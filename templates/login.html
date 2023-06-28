@@ -1,0 +1,79 @@
+<html>
+
+<body>
+
+    <style>
+        .loginInput {
+            border-radius: 8px;
+            border: 1px solid darkgrey;
+            font-size: 1.2em;
+        }
+
+        .container {
+            background: white;
+            margin: auto;
+            width: 20%;
+            border-radius: 10px;
+        }
+
+        body {
+            background: rgb(2, 0, 36);
+            background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(131, 131, 240, 1) 35%, rgba(0, 212, 255, 1) 100%);
+        }
+
+        .loginbutton {
+            background-color: green;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+
+        .loginbutton:hover {
+            background-color: #4CAF50;
+        }
+    </style>
+
+    <div style="height: 20%;"></div>
+
+    <center>
+        <div class="container">
+
+            <br>
+
+            <img src="/assets/logo.png" style="width: 20%;">
+
+            <h1>Log in to Vidzy</h1>
+
+            <form action="/login" enctype="multipart/form-data" method="POST">
+                <input type="text" name="username" placeholder="Username" class="loginInput" required>
+                <br><br>
+                <input type="password" name="password" placeholder="Password" class="loginInput" id="pswInput" required>
+                <input type="checkbox" onclick="showPSW()" style="margin-left: -22px;">
+                <br><br>
+                <button name="login" class="loginbutton">Log in</button>
+            </form>
+
+            <br>
+
+        </div>
+    </center>
+
+    <script>
+        function showPSW() {
+            var x = document.getElementById("pswInput");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
