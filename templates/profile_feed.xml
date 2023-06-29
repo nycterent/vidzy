@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+
+<channel>
+<title>Vidzy Profile Feed</title>
+<link></link>
+<description>Vidzy Profile Feed</description>
+{% for short in latest_short_list %}
+<item>
+    <title>{{ short.title }}</title>
+    <link>/shorts/{{ short.id }}</link>
+    <description>New Post on Vidzy</description>
+</item>
+{% endfor %}
+</channel>
+
+</rss>

@@ -1,0 +1,14 @@
+<script>
+    function like(what) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText == "Success") {
+                    what.getElementsByTagName('img')[0].src = "/static/star-solid.svg";
+                }
+            }
+        };
+        xmlhttp.open("GET", "/like_post?id=" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText, true);
+        xmlhttp.send();
+    }
+</script>

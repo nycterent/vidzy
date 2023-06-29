@@ -2,6 +2,7 @@ from flask import *
 from flask_mysqldb import MySQL
 import requests
 import json
+import mysql.connector
 
 app = Flask(__name__, static_url_path='')
 
@@ -13,7 +14,36 @@ app.config["MYSQL_PASSWORD"] = "1234"
 app.config["MYSQL_DB"] = "vidzy"
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="1234",
+  database="vidzy"
+)
+
 mysql = MySQL(app)
+
+@app.route("/like_post")
+def like_post_page():
+    mycursor = mydb.cursor()
+
+
+
+    mycursor.execute("SELECT * FROM likes WHERE short_id = " + str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
+
+    myresult = mycursor.fetchall()
+
+    for x in myresult:
+        return "Already Liked"
+
+
+    sql = "INSERT INTO likes (`short_id`, `user_id`) VALUES (%s, %s)"
+    val = (request.args.get("id"), str(session["user"]["id"]))
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+    return "Success"
 
 @app.route("/")
 def index_page():
@@ -21,10 +51,21 @@ def index_page():
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM shorts LIMIT 20;")
+    cur.execute("SELECT * FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = " + str(session["user"]["id"]) + " OR p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('index.html', shorts=rv, session=session)
+
+@app.route("/explore")
+def explore_page():
+    if not "username" in session:
+        return "<script>window.location.href='/login';</script>"
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM shorts LIMIT 20;")
+    rv = cur.fetchall()
+
+    return render_template('explore.html', shorts=rv, session=session)
 
 @app.route("/yt")
 def yt_page():
@@ -51,6 +92,20 @@ def profile_page(user):
     latest_short_list = cur.fetchall()
 
     return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list)
+
+@app.route("/users/<user>/feed")
+def profile_feed_page(user):
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM users WHERE username='" + user + "';")
+    user = cur.fetchall()[0]
+    
+    cur.execute("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+    latest_short_list = cur.fetchall()
+
+    resp = make_response(render_template('profile_feed.xml', user=user, session=session, latest_short_list=latest_short_list))
+    resp.headers['Content-type'] = 'text/xml; charset=utf-8'
+    return resp
 
 @app.route("/shorts/<short>")
 def short_page(short):
