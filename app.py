@@ -25,7 +25,7 @@ mysql = MySQL(app)
 
 @app.route("/like_post")
 def like_post_page():
-    mycursor = mydb.cursor()
+    mycursor = mysql.connection.cursor()
 
 
 
@@ -36,6 +36,7 @@ def like_post_page():
     for x in myresult:
         return "Already Liked"
 
+    mycursor = mysql.connection.cursor()
 
     sql = "INSERT INTO likes (`short_id`, `user_id`) VALUES (%s, %s)"
     val = (request.args.get("id"), str(session["user"]["id"]))
@@ -47,17 +48,14 @@ def like_post_page():
 
 @app.route("/if_liked_post")
 def liked_post_page():
-    mycursor = mydb.cursor()
-
-
-
+    mycursor = mysql.connection.cursor()
+    
     mycursor.execute("SELECT * FROM likes WHERE short_id = " + str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
 
     myresult = mycursor.fetchall()
 
     for x in myresult:
         return "true"
-
 
     return "false"
 

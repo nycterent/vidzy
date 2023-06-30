@@ -12,16 +12,21 @@
         xmlhttp.send();
     }
 
-    function if_liked(what) {
+
+    elements = document.querySelectorAll(".like_button_img");
+
+    for (var i = 0; i < elements.length; i++) {
+        elem = elements[i];
+
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 if (this.responseText == "true") {
-                    what.src = "/static/star-solid.svg";
+                    elem.src = "/static/star-solid.svg";
                 }
             }
         };
-        xmlhttp.open("GET", "/if_liked_post?id=" + what.parentNode.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText, true);
+        xmlhttp.open("GET", "/if_liked_post?id=" + elem.parentNode.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText, false);
         xmlhttp.send();
     }
 </script>

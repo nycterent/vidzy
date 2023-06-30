@@ -21,13 +21,13 @@
         </div>
     </div>
 
-    {% include "shortjs.html" %}
-
     <div class="app__videos">
         {% for short in shorts %}
         {% include "displayshort.html" %}
         {% endfor %}
     </div>
+
+    {% include "shortjs.html" %}
 
     <script>
         var options = {

@@ -1,8 +1,7 @@
 # Todo
 
-- Like post
-- bookmark post
+- bookmark posts
 - Live videos
-- comment on post
+- comment on posts
 - Activitypub support
-- Add a share / boost post system.
+- Add a share / boost posts system.
