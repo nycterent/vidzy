@@ -2,7 +2,7 @@
 
 Hello there! Welcome to the Vidzy repo, this project is a free and open source alternative to TikTok. The project has just started and is in very early stages.
 
-If you want to test out this software for yourself, do checkout our little [documentation](/docs/install.md).
+If you want to test out this software for yourself, do checkout our little [documentation](docs/install.md).
 
 
 ## Features
