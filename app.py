@@ -45,6 +45,22 @@ def like_post_page():
 
     return "Success"
 
+@app.route("/if_liked_post")
+def liked_post_page():
+    mycursor = mydb.cursor()
+
+
+
+    mycursor.execute("SELECT * FROM likes WHERE short_id = " + str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
+
+    myresult = mycursor.fetchall()
+
+    for x in myresult:
+        return "true"
+
+
+    return "false"
+
 @app.route("/")
 def index_page():
     if not "username" in session:

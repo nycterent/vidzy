@@ -11,4 +11,17 @@
         xmlhttp.open("GET", "/like_post?id=" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText, true);
         xmlhttp.send();
     }
+
+    function if_liked(what) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText == "true") {
+                    what.src = "/static/star-solid.svg";
+                }
+            }
+        };
+        xmlhttp.open("GET", "/if_liked_post?id=" + what.parentNode.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText, true);
+        xmlhttp.send();
+    }
 </script>
