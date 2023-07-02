@@ -6,6 +6,8 @@ A free and open source alternative to TikTok
 <a href="https://vidzy.codeberg.page/">Website</a>
 &nbsp;•&nbsp;
 <a href="https://matrix.to/#/#vidzysocial:fedora.im">Matrix</a>
+
+![License: AGPL-v3.0](./license_badge.svg)
 </div>
 
 <br><br>
@@ -17,7 +19,7 @@ A free and open source alternative to TikTok
 
 ## Features
 
-As said, the project is in very early stages, and we will update the repo as soon as the code is available and tested. We will later add federation through [ActivityPub](https://www.w3.org/TR/activitypub/).
+The project is in very early stages, and we will update the repo as soon as the code is available and tested. We will later add federation through [ActivityPub](https://www.w3.org/TR/activitypub/).
 
 ## Contributing
 
