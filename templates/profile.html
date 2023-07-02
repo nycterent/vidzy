@@ -520,8 +520,7 @@
 
                 <div class="profile-image">
 
-                    <img src="/static/snapit/users/{{ user.username }}.jpg" alt="profile picture"
-                        style="width: 200px; height: 200px;">
+                    <img src="{{ user.email|get_gravatar }}" alt="profile picture" style="width: 200px; height: 200px;">
 
                 </div>
 

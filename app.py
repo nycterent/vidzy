@@ -1,8 +1,13 @@
 from flask import *
 from flask_mysqldb import MySQL
+from flask_htmlmin import HTMLMIN
+
+import hashlib
 import requests
 import json
 import mysql.connector
+
+import vidzy_config
 
 app = Flask(__name__, static_url_path='')
 
@@ -14,6 +19,11 @@ app.config["MYSQL_PASSWORD"] = "1234"
 app.config["MYSQL_DB"] = "vidzy"
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
+if vidzy_config.minify_html:
+    app.config['MINIFY_HTML'] = True
+
+    htmlmin = HTMLMIN(app, remove_comments=True)
+
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
@@ -22,6 +32,10 @@ mydb = mysql.connector.connect(
 )
 
 mysql = MySQL(app)
+
+@app.template_filter('get_gravatar')
+def get_gravatar(email):
+    return "https://www.gravatar.com/avatar/" + hashlib.md5(email.encode()).hexdigest() + "?d=mp"
 
 @app.route("/like_post")
 def like_post_page():
