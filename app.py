@@ -161,5 +161,52 @@ def login_page():
     else:
         return render_template("login.html")
 
+@app.route('/.well-known/webfinger')
+def webfinger():
+    info = {}
+
+    info["subject"] = request.args.get("resource")
+
+    info["aliases"] = [request.host_url + "users/" + request.args.get("resource").replace("acct:", "").split("@")[0]]
+
+    info["links"] = [
+		{
+			"rel": "self",
+			"type": "application/activity+json",
+			"href": request.host_url + "activitypub/actor/" + request.args.get("resource").replace("acct:", "").split("@")[0]
+		}
+    ]
+
+    if info["subject"].split("@")[1] != request.host:
+        return " "
+
+    resp = Response(json.dumps(info))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/activitypub/actor/<user>')
+def activitypub_actor(user):
+    info = {
+        "@context": [
+            "https://www.w3.org/ns/activitystreams",
+            "https://w3id.org/security/v1"
+        ],
+
+        "id": request.base_url,
+        "type": "Person",
+        "preferredUsername": user,
+        "inbox": "https://my-example.com/inbox",
+
+        "publicKey": {
+            "id": request.base_url + "#main-key",
+            "owner": request.base_url,
+            "publicKeyPem": "-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4Z4L0/TKZdgyVHjcC/tK\nDQu1E7o3ZIYpfQpl8MncPzOtL+j+ECKWw514T9Y4NxKbKHe0D2Uoggn92SzcUwIx\nNpN5J1KzskpH/4NT6GGfgou2UmIRltNV+4C49bioW2dgakexyDpkQajzWlvVyvOX\n/R7Azjnc/nxtAYVKqCIv/JrcLF0emXDKRtjM+v7ndo6pFoDqC1tw8Vq1qr64jHae\nkaM92V3lKfW6JjlCZrggFdswd4ySa7hNJUdq5QTTrzoqEzLSvR6ZP3RNXFqt45kz\nifz5ZuMfa2Ahw3z6hf+yVZi/FRnpeP1R/mUtTtM9c4QtStD3Oyi6qFhAChqUKsyS\nKwIDAQAB\n-----END PUBLIC KEY-----"
+        }
+    }
+
+    resp = Response(json.dumps(info))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
 if __name__ == "__main__":
     app.run(debug=True)
