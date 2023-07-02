@@ -29,4 +29,19 @@
         xmlhttp.open("GET", "/if_liked_post?id=" + elem.parentNode.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText, false);
         xmlhttp.send();
     }
+
+
+    function share(what) {
+        if (navigator.share) {
+            navigator.share({
+                title: "I like this video",
+                text: "Come look a this video",
+                url: "{{ request.host_url }}shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText
+            })
+                .then(() => console.log('Successful share'))
+                .catch(error => console.log('Error sharing:', error));
+        } else {
+            alert("{{ request.host_url }}shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText);
+        }
+    }
 </script>

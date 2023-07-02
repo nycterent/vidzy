@@ -194,14 +194,18 @@ def activitypub_actor(user):
 
         "id": request.base_url,
         "type": "Person",
+        "following": "https://mastodon.jgarr.net/following",
+        "followers": "https://mastodon.jgarr.net/followers",
+        "featured": "https://mastodon.jgarr.net/featured",
+        "inbox": "https://mastodon.jgarr.net/inbox",
+        "outbox": "https://mastodon.jgarr.net/outbox",
         "preferredUsername": user,
-        "inbox": "https://my-example.com/inbox",
-
-        "publicKey": {
-            "id": request.base_url + "#main-key",
-            "owner": request.base_url,
-            "publicKeyPem": "-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4Z4L0/TKZdgyVHjcC/tK\nDQu1E7o3ZIYpfQpl8MncPzOtL+j+ECKWw514T9Y4NxKbKHe0D2Uoggn92SzcUwIx\nNpN5J1KzskpH/4NT6GGfgou2UmIRltNV+4C49bioW2dgakexyDpkQajzWlvVyvOX\n/R7Azjnc/nxtAYVKqCIv/JrcLF0emXDKRtjM+v7ndo6pFoDqC1tw8Vq1qr64jHae\nkaM92V3lKfW6JjlCZrggFdswd4ySa7hNJUdq5QTTrzoqEzLSvR6ZP3RNXFqt45kz\nifz5ZuMfa2Ahw3z6hf+yVZi/FRnpeP1R/mUtTtM9c4QtStD3Oyi6qFhAChqUKsyS\nKwIDAQAB\n-----END PUBLIC KEY-----"
-        }
+        "name": "Justin Garrison",
+        "summary": "Static mastodon server example.",
+        "url": "https://justingarrison.com",
+        "manuallyApprovesFollowers": true,
+        "discoverable": true,
+        "published": "2000-01-01T00:00:00Z",
     }
 
     resp = Response(json.dumps(info))
