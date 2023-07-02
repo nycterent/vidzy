@@ -17,6 +17,11 @@ A free and open source alternative to TikTok
 	git clone https://codeberg.org/vidzy/vidzy
 	./run.sh
 
+## Screenshots
+
+### Homepage
+![Homepage Screenshot](./screenshots/homepage.png)
+
 ## Features
 
 The project is in very early stages, and we will update the repo as soon as the code is available and tested. We will later add federation through [ActivityPub](https://www.w3.org/TR/activitypub/).
