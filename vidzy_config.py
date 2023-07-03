@@ -1,1 +1,1 @@
-minify_html = True
+minify_html = False

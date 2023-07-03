@@ -15,7 +15,9 @@ A free and open source alternative to TikTok
 ## Install
 
 	git clone https://codeberg.org/vidzy/vidzy
-	./run.sh
+	cd vidzy
+	pip install -r requirements.txt
+	python -m waitress --port=8080 --call app:create_app
 
 ## Screenshots
 

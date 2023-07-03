@@ -226,5 +226,8 @@ def activitypub_actor(user):
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+def create_app():
+   return app
+
 if __name__ == "__main__":
     app.run(debug=True)
