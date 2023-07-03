@@ -533,38 +533,17 @@
                 </div>
 
                 <div class="profile-user-settings">
-                    {% if user.first_name %}
-                    <h6 class="profile-user-name">{{ user.first_name }} {{ user.last_name }}</h6> <br>
-                    {% endif %}
+                    <h6 class="profile-user-name">{{ user.display_name }}</h6> <br>
+
                     <h5 style="font-size: 15px;" class="profile-user-name">{{ user.username }}</h5>
 
-                    {% if session.user.is_authenticated and session.user.id == user_id %}
-                    <a style="text-decoration: none;" href="" class="btn profile-edit-btn">Edit
-                        Profile</a>
-                    <a style="text-decoration: none;" href="/accounts/logout" class="btn profile-edit-btn">Logout</a>
-                    <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fa fa-cog"
-                            aria-hidden="true"></i></button>
-
-
-                    {% endif %}
                     <br><br>
-                    {% if session.user.is_authenticated and session.user.id != user_id %}
                     {% if True == True %}
                     <a href="" class="btn profile-edit-btn" style="color: red;">Unfollow</a> <br><br>
                     {% else %}
                     <a href="" class="btn profile-edit-btn" style="color: green;">Follow</a> <br><br>
                     {% endif %}
-                    {% endif %}
-
-                    {% if session.user.is_authenticated and session.user.id != user_id %}
-                    <a href="" class="btn profile-edit-btn">Message</a> <br><br>
-                    {% endif %}
                     <br>
-
-
-
-
-
 
                 </div>
 
@@ -572,17 +551,10 @@
 
                 <div class="profile-bio">
                     <br>
-                    {% if True %}
-                    <p><span class="profile-real-name"></span>◉ {{ user.bio }}</p>
-                    {% endif %}
-                    {% if True %}
-                    <p><span class="profile-real-name"></span>◉ {{ user.location }}</p>
-                    {% endif %}
-                    {% if True %}
-                    <p><span class="profile-real-name"></span>◉
-                        <a href="{{ user.website }}">{{ user.website }}</a>
+                    {% for field in user.fields %}
+                    <p><span class="profile-real-name"></span>◉ {{ field.name }} - {{ field.value|safe }}</p>
+                    {% endfor %}
                     </p>
-                    {% endif %}
                     <br><br>
                     <div class="profile-user-settings">
                         <a href="" class="btns profiele-edit-btn">Posts</a>
@@ -596,9 +568,9 @@
                 <div class="profile-stats">
 
                     <ul>
-                        <li><span class="profile-stat-count">posts_count</span> posts</li>
-                        <li><span class="profile-stat-count">followers_count</span> followers</li>
-                        <li><span class="profile-stat-count">following_count</span> following</li>
+                        <li><span class="profile-stat-count">{{ user.statuses_count }}</span> posts</li>
+                        <li><span class="profile-stat-count">{{ user.followers_count }}</span> followers</li>
+                        <li><span class="profile-stat-count">{{ user.following_count }}</span> following</li>
                     </ul>
                     <br>
 
@@ -618,11 +590,12 @@
 
             <div class="gallery">
 
-                {% for post in latest_short_list %}
-                <a href="/shorts/{{post.id}}">
+                {% for post in posts %}
+                {% if post.media_attachments|length > 0 %}
+                <a href="{{post.url}}">
                     <div class="gallery-item" tabindex="0">
 
-                        <video src="/static/uploads/{{ post.url }}" class="gallery-image" alt=""
+                        <video src="{{ post.media_attachments[0].url|image_proxy }}" class="gallery-image" alt=""
                             style="width: 285px; height: 300px; object-fit: cover;" loop muted></video>
 
                         <div class="gallery-item-info">
@@ -638,6 +611,7 @@
 
                     </div>
                 </a>
+                {% endif %}
                 {% endfor %}
 
 

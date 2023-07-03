@@ -6,6 +6,8 @@ import hashlib
 import requests
 import json
 import mysql.connector
+from urllib.parse import quote, unquote
+import re
 
 import vidzy_config
 
@@ -33,9 +35,29 @@ mydb = mysql.connector.connect(
 
 mysql = MySQL(app)
 
+@app.template_filter('image_proxy')
+def image_proxy(src):
+    return "/proxy/?url=" + quote(str(src))
+
 @app.template_filter('get_gravatar')
 def get_gravatar(email):
     return "https://www.gravatar.com/avatar/" + hashlib.md5(email.encode()).hexdigest() + "?d=mp"
+
+@app.route('/proxy/')
+def route_proxy():
+    url = request.args.get("url")
+    if url != None:
+        if re.search("https:\/\/media\..*\/media_attachments\/", url):
+            data = requests.get(unquote(url))
+            content_type = data.headers["content-type"]
+            if content_type.startswith("image/") or content_type.startswith("video/"):
+                return Response(data.content, content_type=data.headers["content-type"])
+            else:
+                return Response(render_template("400.html"), status=400)
+        else:
+            return Response(render_template("400.html"), status=400)
+    else:
+        return Response(render_template("400.html"), status=400)
 
 @app.route("/like_post")
 def like_post_page():
@@ -120,6 +142,17 @@ def profile_page(user):
     latest_short_list = cur.fetchall()
 
     return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list)
+
+@app.route("/external/users/<user>")
+def external_profile_page(user):
+    if not "username" in session:
+        return "<script>window.location.href='/login';</script>"
+
+    acc = json.loads(requests.get("https://mstdn.social/api/v1/accounts/lookup?acct=stux@mstdn.social").text)
+
+    posts = json.loads(requests.get("https://mstdn.social/api/v1/accounts/" + acc["id"] + "/statuses").text)
+
+    return render_template('external_profile.html', user=acc, session=session, posts=posts)
 
 @app.route("/users/<user>/feed")
 def profile_feed_page(user):
