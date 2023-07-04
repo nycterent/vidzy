@@ -24,7 +24,7 @@
         {% for short in shorts %}
         <!-- video starts -->
         <div class="video">
-            <video class="video__player" src="https://sea1.iv.ggtyler.dev/latest_version?id={{ short.videoId }}&itag=22"
+            <video class="video__player" src="{{ invidious_instance }}/latest_version?id={{ short.videoId }}&itag=22"
                 loop controls></video>
 
             <!-- sidebar -->

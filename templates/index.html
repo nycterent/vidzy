@@ -13,13 +13,7 @@
 </head>
 
 <body>
-    <div class="topnav">
-        <a href="/">Home</a>
-        <a href="/explore">Explore</a>
-        <div class="topnav-right">
-            <a>{{ session.username }}</a>
-        </div>
-    </div>
+    {% include "topnav.html" %}
 
     <div class="app__videos">
         {% for short in shorts %}

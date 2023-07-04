@@ -106,6 +106,19 @@ def index_page():
 
     return render_template('index.html', shorts=rv, session=session)
 
+@app.route("/search")
+def search_page():
+    if not "username" in session:
+        return "<script>window.location.href='/login';</script>"
+
+    query = request.args.get('q')
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE '%" + query + "%' ORDER BY f.follower_id = " + str(session["user"]["id"]) + ", p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
+    rv = cur.fetchall()
+
+    return render_template('search.html', shorts=rv, session=session, query=query)
+
 @app.route("/explore")
 def explore_page():
     if not "username" in session:
@@ -122,10 +135,10 @@ def yt_page():
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
 
-    r = requests.get("https://sea1.iv.ggtyler.dev/api/v1/search?q=duration:short&sort_by=rating&features=creative_commons").text
+    r = requests.get(vidzy_config.invidious_instance + "/api/v1/search?q=duration:short&sort_by=rating&features=creative_commons").text
     rv = json.loads(r)[:8]
 
-    return render_template('yt.html', shorts=rv, session=session)
+    return render_template('yt.html', shorts=rv, session=session, invidious_instance=vidzy_config.invidious_instance)
 
 @app.route("/users/<user>")
 def profile_page(user):
@@ -263,4 +276,4 @@ def create_app():
    return app
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host=vidzy_config.host, debug=True)

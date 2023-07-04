@@ -15,6 +15,9 @@
 <body>
     {% include "topnav.html" %}
 
+    <br><br>
+    <h1 style="color: white;">Search results for "{{ query }}"</h1>
+
     <div class="app__videos">
         {% for short in shorts %}
         {% include "displayshort.html" %}
