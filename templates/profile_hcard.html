@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>@{{ user.username }}</title>
+
+</head>
+
+<body>
+
+    <h1><a href="/users/{{ user.username }}">Please click here to see this users profile</a></h1>
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    <p class="guid">{{ guid }}</p>
+
+    <div class="container">
+
+        <div class="profile">
+
+            {% for size in ["entity_photo", "entity_photo_medium", "entity_photo_small"] %}
+            <div class="profile-image {{ size }}">
+
+                {% if "avatar" in user %}
+
+                <img src="{{ user.avatar }}" alt="profile picture" style="width: 200px; height: 200px;" class="photo">
+
+                {% else %}
+
+                <img src="{{ user.email|get_gravatar }}" alt="profile picture" style="width: 200px; height: 200px;"
+                    class="photo">
+
+                {% endif %}
+
+            </div>
+            {% endfor %}
+
+            <div class="searchable">false</div>
+
+            <div class="profile-user-settings">
+                {% if user.first_name %}
+                <h6 class="profile-user-name fn">{{ user.first_name }} {{ user.last_name }}</h6>
+                {% endif %}
+                <p class="given_name"></p>
+                <p class="family_name"></p>
+                <p class="key">-----BEGIN PUBLIC
+                    KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4Z4L0/TKZdgyVHjcC/tK
+                    DQu1E7o3ZIYpfQpl8MncPzOtL+j+ECKWw514T9Y4NxKbKHe0D2Uoggn92SzcUwIx
+                    NpN5J1KzskpH/4NT6GGfgou2UmIRltNV+4C49bioW2dgakexyDpkQajzWlvVyvOX
+                    /R7Azjnc/nxtAYVKqCIv/JrcLF0emXDKRtjM+v7ndo6pFoDqC1tw8Vq1qr64jHae
+                    kaM92V3lKfW6JjlCZrggFdswd4ySa7hNJUdq5QTTrzoqEzLSvR6ZP3RNXFqt45kz
+                    ifz5ZuMfa2Ahw3z6hf+yVZi/FRnpeP1R/mUtTtM9c4QtStD3Oyi6qFhAChqUKsyS
+                    KwIDAQAB-----END PUBLIC KEY-----</p>
+                <h5 style="font-size: 15px;" class="profile-user-name fn">{{ user.username }}</h5>
+            </div>
+
+
+
+            <div class="profile-bio">
+
+                {% if True %}
+                <p><span class="profile-real-name"></span>◉ {{ user.bio }}</p>
+                {% endif %}
+                {% if True %}
+                <p><span class="profile-real-name"></span>◉ {{ user.location }}</p>
+                {% endif %}
+                {% if True %}
+                <p><span class="profile-real-name"></span>◉
+                    <a href="{{ user.website }}">{{ user.website }}</a>
+                </p>
+                {% endif %}
+
+            </div>
+
+
+            <div class="profile-stats">
+
+                <ul>
+                    <li><span class="profile-stat-count">posts_count</span> posts</li>
+                    <li><span class="profile-stat-count">followers_count</span> followers</li>
+                    <li><span class="profile-stat-count">following_count</span> following</li>
+                </ul>
+
+
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

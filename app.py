@@ -74,8 +74,8 @@ def like_post_page():
 
     mycursor = mysql.connection.cursor()
 
-    sql = "INSERT INTO likes (`short_id`, `user_id`) VALUES (%s, %s)"
-    val = (request.args.get("id"), str(session["user"]["id"]))
+    sql = "INSERT INTO `likes` (`short_id`, `user_id`) VALUES (%s, %s)"
+    val = (request.args.get("id"), session["user"]["id"])
     mycursor.execute(sql, val)
 
     mydb.commit()
@@ -101,7 +101,7 @@ def index_page():
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = " + str(session["user"]["id"]) + " OR p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = " + str(session["user"]["id"]) + " OR p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('index.html', shorts=rv, session=session)
@@ -114,7 +114,7 @@ def search_page():
     query = request.args.get('q')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE '%" + query + "%' ORDER BY f.follower_id = " + str(session["user"]["id"]) + ", p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE '%" + query + "%' ORDER BY f.follower_id = " + str(session["user"]["id"]) + ", p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('search.html', shorts=rv, session=session, query=query)
@@ -125,7 +125,7 @@ def explore_page():
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM shorts LIMIT 20;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('explore.html', shorts=rv, session=session)
@@ -155,6 +155,21 @@ def profile_page(user):
     latest_short_list = cur.fetchall()
 
     return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list)
+
+@app.route("/hcard/users/<guid>")
+def hcard_page(guid):
+    user = bytes.fromhex(guid).decode('utf-8')
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM users WHERE username='" + user + "';")
+    user = cur.fetchall()[0]
+
+    cur.execute("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+    print("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+    latest_short_list = cur.fetchall()
+
+    return render_template('profile_hcard.html', user=user, session=session, latest_short_list=latest_short_list, guid=guid)
 
 @app.route("/external/users/<user>")
 def external_profile_page(user):
@@ -187,7 +202,7 @@ def short_page(short):
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM shorts WHERE id = '" + short + "';")
+    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p WHERE id = '" + short + "';")
     rv = cur.fetchall()[0]
 
     return render_template('short.html', short=rv, session=session)
@@ -230,11 +245,16 @@ def webfinger():
     info["aliases"] = [request.host_url + "users/" + request.args.get("resource").replace("acct:", "").split("@")[0]]
 
     info["links"] = [
-		{
-			"rel": "self",
-			"type": "application/activity+json",
-			"href": request.host_url + "activitypub/actor/" + request.args.get("resource").replace("acct:", "").split("@")[0]
-		}
+        {
+            "rel": "http://microformats.org/profile/hcard",
+            "type": "text/html",
+            "href": request.host_url + "hcard/users/" + request.args.get("resource").replace("acct:", "").split("@")[0].encode("utf-8").hex()
+        },
+        {
+            "rel": "http://joindiaspora.com/seed_location",
+            "type": "text/html",
+            "href": request.host_url
+        }
     ]
 
     if info["subject"].split("@")[1] != request.host:
