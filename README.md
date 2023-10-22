@@ -38,4 +38,4 @@ If you discover a security vulnerability within Vidzy, please send an e-mail to 
 
 ## License
 
-Vidzy is open-sourced software licensed under the AGPL license.
+Vidzy is open-source software licensed under the GNU Affero General Public License v3.0
