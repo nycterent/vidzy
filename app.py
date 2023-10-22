@@ -8,6 +8,7 @@ import json
 import mysql.connector
 from urllib.parse import quote, unquote
 import re
+import os
 
 import vidzy_config
 
@@ -27,21 +28,24 @@ if vidzy_config.minify_html:
     htmlmin = HTMLMIN(app, remove_comments=True)
 
 mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="1234",
-  database="vidzy"
+    host="localhost",
+    user="root",
+    password="1234",
+    database="vidzy"
 )
 
 mysql = MySQL(app)
+
 
 @app.template_filter('image_proxy')
 def image_proxy(src):
     return "/proxy/?url=" + quote(str(src))
 
+
 @app.template_filter('get_gravatar')
 def get_gravatar(email):
     return "https://www.gravatar.com/avatar/" + hashlib.md5(email.encode()).hexdigest() + "?d=mp"
+
 
 @app.route('/proxy/')
 def route_proxy():
@@ -59,13 +63,13 @@ def route_proxy():
     else:
         return Response(render_template("400.html"), status=400)
 
+
 @app.route("/like_post")
 def like_post_page():
     mycursor = mysql.connection.cursor()
 
-
-
-    mycursor.execute("SELECT * FROM likes WHERE short_id = " + str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
+    mycursor.execute("SELECT * FROM likes WHERE short_id = " +
+                     str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
 
     myresult = mycursor.fetchall()
 
@@ -82,11 +86,13 @@ def like_post_page():
 
     return "Success"
 
+
 @app.route("/if_liked_post")
 def liked_post_page():
     mycursor = mysql.connection.cursor()
-    
-    mycursor.execute("SELECT * FROM likes WHERE short_id = " + str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
+
+    mycursor.execute("SELECT * FROM likes WHERE short_id = " +
+                     str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
 
     myresult = mycursor.fetchall()
 
@@ -95,16 +101,19 @@ def liked_post_page():
 
     return "false"
 
+
 @app.route("/")
 def index_page():
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = " + str(session["user"]["id"]) + " OR p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = " +
+                str(session["user"]["id"]) + " OR p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('index.html', shorts=rv, session=session)
+
 
 @app.route("/search")
 def search_page():
@@ -114,10 +123,12 @@ def search_page():
     query = request.args.get('q')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE '%" + query + "%' ORDER BY f.follower_id = " + str(session["user"]["id"]) + ", p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE '%" +
+                query + "%' ORDER BY f.follower_id = " + str(session["user"]["id"]) + ", p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('search.html', shorts=rv, session=session, query=query)
+
 
 @app.route("/explore")
 def explore_page():
@@ -125,20 +136,37 @@ def explore_page():
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts LIMIT 20;")
+    cur.execute(
+        "SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('explore.html', shorts=rv, session=session)
+
 
 @app.route("/yt")
 def yt_page():
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
 
-    r = requests.get(vidzy_config.invidious_instance + "/api/v1/search?q=duration:short&sort_by=rating&features=creative_commons").text
+    r = requests.get(vidzy_config.invidious_instance +
+                     "/api/v1/search?q=duration:short&sort_by=rating&features=creative_commons").text
     rv = json.loads(r)[:8]
 
     return render_template('yt.html', shorts=rv, session=session, invidious_instance=vidzy_config.invidious_instance)
+
+
+@app.route("/pt")
+def pt_page():
+    if not "username" in session:
+        return "<script>window.location.href='/login';</script>"
+
+    r = requests.get("https://share.tube/api/v1/videos").text
+    rv = json.loads(r)
+
+    print(rv)
+
+    return render_template('pt.html', shorts=rv, session=session)
+
 
 @app.route("/users/<user>")
 def profile_page(user):
@@ -150,11 +178,13 @@ def profile_page(user):
     cur.execute("SELECT * FROM users WHERE username='" + user + "';")
     user = cur.fetchall()[0]
 
-    cur.execute("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+    cur.execute("SELECT * FROM shorts WHERE user_id='" +
+                str(user["id"]) + "';")
     print("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
     latest_short_list = cur.fetchall()
 
     return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list)
+
 
 @app.route("/hcard/users/<guid>")
 def hcard_page(guid):
@@ -165,22 +195,27 @@ def hcard_page(guid):
     cur.execute("SELECT * FROM users WHERE username='" + user + "';")
     user = cur.fetchall()[0]
 
-    cur.execute("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+    cur.execute("SELECT * FROM shorts WHERE user_id='" +
+                str(user["id"]) + "';")
     print("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
     latest_short_list = cur.fetchall()
 
     return render_template('profile_hcard.html', user=user, session=session, latest_short_list=latest_short_list, guid=guid)
+
 
 @app.route("/external/users/<user>")
 def external_profile_page(user):
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
 
-    acc = json.loads(requests.get("https://mstdn.social/api/v1/accounts/lookup?acct=stux@mstdn.social").text)
+    acc = json.loads(requests.get(
+        "https://mstdn.social/api/v1/accounts/lookup?acct=stux@mstdn.social").text)
 
-    posts = json.loads(requests.get("https://mstdn.social/api/v1/accounts/" + acc["id"] + "/statuses").text)
+    posts = json.loads(requests.get(
+        "https://mstdn.social/api/v1/accounts/" + acc["id"] + "/statuses").text)
 
     return render_template('external_profile.html', user=acc, session=session, posts=posts)
+
 
 @app.route("/users/<user>/feed")
 def profile_feed_page(user):
@@ -188,13 +223,16 @@ def profile_feed_page(user):
 
     cur.execute("SELECT * FROM users WHERE username='" + user + "';")
     user = cur.fetchall()[0]
-    
-    cur.execute("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+
+    cur.execute("SELECT * FROM shorts WHERE user_id='" +
+                str(user["id"]) + "';")
     latest_short_list = cur.fetchall()
 
-    resp = make_response(render_template('profile_feed.xml', user=user, session=session, latest_short_list=latest_short_list))
+    resp = make_response(render_template(
+        'profile_feed.xml', user=user, session=session, latest_short_list=latest_short_list))
     resp.headers['Content-type'] = 'text/xml; charset=utf-8'
     return resp
+
 
 @app.route("/shorts/<short>")
 def short_page(short):
@@ -207,9 +245,11 @@ def short_page(short):
 
     return render_template('short.html', short=rv, session=session)
 
+
 @app.route('/static/<path:path>')
 def send_static(path):
     return send_from_directory('static', path)
+
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_page():
@@ -222,7 +262,8 @@ def login_page():
 
         mycursor = mysql.connection.cursor()
 
-        mycursor.execute("SELECT * FROM users WHERE username = '" + username + "';")
+        mycursor.execute(
+            "SELECT * FROM users WHERE username = '" + username + "';")
 
         myresult = mycursor.fetchall()
 
@@ -236,13 +277,15 @@ def login_page():
     else:
         return render_template("login.html")
 
+
 @app.route('/.well-known/webfinger')
 def webfinger():
     info = {}
 
     info["subject"] = request.args.get("resource")
 
-    info["aliases"] = [request.host_url + "users/" + request.args.get("resource").replace("acct:", "").split("@")[0]]
+    info["aliases"] = [request.host_url + "users/" +
+                       request.args.get("resource").replace("acct:", "").split("@")[0]]
 
     info["links"] = [
         {
@@ -264,6 +307,7 @@ def webfinger():
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+
 @app.route('/activitypub/actor/<user>')
 def activitypub_actor(user):
     info = {
@@ -283,8 +327,8 @@ def activitypub_actor(user):
         "name": "Justin Garrison",
         "summary": "Static mastodon server example.",
         "url": "https://justingarrison.com",
-        "manuallyApprovesFollowers": true,
-        "discoverable": true,
+        "manuallyApprovesFollowers": True,
+        "discoverable": True,
         "published": "2000-01-01T00:00:00Z",
     }
 
@@ -292,8 +336,184 @@ def activitypub_actor(user):
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+
+@app.route('/api/v1/instance')
+def instance_info():
+    info = {
+        "uri": "127.0.0.1:5000",
+        "title": "Vidzy",
+        "short_description": "The testing server operated by Vidzy",
+        "description": "",
+        "email": "",
+        "version": "4.1.2+nightly-20230705",
+        "urls": {
+            "streaming_api": "wss://streaming.mastodon.online"
+        },
+        "stats": {
+            "user_count": 181756,
+            "status_count": 5486286,
+            "domain_count": 35493
+        },
+        "thumbnail": "https://files.mastodon.online/site_uploads/files/000/000/001/@1x/dac498d1edf4191b.png",
+        "languages": [
+            "en"
+        ],
+        "registrations": True,
+        "approval_required": False,
+        "invites_enabled": True,
+        "configuration": {
+            "accounts": {
+                "max_featured_tags": 10
+            },
+            "statuses": {
+                "max_characters": 500,
+                "max_media_attachments": 4,
+                "characters_reserved_per_url": 23
+            },
+            "media_attachments": {
+                "supported_mime_types": [
+                    "image/jpeg",
+                    "image/png",
+                    "image/gif",
+                    "image/heic",
+                    "image/heif",
+                    "image/webp",
+                    "image/avif",
+                    "video/webm",
+                    "video/mp4",
+                    "video/quicktime",
+                    "video/ogg",
+                    "audio/wave",
+                    "audio/wav",
+                    "audio/x-wav",
+                    "audio/x-pn-wave",
+                    "audio/vnd.wave",
+                    "audio/ogg",
+                    "audio/vorbis",
+                    "audio/mpeg",
+                    "audio/mp3",
+                    "audio/webm",
+                    "audio/flac",
+                    "audio/aac",
+                    "audio/m4a",
+                    "audio/x-m4a",
+                    "audio/mp4",
+                    "audio/3gpp",
+                    "video/x-ms-asf"
+                ],
+                "image_size_limit": 16777216,
+                "image_matrix_limit": 33177600,
+                "video_size_limit": 103809024,
+                "video_frame_rate_limit": 120,
+                "video_matrix_limit": 8294400
+            },
+            "polls": {
+                "max_options": 4,
+                "max_characters_per_option": 50,
+                "min_expiration": 300,
+                "max_expiration": 2629746
+            }
+        },
+        "contact_account": {
+            "id": "6891",
+            "username": "Mastodon",
+            "acct": "Mastodon@mastodon.social",
+            "display_name": "Mastodon",
+            "locked": False,
+            "bot": False,
+            "discoverable": True,
+            "group": False,
+            "created_at": "2016-11-23T00:00:00.000Z",
+            "note": "<p>Official account of the Mastodon project. News, releases, announcements! Learn more on our website!</p>",
+            "url": "https://mastodon.social/@Mastodon",
+            "avatar": "https://files.mastodon.online/cache/accounts/avatars/000/006/891/original/331abf389ab49bb1.png",
+            "avatar_static": "https://files.mastodon.online/cache/accounts/avatars/000/006/891/original/331abf389ab49bb1.png",
+            "header": "https://files.mastodon.online/cache/accounts/headers/000/006/891/original/4d816e58a8569ecf.png",
+            "header_static": "https://files.mastodon.online/cache/accounts/headers/000/006/891/original/4d816e58a8569ecf.png",
+            "followers_count": 784750,
+            "following_count": 8,
+            "statuses_count": 239,
+            "last_status_at": "2023-07-02",
+            "emojis": [],
+            "fields": [
+                {
+                    "name": "Homepage",
+                    "value": "<a href=\"https://joinmastodon.org\" rel=\"nofollow noopener noreferrer\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">joinmastodon.org</span><span class=\"invisible\"></span></a>",
+                    "verified_at": "2023-07-05T19:25:17.795+00:00"
+                },
+                {
+                    "name": "Patreon",
+                    "value": "<a href=\"https://patreon.com/mastodon\" rel=\"nofollow noopener noreferrer\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">patreon.com/mastodon</span><span class=\"invisible\"></span></a>",
+                    "verified_at": None
+                },
+                {
+                    "name": "GitHub",
+                    "value": "<a href=\"https://github.com/mastodon\" rel=\"nofollow noopener noreferrer\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">github.com/mastodon</span><span class=\"invisible\"></span></a>",
+                    "verified_at": "2023-07-05T19:25:20.250+00:00"
+                }
+            ]
+        },
+        "rules": [
+            {
+                "id": "1",
+                "text": "No racism, sexism, homophobia, transphobia, xenophobia, or casteism"
+            },
+            {
+                "id": "6",
+                "text": "Sexually explicit or violent media must be marked as sensitive when posting"
+            },
+            {
+                "id": "7",
+                "text": "No incitement of violence or promotion of violent ideologies"
+            },
+            {
+                "id": "8",
+                "text": "No harassment, dogpiling or doxxing of other users"
+            },
+            {
+                "id": "10",
+                "text": "Do not share false or misleading information that may lead to physical harm"
+            }
+        ]
+    }
+
+    resp = Response(json.dumps(info))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+
+@app.route('/api/v1/apps', methods=['POST'])
+def api_apps_page():
+    info = {
+        "id": "563419",
+        "name": request.get_json().get("client_name"),
+        "website": None,
+        "redirect_uri": "urn:ietf:wg:oauth:2.0:oob",
+        "client_id": "client_id",
+        "client_secret": "ZEaFUFmF0umgBX1qKJDjaU99Q31lDkOU8NutzTOoliw",
+    }
+    resp = Response(json.dumps(info))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+
+@app.route('/oauth/authorize/')
+def authorize_oauth():
+    if request.args.get("response_type") == "code" and request.args.get("redirect_uri") == "urn:ietf:wg:oauth:2.0:oob":
+        return "Here is your code: 123456"
+    else:
+        return "A response type other than code is not supported"
+
+
+@app.route('/oauth/token', methods=['POST', 'GET'])
+def oauth_token_page():
+    # has to return something like    https://docs.joinmastodon.org/methods/oauth/#token
+    return request.get_json()
+
+
 def create_app():
-   return app
+    return app
+
 
 if __name__ == "__main__":
     app.run(host=vidzy_config.host, debug=True)
