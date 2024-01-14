@@ -263,12 +263,12 @@ def login_page():
         mycursor = mysql.connection.cursor()
 
         mycursor.execute(
-            "SELECT * FROM users WHERE username = '" + username + "';")
+            "SELECT * FROM users WHERE username = %s;", (username,))
 
         myresult = mycursor.fetchall()
 
         for x in myresult:
-            if x["password"] == password:
+            if x["password"] == hashlib.sha256(password.encode()).hexdigest():
                 session["username"] = username
                 session["id"] = x["id"]
                 session["user"] = x
