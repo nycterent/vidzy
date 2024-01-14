@@ -137,7 +137,7 @@ def explore_page():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts LIMIT 20;")
+        "SELECT *, (SELECT count(*) FROM `vidzy`.`likes` p WHERE short_id = p.id) likes FROM shorts LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('explore.html', shorts=rv, session=session)
