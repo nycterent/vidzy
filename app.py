@@ -108,7 +108,7 @@ def index_page():
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes, (SELECT username FROM `vidzy`.`users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = " +
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = " +
                 str(session["user"]["id"]) + " OR p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
     rv = cur.fetchall()
 
@@ -123,7 +123,7 @@ def search_page():
     query = request.args.get('q')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE '%" +
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE '%" +
                 query + "%' ORDER BY f.follower_id = " + str(session["user"]["id"]) + ", p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
     rv = cur.fetchall()
 
@@ -137,7 +137,7 @@ def explore_page():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT *, (SELECT count(*) FROM `vidzy`.`likes` p WHERE short_id = p.id) likes FROM shorts LIMIT 20;")
+        "SELECT *, (SELECT count(*) FROM `likes` p WHERE short_id = p.id) likes FROM shorts LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('explore.html', shorts=rv, session=session)
@@ -240,7 +240,7 @@ def short_page(short):
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `vidzy`.`likes` WHERE short_id = p.id) likes FROM shorts p WHERE id = '" + short + "';")
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE id = '" + short + "';")
     rv = cur.fetchall()[0]
 
     return render_template('short.html', short=rv, session=session)
@@ -276,6 +276,32 @@ def login_page():
             return "<script>window.location.href='/login';</script>"
     else:
         return render_template("login.html")
+
+@app.route('/register', methods =['GET', 'POST'])
+def register():
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form :
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM users WHERE username = %s', (username, ))
+        account = cursor.fetchone()
+        if account:
+            msg = 'Account already exists !'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address !'
+        elif not re.match(r'[A-Za-z0-9]+', username):
+            msg = 'Username must contain only characters and numbers !'
+        elif not username or not password or not email:
+            msg = 'Please fill out the form !'
+        else:
+            cursor.execute('INSERT INTO users (`username`, `password`, `email`) VALUES (%s, %s, %s)', (username, hashlib.sha256(password.encode()).hexdigest(), email, ))
+            mysql.connection.commit()
+            msg = 'You have successfully registered! <a href="/login">Click here to login</a>'
+    elif request.method == 'POST':
+        msg = 'Please fill out the form !'
+    return render_template('register.html', msg = msg)
 
 
 @app.route('/.well-known/webfinger')
