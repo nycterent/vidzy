@@ -3,27 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <title> Register </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .loginInput {
+            border-radius: 8px;
+            border: 1px solid darkgrey;
+            font-size: 1.2em;
+        }
+
+        .container {
+            background: white;
+            margin: auto;
+            width: 20%;
+            border-radius: 10px;
+        }
+
+        body {
+            background: rgb(2, 0, 36);
+            background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(131, 131, 240, 1) 35%, rgba(0, 212, 255, 1) 100%);
+        }
+
+        .loginbutton {
+            background-color: green;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+
+        .loginbutton:hover {
+            background-color: #4CAF50;
+        }
+    </style>
 </head>
 
-<body></br></br></br></br></br>
-    <div align="center">
-        <div align="center" class="border">
-            <div class="header">
-                <h1 class="word">Register</h1>
-            </div></br></br></br>
-            <h2 class="word">
-                <form action="{{ url_for('register') }}" method="post">
-                    <div class="msg">{{ msg|safe}}</div>
-                    <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox" /></br></br>
-                    <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox" /></br></br>
-                    <input id="email" name="email" type="text" placeholder="Enter Your Email ID" class="textbox" /></br></br>
-                    <input type="submit" class="btn" value="Sign Up"></br>
-                </form>
-            </h2>
-            <p class="bottom">Already have an account? <a class="bottom" href="{{url_for('login_page')}}"> Sign In here</a></p>
+<body>
+    <div style="height: 20%;"></div>
+
+    <center>
+        {{ msg|safe}}
+        <div class="container">
+
+            <br>
+
+            <img src="/static/logo.png" style="width: 20%;">
+
+            <h1>Sign up for Vidzy</h1>
+
+            <form action="{{ url_for('register') }}" method="POST">
+                <input type="text" name="username" placeholder="Username" class="loginInput" required>
+                <br><br>
+                <input type="password" name="password" placeholder="Password" class="loginInput" id="pswInput" required>
+                <input type="checkbox" onclick="showPSW()" style="margin-left: -22px;">
+                <br><br>
+                <input type="text" name="email" placeholder="Enter Your Email Address" class="loginInput" required>
+                <br><br>
+                <button class="loginbutton">Signup</button>
+            </form>
+
+            <p>Already have an account? <a class="bottom" href="{{url_for('login_page')}}"> Sign In here</p>
+
+            <br>
+
         </div>
-    </div>
+    </center>
+
+    <script>
+        function showPSW() {
+            var x = document.getElementById("pswInput");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
 </body>
 
 </html>
