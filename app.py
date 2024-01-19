@@ -279,6 +279,9 @@ def login_page():
 
 @app.route('/register', methods =['GET', 'POST'])
 def register():
+    if "username" in session:
+        return "<script>window.location.href='/';</script>"
+    
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form :
         username = request.form['username']
