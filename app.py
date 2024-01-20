@@ -6,11 +6,13 @@ import hashlib
 import requests
 import json
 import mysql.connector
-from urllib.parse import quote, unquote
+from urllib.parse import quote, unquote, urlparse
 import re
 import os
 
 import vidzy_config
+
+vidzy_version = "v0.0.9"
 
 app = Flask(__name__, static_url_path='')
 
@@ -369,180 +371,19 @@ def activitypub_actor(user):
 @app.route('/api/v1/instance')
 def instance_info():
     info = {
-        "uri": "127.0.0.1:5000",
+        "uri": str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc),
         "title": "Vidzy",
         "short_description": "The testing server operated by Vidzy",
         "description": "",
-        "email": "",
-        "version": "4.1.2+nightly-20230705",
-        "urls": {
-            "streaming_api": "wss://streaming.mastodon.online"
-        },
-        "stats": {
-            "user_count": 181756,
-            "status_count": 5486286,
-            "domain_count": 35493
-        },
-        "thumbnail": "https://files.mastodon.online/site_uploads/files/000/000/001/@1x/dac498d1edf4191b.png",
-        "languages": [
-            "en"
-        ],
-        "registrations": True,
-        "approval_required": False,
-        "invites_enabled": True,
-        "configuration": {
-            "accounts": {
-                "max_featured_tags": 10
-            },
-            "statuses": {
-                "max_characters": 500,
-                "max_media_attachments": 4,
-                "characters_reserved_per_url": 23
-            },
-            "media_attachments": {
-                "supported_mime_types": [
-                    "image/jpeg",
-                    "image/png",
-                    "image/gif",
-                    "image/heic",
-                    "image/heif",
-                    "image/webp",
-                    "image/avif",
-                    "video/webm",
-                    "video/mp4",
-                    "video/quicktime",
-                    "video/ogg",
-                    "audio/wave",
-                    "audio/wav",
-                    "audio/x-wav",
-                    "audio/x-pn-wave",
-                    "audio/vnd.wave",
-                    "audio/ogg",
-                    "audio/vorbis",
-                    "audio/mpeg",
-                    "audio/mp3",
-                    "audio/webm",
-                    "audio/flac",
-                    "audio/aac",
-                    "audio/m4a",
-                    "audio/x-m4a",
-                    "audio/mp4",
-                    "audio/3gpp",
-                    "video/x-ms-asf"
-                ],
-                "image_size_limit": 16777216,
-                "image_matrix_limit": 33177600,
-                "video_size_limit": 103809024,
-                "video_frame_rate_limit": 120,
-                "video_matrix_limit": 8294400
-            },
-            "polls": {
-                "max_options": 4,
-                "max_characters_per_option": 50,
-                "min_expiration": 300,
-                "max_expiration": 2629746
-            }
-        },
-        "contact_account": {
-            "id": "6891",
-            "username": "Mastodon",
-            "acct": "Mastodon@mastodon.social",
-            "display_name": "Mastodon",
-            "locked": False,
-            "bot": False,
-            "discoverable": True,
-            "group": False,
-            "created_at": "2016-11-23T00:00:00.000Z",
-            "note": "<p>Official account of the Mastodon project. News, releases, announcements! Learn more on our website!</p>",
-            "url": "https://mastodon.social/@Mastodon",
-            "avatar": "https://files.mastodon.online/cache/accounts/avatars/000/006/891/original/331abf389ab49bb1.png",
-            "avatar_static": "https://files.mastodon.online/cache/accounts/avatars/000/006/891/original/331abf389ab49bb1.png",
-            "header": "https://files.mastodon.online/cache/accounts/headers/000/006/891/original/4d816e58a8569ecf.png",
-            "header_static": "https://files.mastodon.online/cache/accounts/headers/000/006/891/original/4d816e58a8569ecf.png",
-            "followers_count": 784750,
-            "following_count": 8,
-            "statuses_count": 239,
-            "last_status_at": "2023-07-02",
-            "emojis": [],
-            "fields": [
-                {
-                    "name": "Homepage",
-                    "value": "<a href=\"https://joinmastodon.org\" rel=\"nofollow noopener noreferrer\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">joinmastodon.org</span><span class=\"invisible\"></span></a>",
-                    "verified_at": "2023-07-05T19:25:17.795+00:00"
-                },
-                {
-                    "name": "Patreon",
-                    "value": "<a href=\"https://patreon.com/mastodon\" rel=\"nofollow noopener noreferrer\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">patreon.com/mastodon</span><span class=\"invisible\"></span></a>",
-                    "verified_at": None
-                },
-                {
-                    "name": "GitHub",
-                    "value": "<a href=\"https://github.com/mastodon\" rel=\"nofollow noopener noreferrer\" translate=\"no\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">github.com/mastodon</span><span class=\"invisible\"></span></a>",
-                    "verified_at": "2023-07-05T19:25:20.250+00:00"
-                }
-            ]
-        },
-        "rules": [
-            {
-                "id": "1",
-                "text": "No racism, sexism, homophobia, transphobia, xenophobia, or casteism"
-            },
-            {
-                "id": "6",
-                "text": "Sexually explicit or violent media must be marked as sensitive when posting"
-            },
-            {
-                "id": "7",
-                "text": "No incitement of violence or promotion of violent ideologies"
-            },
-            {
-                "id": "8",
-                "text": "No harassment, dogpiling or doxxing of other users"
-            },
-            {
-                "id": "10",
-                "text": "Do not share false or misleading information that may lead to physical harm"
-            }
-        ]
+        "version": vidzy_version
     }
 
     resp = Response(json.dumps(info))
     resp.headers['Content-Type'] = 'application/json'
     return resp
-
-
-@app.route('/api/v1/apps', methods=['POST'])
-def api_apps_page():
-    info = {
-        "id": "563419",
-        "name": request.get_json().get("client_name"),
-        "website": None,
-        "redirect_uri": "urn:ietf:wg:oauth:2.0:oob",
-        "client_id": "client_id",
-        "client_secret": "ZEaFUFmF0umgBX1qKJDjaU99Q31lDkOU8NutzTOoliw",
-    }
-    resp = Response(json.dumps(info))
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
-
-
-@app.route('/oauth/authorize/')
-def authorize_oauth():
-    if request.args.get("response_type") == "code" and request.args.get("redirect_uri") == "urn:ietf:wg:oauth:2.0:oob":
-        return "Here is your code: 123456"
-    else:
-        return "A response type other than code is not supported"
-
-
-@app.route('/oauth/token', methods=['POST', 'GET'])
-def oauth_token_page():
-    # has to return something like    https://docs.joinmastodon.org/methods/oauth/#token
-    return request.get_json()
-
 
 def create_app():
     return app
-
 
 if __name__ == "__main__":
     app.run(host=vidzy_config.host, debug=True)
