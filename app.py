@@ -132,11 +132,11 @@ def yt_page():
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
 
-    r = requests.get(vidzy_config.invidious_instance +
+    r = requests.get(app.config["invidious_instance"] +
                      "/api/v1/search?q=duration:short&sort_by=rating&features=creative_commons").text
     rv = json.loads(r)[:8]
 
-    return render_template('yt.html', shorts=rv, session=session, invidious_instance=vidzy_config.invidious_instance)
+    return render_template('yt.html', shorts=rv, session=session, invidious_instance=app.config["invidious_instance"])
 
 
 @app.route("/pt")
@@ -368,4 +368,4 @@ def create_app():
     return app
 
 if __name__ == "__main__":
-    app.run(host=vidzy_config.host, debug=True)
+    app.run(host=app.config["HOST"], debug=True)
