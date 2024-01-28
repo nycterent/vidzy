@@ -8,13 +8,19 @@ import json
 from urllib.parse import quote, unquote, urlparse
 import re
 import os
+from werkzeug.utils import secure_filename
+from datetime import datetime
 
 vidzy_version = "v0.0.9"
+
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'mp4'}
 
 mysql = MySQL()
 app = Flask(__name__, static_url_path='')
 
 app.config.from_pyfile('settings.py', silent=False)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 if app.config['MINIFY_HTML']:
     htmlmin = HTMLMIN(app, remove_comments=True)
@@ -363,6 +369,49 @@ def instance_info():
     resp = Response(json.dumps(info))
     resp.headers['Content-Type'] = 'application/json'
     return resp
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if not "username" in session:
+        return "<script>window.location.href='/login';</script>"
+
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = datetime.today().strftime('%Y%m%d') + secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            cur = mysql.connection.cursor()
+
+            cur.execute("""INSERT INTO shorts (title, url, user_id) VALUES (%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"])))
+            mysql.connection.commit()
+
+            return redirect(url_for('index_page'))
+    return '''
+    <!doctype html>
+    <title>Upload a new video</title>
+    <h1>Upload a new video</h1>
+    <form method=post enctype=multipart/form-data>
+      Video title: <input type=text name=title>
+      <br><br>
+      <input type=file name=file>
+      <br><br>
+      <input type=submit value=Upload>
+    </form>
+    '''
 
 def create_app():
     return app
