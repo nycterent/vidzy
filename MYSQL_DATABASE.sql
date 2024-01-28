@@ -90,7 +90,7 @@ CREATE TABLE `shorts` (
 
 LOCK TABLES `shorts` WRITE;
 /*!40000 ALTER TABLE `shorts` DISABLE KEYS */;
-INSERT INTO `shorts` VALUES (2,'Cute Kitten','9manidkrogo.mp4',2),(3,'Dog and duck so cute!','prOXIp07esM.mp4',2),(6,'Godot in 100 Seconds','QKgTZWbwD1U.mp4',1),(7,'Unity in 100 Seconds','iqlH4okiQqg.mp4',1),(8,'Unreal in 100 Seconds','DXDe-2BC4cE.mp4',1),(9,'Bash in 100 Seconds','I4EWvMFj37g.mp4',1),(11,'SVG Explained in 100 Seconds','emFMHH2Bfvo.mp4',1),(12,'VS Code in 100 Seconds','KMxo3T_MTvY.mp4',1),(13,'Python in 100 Seconds','x7X9w_GIm1s.mp4',1),(14,'C in 100 Seconds','U3aXWizDbQ4.mp4',1),(15,'Java in 100 Seconds','l9AzO1FMgM8.mp4',1),(16,'HTML in 100 Seconds','ok-plXXHlWw.mp4',1),(20,'This Laptop changes everything! #laptop #framework','H3lwNOb8iRE.mp4',1),(21,'7 Things We Like About The Pixel 7A','vt8TwrL-Bpg.mp4',1);
+INSERT INTO `shorts` VALUES (1,'test video','video.mp4',1),(1,'test video #2','video.mp4',1);
 /*!40000 ALTER TABLE `shorts` ENABLE KEYS */;
 UNLOCK TABLES;
 
