@@ -341,6 +341,8 @@ def webfinger():
 
 @app.route('/activitypub/actor/<user>')
 def activitypub_actor(user):
+    vidzy_base_url = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc)
+
     info = {
         "@context": [
             "https://www.w3.org/ns/activitystreams",
@@ -349,15 +351,15 @@ def activitypub_actor(user):
 
         "id": request.base_url,
         "type": "Person",
-        "following": "https://mastodon.jgarr.net/following",
-        "followers": "https://mastodon.jgarr.net/followers",
-        "featured": "https://mastodon.jgarr.net/featured",
-        "inbox": "https://mastodon.jgarr.net/inbox",
-        "outbox": "https://mastodon.jgarr.net/outbox",
+        "following": vidzy_base_url + "/following",
+        "followers": vidzy_base_url + "/followers",
+        "featured": vidzy_base_url + "/featured",
+        "inbox": vidzy_base_url + "/inbox",
+        "outbox": vidzy_base_url + "/outbox",
         "preferredUsername": user,
-        "name": "Justin Garrison",
-        "summary": "Static mastodon server example.",
-        "url": "https://justingarrison.com",
+        "name": "",
+        "summary": "",
+        "url": vidzy_base_url + "/users/" + user,
         "manuallyApprovesFollowers": True,
         "discoverable": True,
         "published": "2000-01-01T00:00:00Z",
