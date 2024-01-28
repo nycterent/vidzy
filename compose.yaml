@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mariadb
+    env_file:
+     - ./.env.docker
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./mysql-dump:/docker-entrypoint-initdb.d
+  web: 
+    build:
+      context: .
+      target: builder
+    depends_on:
+      - db
+    env_file:
+     - ./.env.docker
+    # flask requires SIGINT to stop gracefully
+    # (default stop signal from Compose is SIGTERM)
+    stop_signal: SIGINT
+    ports:
+      - '8080:8080'
+
+
+volumes:
+  mysqldata:
+
+
