@@ -10,7 +10,7 @@ CREATE TABLE `follows` (
   `follower_id` int DEFAULT NULL,
   `following_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-)
+);
 
 --
 -- Dumping data for table `follows`
@@ -34,7 +34,7 @@ CREATE TABLE `likes` (
   `short_id` int DEFAULT NULL,
   `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-)
+);
 
 --
 -- Dumping data for table `likes`
@@ -58,7 +58,7 @@ CREATE TABLE `oauth_tokens` (
   `user_id` int DEFAULT NULL,
   `token` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-)
+);
 
 --
 -- Dumping data for table `oauth_tokens`
@@ -82,7 +82,7 @@ CREATE TABLE `shorts` (
   `url` varchar(60) DEFAULT NULL,
   `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-)
+);
 
 --
 -- Dumping data for table `shorts`
@@ -115,7 +115,7 @@ CREATE TABLE `users` (
   `email` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
-)
+);
 
 --
 -- Dumping data for table `users`
@@ -139,7 +139,7 @@ CREATE TABLE `watches` (
   `short_id` int DEFAULT NULL,
   `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-)
+);
 
 --
 -- Dumping data for table `watches`
