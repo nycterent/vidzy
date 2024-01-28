@@ -547,11 +547,11 @@
 
                     {% endif %}
                     <br><br>
-                    {% if session.user.is_authenticated and session.user.id != user_id %}
-                    {% if True == True %}
-                    <a href="" class="btn profile-edit-btn" style="color: red;">Unfollow</a> <br><br>
+                    {% if session.user.id != user_id %}
+                    {% if following == True %}
+                    <a href="javascript:unfollow()" class="btn profile-edit-btn" style="color: red;">Unfollow</a> <br><br>
                     {% else %}
-                    <a href="" class="btn profile-edit-btn" style="color: green;">Follow</a> <br><br>
+                    <a href="javascript:follow()" class="btn profile-edit-btn" style="color: green;">Follow</a> <br><br>
                     {% endif %}
                     {% endif %}
 
@@ -655,6 +655,28 @@
             elements[i].addEventListener('loadedmetadata', function () {
                 this.currentTime = 5;
             }, false);
+        }
+
+        function follow() {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    window.location.reload();
+                }
+            };
+            xmlhttp.open("GET", "/follow?id={{user.id}}", true);
+            xmlhttp.send();
+        }
+
+        function unfollow() {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    window.location.reload();
+                }
+            };
+            xmlhttp.open("GET", "/unfollow?id={{user.id}}", true);
+            xmlhttp.send();
         }
     </script>
 </body>

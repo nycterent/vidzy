@@ -173,7 +173,13 @@ def profile_page(user):
     print("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
     latest_short_list = cur.fetchall()
 
-    return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list)
+    cur.execute("SELECT * FROM follows WHERE follower_id='" +
+                str(session["user"]["id"]) + "' AND following_id='" + str(user["id"]) + "';")
+    following = False
+    for i in cur.fetchall():
+        following = True
+
+    return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list, following=following)
 
 
 @app.route("/hcard/users/<guid>")
@@ -412,6 +418,53 @@ def upload_file():
       <input type=submit value=Upload>
     </form>
     '''
+
+@app.route('/follow')
+def follow():
+    following_id = str(request.args.get("id"))
+
+
+    cur = mysql.connection.cursor()
+
+
+    cur.execute("SELECT * FROM follows WHERE following_id = " +
+                     following_id + " AND follower_id = " + str(session["user"]["id"]))
+
+    myresult = cur.fetchall()
+
+    for x in myresult:
+        return "Already following"
+    
+
+    cur.execute("""INSERT INTO follows (follower_id, following_id) VALUES (%s,%s)""", (str(session["user"]["id"]), following_id))
+    mysql.connection.commit()
+
+    return "Done"
+
+@app.route('/unfollow')
+def unfollow():
+    following_id = str(request.args.get("id"))
+
+
+    cur = mysql.connection.cursor()
+
+
+    cur.execute("SELECT * FROM follows WHERE following_id = " +
+                     following_id + " AND follower_id = " + str(session["user"]["id"]))
+
+    myresult = cur.fetchall()
+
+    following = False
+    for x in myresult:
+        following = True
+    
+    if following == False:
+        return "Not currently following user"
+
+    cur.execute("""DELETE FROM `vidzy`.`follows` WHERE `follower_id` = %s AND `following_id` = %s;""", (str(session["user"]["id"]), following_id))
+    mysql.connection.commit()
+
+    return "Done"
 
 def create_app():
     return app
