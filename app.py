@@ -5,39 +5,21 @@ from flask_htmlmin import HTMLMIN
 import hashlib
 import requests
 import json
-import mysql.connector
 from urllib.parse import quote, unquote, urlparse
 import re
 import os
 
-import vidzy_config
-
 vidzy_version = "v0.0.9"
 
+mysql = MySQL()
 app = Flask(__name__, static_url_path='')
 
-app.secret_key = "DONT_DO_THIS_IN_PRODUCTION"
-#app.secret_key = secrets.token_hex()
+app.config.from_pyfile('settings.py', silent=False)
 
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "1234"
-app.config["MYSQL_DB"] = "vidzy"
-app.config["MYSQL_CURSORCLASS"] = "DictCursor"
-
-if vidzy_config.minify_html:
-    app.config['MINIFY_HTML'] = True
-
+if app.config['MINIFY_HTML']:
     htmlmin = HTMLMIN(app, remove_comments=True)
 
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="1234",
-    database="vidzy"
-)
-
-mysql = MySQL(app)
-
+mysql.init_app(app)
 
 @app.template_filter('image_proxy')
 def image_proxy(src):
@@ -53,7 +35,7 @@ def get_gravatar(email):
 def route_proxy():
     url = request.args.get("url")
     if url != None:
-        if re.search("https:\/\/media\..*\/media_attachments\/", url):
+        if re.search(r"https://media.*?/media_attachments/", url):
             data = requests.get(unquote(url))
             content_type = data.headers["content-type"]
             if content_type.startswith("image/") or content_type.startswith("video/"):
@@ -84,7 +66,7 @@ def like_post_page():
     val = (request.args.get("id"), session["user"]["id"])
     mycursor.execute(sql, val)
 
-    mydb.commit()
+    mysql.connection.commit()
 
     return "Success"
 
@@ -341,8 +323,6 @@ def webfinger():
 
 @app.route('/activitypub/actor/<user>')
 def activitypub_actor(user):
-    vidzy_base_url = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc)
-
     info = {
         "@context": [
             "https://www.w3.org/ns/activitystreams",
@@ -351,15 +331,15 @@ def activitypub_actor(user):
 
         "id": request.base_url,
         "type": "Person",
-        "following": vidzy_base_url + "/following",
-        "followers": vidzy_base_url + "/followers",
-        "featured": vidzy_base_url + "/featured",
-        "inbox": vidzy_base_url + "/inbox",
-        "outbox": vidzy_base_url + "/outbox",
+        "following": "https://mastodon.jgarr.net/following",
+        "followers": "https://mastodon.jgarr.net/followers",
+        "featured": "https://mastodon.jgarr.net/featured",
+        "inbox": "https://mastodon.jgarr.net/inbox",
+        "outbox": "https://mastodon.jgarr.net/outbox",
         "preferredUsername": user,
-        "name": "",
-        "summary": "",
-        "url": vidzy_base_url + "/users/" + user,
+        "name": "Justin Garrison",
+        "summary": "Static mastodon server example.",
+        "url": "https://justingarrison.com",
         "manuallyApprovesFollowers": True,
         "discoverable": True,
         "published": "2000-01-01T00:00:00Z",
