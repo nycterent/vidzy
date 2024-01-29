@@ -33,7 +33,7 @@
         padding-top: 20px;
     }
 
-    .sidenav a {
+    .sidenav a:not(#special) {
         padding: 6px 8px 6px 16px;
         text-decoration: none;
         font-size: 25px;
@@ -41,7 +41,7 @@
         display: block;
     }
 
-    .sidenav a:hover {
+    .sidenav a:hover:not(#special) {
         color: #f1f1f1;
     }
 
@@ -68,4 +68,5 @@
     <a href="/">For You</a>
     <a href="/explore">Explore</a>
     <a href="/users/{{ session.username }}">Profile</a>
+    <p style="bottom: 0; position: absolute; padding: 5px;"><a id="special" href="/about">About</a><br><br><a id="special" href="https://codeberg.org/vidzy/vidzy">View source code</a><br><br>{{vidzy_version}}</p>
 </div>

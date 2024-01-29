@@ -19,6 +19,8 @@ ALLOWED_EXTENSIONS = {'mp4'}
 mysql = MySQL()
 app = Flask(__name__, static_url_path='')
 
+app.jinja_env.globals.update(vidzy_version=vidzy_version)
+
 app.config.from_pyfile('settings.py', silent=False)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -465,6 +467,10 @@ def unfollow():
     mysql.connection.commit()
 
     return "Done"
+
+@app.route("/about")
+def about():
+    return render_template('about.html', instance_domain=urlparse(request.base_url).hostname)
 
 def create_app():
     return app
