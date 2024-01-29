@@ -1,10 +1,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <div class="topnav">
-    <a href="/">Home</a>
-    <a href="/explore">Explore</a>
-    <a href="/upload">Upload</a>
+    <a><b style="font-size: 17.1px;">Vidzy</b></a>
     <div class="topnav-right">
+        <a href="/upload">Upload</a>
         <a>{{ session.username }}</a>
     </div>
     <div class="search-container">
@@ -13,4 +12,60 @@
             <button type="submit"><i class="fa fa-search"></i></button>
         </form>
     </div>
+</div>
+
+
+
+<style>
+    body {
+        font-family: "Lato", sans-serif;
+    }
+
+    .sidenav {
+        height: calc(100% - 48px);
+        width: 160px;
+        position: fixed;
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        padding-top: 20px;
+    }
+
+    .sidenav a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+    }
+
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
+
+    .main {
+        margin-left: 160px;
+        /* Same as the width of the sidenav */
+        font-size: 28px;
+        /* Increased text to enable scrolling */
+        padding: 0px 10px;
+    }
+
+    @media screen and (max-height: 450px) {
+        .sidenav {
+            padding-top: 15px;
+        }
+
+        .sidenav a {
+            font-size: 18px;
+        }
+    }
+</style>
+
+<div class="sidenav">
+    <a href="/">For You</a>
+    <a href="/explore">Explore</a>
+    <a href="/users/{{ session.username }}">Profile</a>
 </div>
