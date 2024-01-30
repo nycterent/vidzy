@@ -195,8 +195,6 @@ def remote_profile_page(user):
                 if post["object"]["attachment"][0]["mediaType"].startswith("video"):
                     shorts.append( {"id": 1, "url": post["object"]["attachment"][0]["url"], "username": user, "title": post["object"]["content"]} )
 
-    print(shorts)
-
     return render_template("remote_user.html", shorts=shorts)
     
 
