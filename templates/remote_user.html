@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vidzy</title>
+    <link rel="stylesheet" href="/static/index.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+</head>
+
+<body>
+    {% include "topnav.html" %}
+
+    <div class="app__videos">
+        {% for short in shorts %}
+        {% include "displayexternalshort.html" %}
+        {% endfor %}
+    </div>
+
+    <script>
+        var options = {
+            root: document.querySelector('.app__videos'),
+            rootMargin: '0px',
+            threshold: 1.0
+        };
+
+        var ob = new IntersectionObserver((entries, observer) => {
+            entries[0].target.currentTime = 0;
+            entries[0].target.play();
+        }, options);
+
+        document.querySelectorAll('video').forEach((item) => {
+            ob.observe(item);
+        });
+
+
+        const videos = document.querySelectorAll('video');
+
+        for (const video of videos) {
+            video.addEventListener('click', function () {
+                console.log('clicked');
+                if (video.paused) {
+                    video.play();
+                } else {
+                    video.pause();
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

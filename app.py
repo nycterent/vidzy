@@ -183,6 +183,22 @@ def profile_page(user):
 
     return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list, following=following)
 
+@app.route("/remote_user/<user>")
+def remote_profile_page(user):
+    outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/outbox?page=true").text)
+
+    shorts = []
+
+    for post in outbox["orderedItems"]:
+        if type(post["object"]) is dict:
+            if len(post["object"]["attachment"]) > 0:
+                if post["object"]["attachment"][0]["mediaType"].startswith("video"):
+                    shorts.append( {"id": 1, "url": post["object"]["attachment"][0]["url"], "username": user, "title": post["object"]["content"]} )
+
+    print(shorts)
+
+    return render_template("remote_user.html", shorts=shorts)
+    
 
 @app.route("/hcard/users/<guid>")
 def hcard_page(guid):
