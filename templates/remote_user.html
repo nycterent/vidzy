@@ -15,6 +15,7 @@
     {% include "topnav.html" %}
 
     <div class="app__videos">
+        <p style="color: white; position: fixed; top: 1%;">{{user_info.name}} ({{full_username}}) - {{followers_count}} followers</p>
         {% for short in shorts %}
         {% include "displayexternalshort.html" %}
         {% endfor %}

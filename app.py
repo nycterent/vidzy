@@ -195,7 +195,11 @@ def remote_profile_page(user):
                 if post["object"]["attachment"][0]["mediaType"].startswith("video"):
                     shorts.append( {"id": 1, "url": post["object"]["attachment"][0]["url"], "username": user, "title": post["object"]["content"]} )
 
-    return render_template("remote_user.html", shorts=shorts)
+    followers_count = json.loads(requests.get("https://mstdn.social/users/stux/followers", headers={"Accept":"application/activity+json"}).text)["totalItems"]
+
+    user_info = json.loads(requests.get("https://mstdn.social/users/stux", headers={"Accept":"application/activity+json"}).text)
+
+    return render_template("remote_user.html", shorts=shorts, followers_count=followers_count, user_info=user_info, full_username=user)
     
 
 @app.route("/hcard/users/<guid>")
@@ -215,7 +219,7 @@ def hcard_page(guid):
     return render_template('profile_hcard.html', user=user, session=session, latest_short_list=latest_short_list, guid=guid)
 
 
-@app.route("/external/users/<user>")
+@app.route("/mastodon_external/users/<user>")
 def external_profile_page(user):
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
