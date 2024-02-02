@@ -185,19 +185,39 @@ def profile_page(user):
 
 @app.route("/remote_user/<user>")
 def remote_profile_page(user):
-    outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/outbox?page=true").text)
+    varient = ""
+
+    try:
+        outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/outbox?page=true").text)
+        variant = "mastodon"
+    except json.decoder.JSONDecodeError:
+        outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/accounts/" + user.split("@")[0] + "/outbox?page=1", headers={"Accept":"application/activity+json"}).text)
+        variant = "peertube"
 
     shorts = []
 
     for post in outbox["orderedItems"]:
         if type(post["object"]) is dict:
-            if len(post["object"]["attachment"]) > 0:
-                if post["object"]["attachment"][0]["mediaType"].startswith("video"):
-                    shorts.append( {"id": 1, "url": post["object"]["attachment"][0]["url"], "username": user, "title": post["object"]["content"]} )
+            if variant == "peertube":
+                for i in post["object"]["url"][1]["tag"]:
+                    if "mediaType" in i:
+                        if i["mediaType"] == "video/mp4":
+                            shorts.append( {"id": 1, "url": i["href"], "username": user, "title": "test"} )
+                            break
+            else:
+                if len(post["object"]["attachment"]) > 0:
+                    if post["object"]["attachment"][0]["mediaType"].startswith("video"):
+                        shorts.append( {"id": 1, "url": post["object"]["attachment"][0]["url"], "username": user, "title": post["object"]["content"]} )
 
-    followers_count = json.loads(requests.get("https://mstdn.social/users/stux/followers", headers={"Accept":"application/activity+json"}).text)["totalItems"]
+    if variant == "mastodon":
+        followers_count = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/followers", headers={"Accept":"application/activity+json"}).text)["totalItems"]
+    else:
+        followers_count = 0
 
-    user_info = json.loads(requests.get("https://mstdn.social/users/stux", headers={"Accept":"application/activity+json"}).text)
+    if variant == "mastodon":
+        user_info = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0], headers={"Accept":"application/activity+json"}).text)
+    else:
+        user_info = {}
 
     return render_template("remote_user.html", shorts=shorts, followers_count=followers_count, user_info=user_info, full_username=user)
     
