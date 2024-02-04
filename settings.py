@@ -13,5 +13,4 @@ MYSQL_CURSORCLASS = "DictCursor"
 SECRET_KEY = os.environ.get("VIDZY_APP_SECRET")
 
 MINIFY_HTML = os.environ.get("MINIFY_HTML")
-INVIDIOUS_INSTANCE = os.environ.get("INVIDIOUS_INSTANCE")
 HOST = os.environ.get("HOST")
