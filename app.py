@@ -134,18 +134,6 @@ def explore_page():
 
     return render_template('explore.html', shorts=rv, session=session)
 
-
-@app.route("/yt")
-def yt_page():
-    if not "username" in session:
-        return "<script>window.location.href='/login';</script>"
-
-    r = requests.get(app.config["invidious_instance"] +
-                     "/api/v1/search?q=duration:short&sort_by=rating&features=creative_commons").text
-    rv = json.loads(r)[:8]
-
-    return render_template('yt.html', shorts=rv, session=session, invidious_instance=app.config["invidious_instance"])
-
 @app.route("/users/<user>")
 def profile_page(user):
     if not "username" in session:
