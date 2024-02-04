@@ -146,20 +146,6 @@ def yt_page():
 
     return render_template('yt.html', shorts=rv, session=session, invidious_instance=app.config["invidious_instance"])
 
-
-@app.route("/pt")
-def pt_page():
-    if not "username" in session:
-        return "<script>window.location.href='/login';</script>"
-
-    r = requests.get("https://share.tube/api/v1/videos").text
-    rv = json.loads(r)
-
-    print(rv)
-
-    return render_template('pt.html', shorts=rv, session=session)
-
-
 @app.route("/users/<user>")
 def profile_page(user):
     if not "username" in session:
@@ -172,7 +158,7 @@ def profile_page(user):
 
     cur.execute("SELECT * FROM shorts WHERE user_id='" +
                 str(user["id"]) + "';")
-    print("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+    #print("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
     latest_short_list = cur.fetchall()
 
     cur.execute("SELECT * FROM follows WHERE follower_id='" +
