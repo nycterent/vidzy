@@ -14,6 +14,7 @@ services:
       - db
     env_file:
      - ./.env.docker
+     - ./static/uploads:/static/uploads
     # flask requires SIGINT to stop gracefully
     # (default stop signal from Compose is SIGTERM)
     stop_signal: SIGINT
