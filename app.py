@@ -11,7 +11,7 @@ import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
-vidzy_version = "v0.0.9"
+vidzy_version = "v0.1.0"
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'mp4'}
