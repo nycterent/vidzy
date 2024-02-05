@@ -140,13 +140,13 @@ def profile_page(user):
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM users WHERE username='%s';", (user, ))
+    cur.execute("SELECT * FROM users WHERE username=%s;", (user, ))
     user = cur.fetchall()[0]
 
-    cur.execute("SELECT * FROM shorts WHERE user_id='%s';", (str(user["id"]), ))
+    cur.execute("SELECT * FROM shorts WHERE user_id=%s;", (str(user["id"]), ))
     latest_short_list = cur.fetchall()
 
-    cur.execute("SELECT * FROM follows WHERE follower_id='%s' AND following_id='%s';", (str(session["user"]["id"]), str(user["id"])))
+    cur.execute("SELECT * FROM follows WHERE follower_id=%s AND following_id=%s;", (str(session["user"]["id"]), str(user["id"])))
     following = False
     for i in cur.fetchall():
         following = True
@@ -198,10 +198,10 @@ def hcard_page(guid):
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM users WHERE username='%s';", (user, ))
+    cur.execute("SELECT * FROM users WHERE username=%s;", (user, ))
     user = cur.fetchall()[0]
 
-    cur.execute("SELECT * FROM shorts WHERE user_id='%s';", (str(user["id"]), ))
+    cur.execute("SELECT * FROM shorts WHERE user_id=%s;", (str(user["id"]), ))
     latest_short_list = cur.fetchall()
 
     return render_template('profile_hcard.html', user=user, session=session, latest_short_list=latest_short_list, guid=guid)
@@ -225,10 +225,10 @@ def external_profile_page(user):
 def profile_feed_page(user):
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM users WHERE username='%s';", (user, ))
+    cur.execute("SELECT * FROM users WHERE username=%s;", (user, ))
     user = cur.fetchall()[0]
 
-    cur.execute("SELECT * FROM shorts WHERE user_id='%s';", (str(user["id"]), ))
+    cur.execute("SELECT * FROM shorts WHERE user_id=%s;", (str(user["id"]), ))
     latest_short_list = cur.fetchall()
 
     resp = make_response(render_template(
