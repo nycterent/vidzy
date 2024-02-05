@@ -100,8 +100,7 @@ def index_page():
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = " +
-                str(session["user"]["id"]) + " OR p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
     rv = cur.fetchall()
 
     return render_template('index.html', shorts=rv, session=session)
@@ -141,16 +140,13 @@ def profile_page(user):
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM users WHERE username='" + user + "';")
+    cur.execute("SELECT * FROM users WHERE username='%s';", (user, ))
     user = cur.fetchall()[0]
 
-    cur.execute("SELECT * FROM shorts WHERE user_id='" +
-                str(user["id"]) + "';")
-    #print("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+    cur.execute("SELECT * FROM shorts WHERE user_id='%s';", (str(user["id"]), ))
     latest_short_list = cur.fetchall()
 
-    cur.execute("SELECT * FROM follows WHERE follower_id='" +
-                str(session["user"]["id"]) + "' AND following_id='" + str(user["id"]) + "';")
+    cur.execute("SELECT * FROM follows WHERE follower_id='%s' AND following_id='%s';", (str(session["user"]["id"]), str(user["id"])))
     following = False
     for i in cur.fetchall():
         following = True
@@ -202,12 +198,10 @@ def hcard_page(guid):
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM users WHERE username='" + user + "';")
+    cur.execute("SELECT * FROM users WHERE username='%s';", (user, ))
     user = cur.fetchall()[0]
 
-    cur.execute("SELECT * FROM shorts WHERE user_id='" +
-                str(user["id"]) + "';")
-    print("SELECT * FROM shorts WHERE user_id='" + str(user["id"]) + "';")
+    cur.execute("SELECT * FROM shorts WHERE user_id='%s';", (str(user["id"]), ))
     latest_short_list = cur.fetchall()
 
     return render_template('profile_hcard.html', user=user, session=session, latest_short_list=latest_short_list, guid=guid)
@@ -231,11 +225,10 @@ def external_profile_page(user):
 def profile_feed_page(user):
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM users WHERE username='" + user + "';")
+    cur.execute("SELECT * FROM users WHERE username='%s';", (user, ))
     user = cur.fetchall()[0]
 
-    cur.execute("SELECT * FROM shorts WHERE user_id='" +
-                str(user["id"]) + "';")
+    cur.execute("SELECT * FROM shorts WHERE user_id='%s';", (str(user["id"]), ))
     latest_short_list = cur.fetchall()
 
     resp = make_response(render_template(
