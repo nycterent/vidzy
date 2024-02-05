@@ -100,7 +100,7 @@ def index_page():
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
     rv = cur.fetchall()
 
     return render_template('index.html', shorts=rv, session=session)
