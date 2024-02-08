@@ -105,6 +105,18 @@ def index_page():
 
     return render_template('index.html', shorts=rv, session=session)
 
+@app.route("/settings", methods=['POST', 'GET'])
+def settings_page():
+    if "username" in request.form:
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE `vidzy`.`users` SET `username` = %s WHERE (`id` = %s);", (request.form["username"], session["user"]["id"]))
+        mysql.connection.commit()
+
+        session.clear()
+
+        return redirect("login")
+
+    return render_template('settings.html', username=session["user"]["username"])
 
 @app.route("/search")
 def search_page():
