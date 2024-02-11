@@ -112,11 +112,14 @@ def settings_page():
         cursor.execute("UPDATE `vidzy`.`users` SET `username` = %s WHERE (`id` = %s);", (request.form["username"], session["user"]["id"]))
         mysql.connection.commit()
 
+        cursor.execute("UPDATE `vidzy`.`users` SET `email` = %s WHERE (`id` = %s);", (request.form["email"], session["user"]["id"]))
+        mysql.connection.commit()
+
         session.clear()
 
         return redirect("login")
 
-    return render_template('settings.html', username=session["user"]["username"])
+    return render_template('settings.html', username=session["user"]["username"], email=session["user"]["email"])
 
 @app.route("/search")
 def search_page():
