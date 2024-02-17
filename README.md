@@ -26,7 +26,7 @@ A free and open source alternative to TikTok
 
 ## Features
 
-The project is in very early stages. We have very ALPHA federation through [ActivityPub](https://www.w3.org/TR/activitypub/).
+We have very ALPHA federation through [ActivityPub](https://www.w3.org/TR/activitypub/).
 
 ## Contributing
 
