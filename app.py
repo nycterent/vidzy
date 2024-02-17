@@ -135,6 +135,15 @@ def search_page():
 
     return render_template('search.html', shorts=rv, session=session, query=query)
 
+@app.route("/api/search")
+def api_search_page():
+    query = request.args.get('q')
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT p.id, p.title, p.user_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE %s LIMIT 20;", ("%" + query + "%", ))
+    rv = cur.fetchall()
+
+    return jsonify(rv)
 
 @app.route("/explore")
 def explore_page():
