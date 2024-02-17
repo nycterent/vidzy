@@ -129,8 +129,7 @@ def search_page():
     query = request.args.get('q')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE '%" +
-                query + "%' ORDER BY f.follower_id = " + str(session["user"]["id"]) + ", p.user_id = " + str(session["user"]["id"]) + " LIMIT 20;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE %s ORDER BY f.follower_id = %s, p.user_id = %s LIMIT 20;", ("%" + query + "%", str(session["user"]["id"]), str(session["user"]["id"])))
     rv = cur.fetchall()
 
     return render_template('search.html', shorts=rv, session=session, query=query)
