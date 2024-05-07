@@ -14,7 +14,7 @@ from datetime import datetime
 vidzy_version = "v0.1.0"
 
 UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'mp4'}
+ALLOWED_EXTENSIONS = {'mp4', 'webm'}
 
 mysql = MySQL()
 app = Flask(__name__, static_url_path='')
