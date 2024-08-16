@@ -48,7 +48,7 @@ Vidzy is open-source software licensed under the GNU Affero General Public Licen
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ProgramminCat"><img src="https://avatars.githubusercontent.com/u/72707293?v=4?s=100" width="100px;" alt="ProgramminCat"/><br /><sub><b>ProgramminCat</b></sub></a><br /><a href="#code-ProgramminCat" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ProgramminCat"><img src="https://avatars.githubusercontent.com/u/72707293?v=4?s=100" width="100px;" alt="ProgramminCat"/><br /><sub><b>ProgramminCat</b></sub></a><br /><a href="#code-ProgramminCat" title="Code">💻</a> <a href="#design-ProgramminCat" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>
