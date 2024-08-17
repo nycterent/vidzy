@@ -186,12 +186,12 @@ def explore_page():
 def profile_page(user):
     instance_url = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc)
 
-    if username != "zampano":
+    if user != "zampano":
         abort(404)
 
-    public_key = b'' # retrieve from file/database
+    public_key = 'bruh' # retrieve from file/database
 
-    response = make_response({
+    response = jsonify({
         "@context": [
             "https://www.w3.org/ns/activitystreams",
             "https://w3id.org/security/v1",
@@ -367,7 +367,7 @@ def register():
         return "<script>window.location.href='/';</script>"
     
     msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form :
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
@@ -387,7 +387,7 @@ def register():
             mysql.connection.commit()
             msg = 'You have successfully registered! <a href="/login">Click here to login</a>'
     elif request.method == 'POST':
-        msg = 'Please fill out the form !'
+        msg = 'Please fill out the form!'
     return render_template('register.html', msg = msg)
 
 
