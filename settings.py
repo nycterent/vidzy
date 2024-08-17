@@ -1,6 +1,11 @@
 import os
 from dotenv import load_dotenv
 
+# BELOW CODE IS FOR PRODUCTION ONLY
+#project_folder = os.path.expanduser('~/mysite')  # adjust as appropriate
+#load_dotenv(os.path.join(project_folder, '.env'))
+# ABOVE CODE IS FOR PRODUCTION ONLY
+
 load_dotenv('.env')
 
 MYSQL_USER = os.environ.get("VIDZY_DB_USER")
