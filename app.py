@@ -11,6 +11,32 @@ import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
+
+
+
+from cryptography.hazmat.primitives import serialization as crypto_serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import default_backend as crypto_default_backend
+
+key = rsa.generate_private_key(
+    backend=crypto_default_backend(),
+    public_exponent=65537,
+    key_size=2048
+)
+
+private_key = key.private_bytes(
+    crypto_serialization.Encoding.PEM,
+    crypto_serialization.PrivateFormat.PKCS8,
+    crypto_serialization.NoEncryption())
+
+public_key = key.public_key().public_bytes(
+    crypto_serialization.Encoding.PEM,
+    crypto_serialization.PublicFormat.SubjectPublicKeyInfo
+)
+
+
+
+
 vidzy_version = "v0.1.0"
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -158,6 +184,38 @@ def explore_page():
 
 @app.route("/users/<user>")
 def profile_page(user):
+    instance_url = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc)
+
+    if username != "zampano":
+        abort(404)
+
+    public_key = b'' # retrieve from file/database
+
+    response = make_response({
+        "@context": [
+            "https://www.w3.org/ns/activitystreams",
+            "https://w3id.org/security/v1",
+        ],
+        "id": instance_url + "/users/zampano",
+        "inbox": instance_url + "/users/zampano/inbox",
+        "outbox": instance_url + "/users/zampano/outbox",
+        "type": "Person",
+        "name": "Zampano",
+        "preferredUsername": "zampano",
+        "publicKey": {
+            "id": instance_url + "/users/zampano#main-key",
+            "id": instance_url + "/users/zampano",
+            "publicKeyPem": public_key
+        }
+    })
+
+    # Servers may discard the result if you do not set the appropriate content type
+    response.headers['Content-Type'] = 'application/activity+json'
+
+    return response
+
+    ########################################################################################
+
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
 
@@ -333,6 +391,41 @@ def register():
     return render_template('register.html', msg = msg)
 
 
+@app.route('/users/<username>/inbox', methods=['POST'])
+def user_inbox(username):
+    if username != "zampano":
+        abort(404)
+
+    app.logger.info(request.headers)
+    app.logger.info(request.data)
+    
+    return Response("", status=202)
+
+@app.route('/.well-known/webfinger')
+def webfinger():
+    instance_url = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc)
+
+    resource = request.args.get('resource')
+
+    if resource != "acct:zampano@" + str(urlparse(request.base_url).netloc):
+        abort(404)
+
+    response = make_response({
+        "subject": "acct:zampano@" + str(urlparse(request.base_url).netloc),
+        "links": [
+            {
+                "rel": "self",
+                "type": "application/activity+json",
+                "href": instance_url + "/users/zampano"
+            }
+        ]
+    })
+
+    # Servers may discard the result if you do not set the appropriate content type
+    response.headers['Content-Type'] = 'application/jrd+json'
+    
+    return response
+'''
 @app.route('/.well-known/webfinger')
 def webfinger():
     info = {}
@@ -361,7 +454,7 @@ def webfinger():
     resp = Response(json.dumps(info))
     resp.headers['Content-Type'] = 'application/json'
     return resp
-
+'''
 
 @app.route('/activitypub/actor/<user>')
 def activitypub_actor(user):
