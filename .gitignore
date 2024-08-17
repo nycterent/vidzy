@@ -131,3 +131,6 @@ cython_debug/
 
 # Cryptography Stuff
 private.pem
+
+# Vidzy stuff
+static/uploads/*
