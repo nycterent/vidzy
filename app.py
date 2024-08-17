@@ -10,8 +10,13 @@ import re
 import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
+import re
 
 
+CLEANR = re.compile('<.*?>') 
+def cleanhtml(raw_html):
+  cleantext = re.sub(CLEANR, '', raw_html)
+  return cleantext
 
 
 from cryptography.hazmat.primitives import serialization as crypto_serialization
@@ -254,7 +259,7 @@ def remote_profile_page(user):
             else:
                 if len(post["object"]["attachment"]) > 0:
                     if post["object"]["attachment"][0]["mediaType"].startswith("video"):
-                        shorts.append( {"id": 1, "url": post["object"]["attachment"][0]["url"], "username": user, "title": post["object"]["content"]} )
+                        shorts.append( { "id": 1, "url": post["object"]["attachment"][0]["url"], "username": user, "title": cleanhtml(post["object"]["content"]) } )
 
     if variant == "mastodon":
         followers_count = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/followers", headers={"Accept":"application/activity+json"}).text)["totalItems"]
