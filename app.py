@@ -127,14 +127,16 @@ def liked_post_page():
 
 @app.route("/")
 def index_page():
-    if not "username" in session:
-        return "<script>window.location.href='/login';</script>"
+    logged_in = "username" in session
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
+    if logged_in:
+        cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
+    else:
+        cur.execute("SELECT *, (SELECT count(*) FROM `likes` p WHERE short_id = p.id) likes FROM shorts ORDER BY id DESC LIMIT 20;")
     rv = cur.fetchall()
 
-    return render_template('index.html', shorts=rv, session=session)
+    return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
 
 @app.route("/settings", methods=['POST', 'GET'])
 def settings_page():
@@ -163,7 +165,7 @@ def search_page():
     cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE %s ORDER BY f.follower_id = %s, p.user_id = %s LIMIT 20;", ("%" + query + "%", str(session["user"]["id"]), str(session["user"]["id"])))
     rv = cur.fetchall()
 
-    return render_template('search.html', shorts=rv, session=session, query=query)
+    return render_template('search.html', shorts=rv, session=session, query=query, logged_in = "username" in session)
 
 @app.route("/api/search")
 def api_search_page():
@@ -177,6 +179,8 @@ def api_search_page():
 
 @app.route("/explore")
 def explore_page():
+    logged_in = "username" in session
+
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
 
@@ -185,7 +189,7 @@ def explore_page():
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE short_id = p.id) likes FROM shorts ORDER BY id DESC LIMIT 20;")
     rv = cur.fetchall()
 
-    return render_template('explore.html', shorts=rv, session=session)
+    return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session)
 
 @app.route("/users/<user>")
 def profile_page(user):
@@ -271,7 +275,7 @@ def remote_profile_page(user):
     else:
         user_info = {}
 
-    return render_template("remote_user.html", shorts=shorts, followers_count=followers_count, user_info=user_info, full_username=user)
+    return render_template("remote_user.html", shorts=shorts, followers_count=followers_count, user_info=user_info, full_username=user, logged_in = "username" in session)
     
 
 @app.route("/hcard/users/<guid>")
@@ -328,7 +332,7 @@ def short_page(short):
     cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE id = '" + short + "';")
     rv = cur.fetchall()[0]
 
-    return render_template('short.html', short=rv, session=session)
+    return render_template('short.html', short=rv, session=session, logged_in = "username" in session)
 
 
 @app.route('/static/<path:path>')
