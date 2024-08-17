@@ -184,40 +184,36 @@ def explore_page():
 
 @app.route("/users/<user>")
 def profile_page(user):
+    '''
     instance_url = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc)
-
-    if user != "zampano":
-        abort(404)
-
     public_key = 'bruh' # retrieve from file/database
-
     response = jsonify({
         "@context": [
             "https://www.w3.org/ns/activitystreams",
             "https://w3id.org/security/v1",
         ],
-        "id": instance_url + "/users/zampano",
-        "inbox": instance_url + "/users/zampano/inbox",
-        "outbox": instance_url + "/users/zampano/outbox",
+        "id": instance_url + "/users/testuser",
+        "inbox": instance_url + "/users/testuser/inbox",
+        "outbox": instance_url + "/users/testuser/outbox",
         "type": "Person",
-        "name": "Zampano",
-        "preferredUsername": "zampano",
+        "name": "Testuser",
+        "preferredUsername": "testuser",
         "publicKey": {
-            "id": instance_url + "/users/zampano#main-key",
-            "id": instance_url + "/users/zampano",
+            "id": instance_url + "/users/testuser#main-key",
+            "id": instance_url + "/users/testuser",
             "publicKeyPem": public_key
         }
     })
-
     # Servers may discard the result if you do not set the appropriate content type
     response.headers['Content-Type'] = 'application/activity+json'
-
     return response
+    '''
 
-    ########################################################################################
-
-    if not "username" in session:
-        return "<script>window.location.href='/login';</script>"
+    if "@" in user:
+        if user.split("@")[1] != str(urlparse(request.base_url).netloc):
+            return remote_profile_page(user)
+        else:
+            user = user.split("@")[0]
 
     cur = mysql.connection.cursor()
 
@@ -393,7 +389,7 @@ def register():
 
 @app.route('/users/<username>/inbox', methods=['POST'])
 def user_inbox(username):
-    if username != "zampano":
+    if username != "testuser":
         abort(404)
 
     app.logger.info(request.headers)
@@ -407,16 +403,16 @@ def webfinger():
 
     resource = request.args.get('resource')
 
-    if resource != "acct:zampano@" + str(urlparse(request.base_url).netloc):
+    if resource != "acct:testuser@" + str(urlparse(request.base_url).netloc):
         abort(404)
 
     response = make_response({
-        "subject": "acct:zampano@" + str(urlparse(request.base_url).netloc),
+        "subject": "acct:testuser@" + str(urlparse(request.base_url).netloc),
         "links": [
             {
                 "rel": "self",
                 "type": "application/activity+json",
-                "href": instance_url + "/users/zampano"
+                "href": instance_url + "/users/testuser"
             }
         ]
     })
