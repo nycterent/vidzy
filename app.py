@@ -13,6 +13,10 @@ from datetime import datetime
 import re
 
 
+inproduction = False
+productionpath = os.path.expanduser('~/mysite')
+
+
 CLEANR = re.compile('<.*?>') 
 def cleanhtml(raw_html):
   cleantext = re.sub(CLEANR, '', raw_html)
@@ -554,6 +558,9 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = datetime.today().strftime('%Y%m%d') + secure_filename(file.filename)
+            if inproduction:
+                project_folder = productionpath  # adjust as appropriate
+                file.save(os.path.join(project_folder + '/' + app.config['UPLOAD_FOLDER'], filename))
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             cur = mysql.connection.cursor()
