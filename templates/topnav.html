@@ -87,8 +87,10 @@
     <a href="/users/{{ session.username }}">My Profile</a>
     <a href="/settings">Settings</a>
     {% endif %}
+    {% if logged_in %}
     {% if session["user"]["is_admin"] == 1 %}
     <a href="/admin">Admin Panel</a>
+    {% endif %}
     {% endif %}
     <p style="bottom: 0; position: absolute; padding: 5px;"><a id="special" href="/about">About</a><br><br><a id="special" href="https://github.com/vidzy-social/vidzy">View source code</a><br><br>{{vidzy_version}}</p>
 </div>
