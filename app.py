@@ -561,7 +561,8 @@ def upload_file():
             if inproduction:
                 project_folder = productionpath  # adjust as appropriate
                 file.save(os.path.join(project_folder + '/' + app.config['UPLOAD_FOLDER'], filename))
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            else:
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             cur = mysql.connection.cursor()
 
