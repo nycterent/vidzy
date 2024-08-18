@@ -28,7 +28,7 @@
 
     .sidenav {
         height: calc(100% - 48px);
-        width: 160px;
+        width: 175px;
         position: fixed;
         z-index: 1;
         bottom: 0;
@@ -86,6 +86,9 @@
     <a href="/explore">Explore</a>
     <a href="/users/{{ session.username }}">My Profile</a>
     <a href="/settings">Settings</a>
+    {% endif %}
+    {% if session["user"]["is_admin"] == 1 %}
+    <a href="/admin">Admin Panel</a>
     {% endif %}
     <p style="bottom: 0; position: absolute; padding: 5px;"><a id="special" href="/about">About</a><br><br><a id="special" href="https://github.com/vidzy-social/vidzy">View source code</a><br><br>{{vidzy_version}}</p>
 </div>

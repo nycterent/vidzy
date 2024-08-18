@@ -162,6 +162,9 @@ def settings_page():
 
 @app.route("/admin")
 def admin_panel():
+    if not "user" in session:
+        return "<script>window.location.href='/login';</script>"
+
     if not session["user"]["is_admin"] == 1:
         return "<script>window.location.href='/';</script>"
 
