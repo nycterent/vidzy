@@ -179,15 +179,16 @@ def admin_panel():
     cur.execute("SELECT count(*) total_accounts FROM `users`;")
     total_accounts = cur.fetchall()[0]["total_accounts"]
 
-    cur = mysql.connection.cursor()
+    cur.execute("SELECT count(*) total_shorts FROM `shorts`;")
+    total_shorts = cur.fetchall()[0]["total_shorts"]
+
     cur.execute("SELECT * FROM `users` ORDER BY id DESC LIMIT 50;")
     accounts = cur.fetchall()
 
-    cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM `shorts` ORDER BY id DESC LIMIT 50;")
     shorts = cur.fetchall()
 
-    return render_template('admin_panel.html', session=session, total_accounts=total_accounts, accounts=accounts, shorts=shorts)
+    return render_template('admin_panel.html', session=session, total_accounts=total_accounts, accounts=accounts, shorts=shorts, total_shorts=total_shorts)
 
 @app.route("/admin/banform")
 def ban_form():
@@ -204,6 +205,9 @@ def ban_form():
 
     if len(user) == 0:
         return "User doesn't exist."
+
+    if user["is_admin"] == 1:
+        return "User is an admin. Admins are not bannable through the admin panel."
 
     return render_template("banform.html", user=user, userid=userid)
 
