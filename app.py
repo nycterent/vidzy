@@ -89,6 +89,9 @@ def route_proxy():
 
 @app.route("/like_post")
 def like_post_page():
+    if not "user" in session:
+        return "NotLoggedIn"
+
     mycursor = mysql.connection.cursor()
 
     mycursor.execute("SELECT * FROM likes WHERE short_id = " +

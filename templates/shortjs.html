@@ -5,6 +5,8 @@
             if (this.readyState == 4 && this.status == 200) {
                 if (this.responseText == "Success") {
                     what.getElementsByTagName('img')[0].src = "/static/star-solid.svg";
+                } else if (this.responseText == "NotLoggedIn") {
+                    window.location.href = "/login";
                 }
             }
         };
