@@ -139,7 +139,7 @@ def index_page():
     if logged_in:
         cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
     else:
-        cur.execute("SELECT *, (SELECT count(*) FROM `likes` p WHERE short_id = p.id) likes FROM shorts ORDER BY id DESC LIMIT 20;")
+        cur.execute("SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
