@@ -1,0 +1,22 @@
+<div style="text-align:center;">
+    <h1>Would you like to ban this user?</h1>
+    <h2>Username: {{user.username}}</h2>
+    
+    <form method="POST" action="/admin/ban">
+        <input type="text" id="typehere" placeholder="Type 'ban' here">
+        <br><br>
+        <button id="banbtn" style="width:140px;height:40px;" disabled>Ban {{user.username}}</button>
+        <input type="hidden" name="user" value="{{ user.id }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+</div>
+
+<script>
+setInterval(function() {
+    if (document.getElementById("typehere").value == "ban") {
+        document.getElementById("banbtn").disabled = false;
+    } else {
+        document.getElementById("banbtn").disabled = true;
+    }
+}, 500);
+</script>

@@ -11,6 +11,7 @@ import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import re
+from flask_wtf.csrf import CSRFProtect
 
 
 inproduction = False
@@ -53,11 +54,13 @@ ALLOWED_EXTENSIONS = {'mp4', 'webm'}
 
 mysql = MySQL()
 app = Flask(__name__, static_url_path='')
+csrf = CSRFProtect(app)
 
 app.jinja_env.globals.update(vidzy_version=vidzy_version)
 
 app.config.from_pyfile('settings.py', silent=False)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
 if app.config['MINIFY_HTML']:
     htmlmin = HTMLMIN(app, remove_comments=True)
@@ -185,6 +188,41 @@ def admin_panel():
     shorts = cur.fetchall()
 
     return render_template('admin_panel.html', session=session, total_accounts=total_accounts, accounts=accounts, shorts=shorts)
+
+@app.route("/admin/banform")
+def ban_form():
+    if not "user" in session:
+        return "You are not logged in"
+    if not session["user"]["is_admin"] == 1:
+        return "You are not an admin"
+
+    userid = request.args.get('user')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM `users` WHERE (`id` = %s);", (userid,))
+    user = cursor.fetchall()[0]
+
+    if len(user) == 0:
+        return "User doesn't exist."
+
+    return render_template("banform.html", user=user, userid=userid)
+
+@app.route("/admin/ban", methods=['POST'])
+def ban_user():
+    csrf.protect()
+
+    if not "user" in session:
+        return "NotLoggedIn"
+    if not session["user"]["is_admin"] == 1:
+        return "NotAdmin"
+
+    user = request.form['user']
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM `users` WHERE (`id` = %s);", (user,))
+    mysql.connection.commit()
+
+    return user
 
 @app.route("/search")
 def search_page():

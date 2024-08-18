@@ -82,6 +82,7 @@ tr:nth-child(even) {
       <th>Username</th>
       <th>Email</th>
       <th>Is admin?</th>
+      <th></th>
     </tr>
     {% for account in accounts %}
     <tr>
@@ -89,6 +90,7 @@ tr:nth-child(even) {
       <td>{{account.username}}</td>
       <td>{{account.email}}</td>
       <td>{{account.is_admin}}</td>
+      <td><a href="/admin/banform?user={{account.id}}">Ban This User</a></td>
     </tr>
     {% endfor %}
   </table>
