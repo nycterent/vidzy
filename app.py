@@ -160,6 +160,17 @@ def settings_page():
 
     return render_template('settings.html', username=session["user"]["username"], email=session["user"]["email"])
 
+@app.route("/admin")
+def admin_panel():
+    if not session["user"]["is_admin"] == 1:
+        return "<script>window.location.href='/';</script>"
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT count(*) total_accounts FROM `users`;")
+    total_accounts = cur.fetchall()[0]["total_accounts"]
+
+    return render_template('admin_panel.html', session=session, total_accounts=total_accounts)
+
 @app.route("/search")
 def search_page():
     if not "username" in session:
@@ -608,9 +619,16 @@ def unfollow():
 
     return "Done"
 
+def round_to_multiple(number, multiple):
+    return multiple * round(number / multiple)
+
 @app.route("/about")
 def about():
-    return render_template('about.html', instance_domain=urlparse(request.base_url).hostname)
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT count(*) total_accounts FROM `users`;")
+    total_accounts = round_to_multiple(cur.fetchall()[0]["total_accounts"], 5)
+
+    return render_template('about.html', instance_domain=urlparse(request.base_url).hostname, total_accounts=total_accounts)
 
 def create_app():
     return app
