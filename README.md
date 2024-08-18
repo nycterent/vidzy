@@ -18,6 +18,7 @@ A free and open source alternative to TikTok
     cd vidzy
     pip install -r requirements.txt
     cp .env.sample .env
+    # Use your preferred editor to configure .env (ex. 'nano .env')
     python -m waitress --port=8080 --call app:create_app
 
 ## Screenshots
