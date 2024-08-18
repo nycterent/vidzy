@@ -176,7 +176,15 @@ def admin_panel():
     cur.execute("SELECT count(*) total_accounts FROM `users`;")
     total_accounts = cur.fetchall()[0]["total_accounts"]
 
-    return render_template('admin_panel.html', session=session, total_accounts=total_accounts)
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM `users` ORDER BY id DESC LIMIT 50;")
+    accounts = cur.fetchall()
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM `shorts` ORDER BY id DESC LIMIT 50;")
+    shorts = cur.fetchall()
+
+    return render_template('admin_panel.html', session=session, total_accounts=total_accounts, accounts=accounts, shorts=shorts)
 
 @app.route("/search")
 def search_page():

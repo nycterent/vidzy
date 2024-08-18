@@ -41,6 +41,22 @@ body {font-family: Arial;}
   border: 1px solid #ccc;
   border-top: none;
 }
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
 </style>
 </head>
 <body>
@@ -48,13 +64,52 @@ body {font-family: Arial;}
 <h2>Admin Panel</h2>
 
 <div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'analysis')" id="firsttab">Analysis</button>
-  <!--<button class="tablinks" onclick="openTab(event, 'exampletab')">Example Tab</button>-->
+  <button class="tablinks" onclick="openTab(event, 'analytics')" id="firsttab">Analytics</button>
+  <button class="tablinks" onclick="openTab(event, 'users')">Users</button>
+  <button class="tablinks" onclick="openTab(event, 'shorts')">Shorts</button>
 </div>
 
-<div id="analysis" class="tabcontent">
-  <h3>Analysis</h3>
+<div id="analytics" class="tabcontent">
+  <h3>Analytics</h3>
   <p>Total number of accounts on your instance: {{ total_accounts }}</p>
+</div>
+
+<div id="users" class="tabcontent">
+  <h3>Users (last 50)</h3>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Is admin?</th>
+    </tr>
+    {% for account in accounts %}
+    <tr>
+      <td>{{account.id}}</td>
+      <td>{{account.username}}</td>
+      <td>{{account.email}}</td>
+      <td>{{account.is_admin}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div id="shorts" class="tabcontent">
+  <h3>Shorts (last 50)</h3>
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Filename</th>
+      <th>Owner User ID</th>
+    </tr>
+    {% for short in shorts %}
+    <tr>
+      <td>{{short.title}}</td>
+      <td>{{short.url}}</td>
+      <td>{{short.user_id}}</td>
+    </tr>
+    {% endfor %}
+  </table>
 </div>
 
 <script>
@@ -74,7 +129,7 @@ function openTab(evt, tabName) {
   }
 }
 
-openTab(null, 'analysis');
+openTab(null, 'analytics');
 document.getElementById("firsttab").className += " active";
 </script>
    
