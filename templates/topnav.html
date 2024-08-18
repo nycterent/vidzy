@@ -76,9 +76,16 @@
 </style>
 
 <div class="sidenav">
+    {% if logged_in %}
     <a href="/">For You</a>
+    {% else %}
+    <a href="/">Explore</a>
+    {% endif %}
+    <a href="/livefeed">Live Feed</a>
+    {% if logged_in %}
     <a href="/explore">Explore</a>
-    <a href="/users/{{ session.username }}">Profile</a>
+    <a href="/users/{{ session.username }}">My Profile</a>
     <a href="/settings">Settings</a>
+    {% endif %}
     <p style="bottom: 0; position: absolute; padding: 5px;"><a id="special" href="/about">About</a><br><br><a id="special" href="https://github.com/vidzy-social/vidzy">View source code</a><br><br>{{vidzy_version}}</p>
 </div>

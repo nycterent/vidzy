@@ -115,6 +115,9 @@ def like_post_page():
 
 @app.route("/if_liked_post")
 def liked_post_page():
+    if not "user" in session:
+        return "NotLoggedIn"
+
     mycursor = mysql.connection.cursor()
 
     mycursor.execute("SELECT * FROM likes WHERE short_id = " +
@@ -184,12 +187,20 @@ def api_search_page():
 def explore_page():
     logged_in = "username" in session
 
-    if not "username" in session:
-        return "<script>window.location.href='/login';</script>"
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 20;")
+    rv = cur.fetchall()
+
+    return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session)
+
+@app.route("/livefeed")
+def livefeed_page():
+    logged_in = "username" in session
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT *, (SELECT count(*) FROM `likes` p WHERE short_id = p.id) likes FROM shorts ORDER BY id DESC LIMIT 20;")
+        "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT 20;")
     rv = cur.fetchall()
 
     return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session)
