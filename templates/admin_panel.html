@@ -104,12 +104,14 @@ tr:nth-child(even) {
       <th>Title</th>
       <th>Filename</th>
       <th>Owner User ID</th>
+      <th></th>
     </tr>
     {% for short in shorts %}
     <tr>
       <td>{{short.title}}</td>
       <td>{{short.url}}</td>
       <td>{{short.user_id}}</td>
+      <td><a href="/admin/deletevidform?short={{short.id}}">Delete This Video</a></td>
     </tr>
     {% endfor %}
   </table>

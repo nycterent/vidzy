@@ -167,6 +167,9 @@ def settings_page():
 
     return render_template('settings.html', username=session["user"]["username"], email=session["user"]["email"])
 
+########################################################################
+########################### ADMIN STUFF ################################
+
 @app.route("/admin")
 def admin_panel():
     if not "user" in session:
@@ -226,7 +229,45 @@ def ban_user():
     cursor.execute("DELETE FROM `users` WHERE (`id` = %s);", (user,))
     mysql.connection.commit()
 
-    return user
+    return redirect("/admin", code=302)
+
+@app.route("/admin/deletevidform")
+def delete_vid_form():
+    if not "user" in session:
+        return "You are not logged in"
+    if not session["user"]["is_admin"] == 1:
+        return "You are not an admin"
+
+    shortid = request.args.get('short')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM `shorts` WHERE (`id` = %s);", (shortid,))
+    short = cursor.fetchall()[0]
+
+    if len(short) == 0:
+        return "Short doesn't exist."
+
+    return render_template("deletevidform.html", short=short, shortid=shortid)
+
+@app.route("/admin/deletevid", methods=['POST'])
+def delete_vid():
+    csrf.protect()
+
+    if not "user" in session:
+        return "NotLoggedIn"
+    if not session["user"]["is_admin"] == 1:
+        return "NotAdmin"
+
+    short = request.form['short']
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM `shorts` WHERE (`id` = %s);", (short,))
+    mysql.connection.commit()
+
+    return redirect("/admin", code=302)
+
+######################### END ADMIN STUFF ##############################
+########################################################################
 
 @app.route("/search")
 def search_page():

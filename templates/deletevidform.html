@@ -1,0 +1,22 @@
+<div style="text-align:center;">
+    <h1>Would you like to permanently delete this video?</h1>
+    <h2>Video title: {{short.title}}</h2>
+    
+    <form method="POST" action="/admin/deletevid">
+        <input type="text" id="typehere" placeholder="Type 'delete' here">
+        <br><br>
+        <button id="delbtn" style="width:140px;height:40px;" disabled>Permanently delete '{{short.title}}'</button>
+        <input type="hidden" name="short" value="{{ short.id }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+</div>
+
+<script>
+setInterval(function() {
+    if (document.getElementById("typehere").value == "delete") {
+        document.getElementById("delbtn").disabled = false;
+    } else {
+        document.getElementById("delbtn").disabled = true;
+    }
+}, 500);
+</script>
