@@ -1,0 +1,22 @@
+<div style="text-align:center;">
+    <h1>Would you like to promote this user to an ADMIN?</h1>
+    <h2>Username: {{user.username}}</h2>
+    
+    <form method="POST" action="/admin/promote">
+        <input type="text" id="typehere" placeholder="Type 'promote' here">
+        <br><br>
+        <button id="promotebtn" style="width:200px;height:40px;" disabled>Promote {{user.username}} to an ADMIN</button>
+        <input type="hidden" name="user" value="{{ user.id }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+</div>
+
+<script>
+setInterval(function() {
+    if (document.getElementById("typehere").value == "promote") {
+        document.getElementById("promotebtn").disabled = false;
+    } else {
+        document.getElementById("promotebtn").disabled = true;
+    }
+}, 500);
+</script>

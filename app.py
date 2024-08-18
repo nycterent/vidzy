@@ -266,6 +266,44 @@ def delete_vid():
 
     return redirect("/admin", code=302)
 
+@app.route("/admin/promoteform")
+def promote_form():
+    if not "user" in session:
+        return "You are not logged in"
+    if not session["user"]["is_admin"] == 1:
+        return "You are not an admin"
+
+    userid = request.args.get('user')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM `users` WHERE (`id` = %s);", (userid,))
+    user = cursor.fetchall()[0]
+
+    if len(user) == 0:
+        return "User doesn't exist."
+
+    if user["is_admin"] == 1:
+        return "User is already an admin."
+
+    return render_template("promoteform.html", user=user, userid=userid)
+
+@app.route("/admin/promote", methods=['POST'])
+def promote_user():
+    csrf.protect()
+
+    if not "user" in session:
+        return "NotLoggedIn"
+    if not session["user"]["is_admin"] == 1:
+        return "NotAdmin"
+
+    user = request.form['user']
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("UPDATE `users` SET `is_admin` = '1' WHERE (`id` = %s);", (user,))
+    mysql.connection.commit()
+
+    return redirect("/admin", code=302)
+
 ######################### END ADMIN STUFF ##############################
 ########################################################################
 
