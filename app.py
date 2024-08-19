@@ -373,16 +373,6 @@ def search_page():
 
     return render_template('search.html', shorts=rv, session=session, query=query, logged_in = "username" in session)
 
-@app.route("/api/search")
-def api_search_page():
-    query = request.args.get('q')
-
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT p.id, p.title, p.user_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE %s LIMIT 20;", ("%" + query + "%", ))
-    rv = cur.fetchall()
-
-    return jsonify(rv)
-
 @app.route("/explore")
 def explore_page():
     logged_in = "username" in session
@@ -505,20 +495,6 @@ def hcard_page(guid):
     latest_short_list = cur.fetchall()
 
     return render_template('profile_hcard.html', user=user, session=session, latest_short_list=latest_short_list, guid=guid)
-
-
-@app.route("/mastodon_external/users/<user>")
-def external_profile_page(user):
-    if not "username" in session:
-        return "<script>window.location.href='/login';</script>"
-
-    acc = json.loads(requests.get(
-        "https://mstdn.social/api/v1/accounts/lookup?acct=stux@mstdn.social").text)
-
-    posts = json.loads(requests.get(
-        "https://mstdn.social/api/v1/accounts/" + acc["id"] + "/statuses").text)
-
-    return render_template('external_profile.html', user=acc, session=session, posts=posts)
 
 
 @app.route("/users/<user>/feed")
@@ -703,6 +679,8 @@ def activitypub_actor(user):
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+####################################
+############ API ROUTES ############
 
 @app.route('/api/v1/instance')
 def instance_info():
@@ -717,6 +695,22 @@ def instance_info():
     resp = Response(json.dumps(info))
     resp.headers['Content-Type'] = 'application/json'
     return resp
+
+@app.route("/api/search")
+def api_search_page():
+    query = request.args.get('q')
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE title LIKE %s LIMIT 20;", ("%" + query + "%", ))
+    rv = cur.fetchall()
+
+    for row in rv:
+        row["url"] = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc) + "/static/uploads/" + row["url"]
+
+    return jsonify(rv)
+
+############ API ROUTES ############
+####################################
 
 def allowed_file(filename):
     return '.' in filename and \
