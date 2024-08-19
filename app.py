@@ -144,7 +144,7 @@ def index_page():
 
     cur = mysql.connection.cursor()
     if logged_in:
-        cur.execute("SELECT p.id, title, url, user_id, ANY_VALUE(f.id) followid, ANY_VALUE(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
+        cur.execute("SELECT p.id, title, url, user_id, date_uploaded, ANY_VALUE(f.id) followid, ANY_VALUE(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
     else:
         cur.execute("SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 20;")
     rv = cur.fetchall()
@@ -695,7 +695,7 @@ def upload_file():
 
             cur = mysql.connection.cursor()
 
-            cur.execute("""INSERT INTO shorts (title, url, user_id) VALUES (%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"])))
+            cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded) VALUES (%s,%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d')) )
             mysql.connection.commit()
 
             return redirect(url_for('index_page'))

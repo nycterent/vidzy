@@ -46,4 +46,54 @@
             alert("{{ request.host_url }}shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText);
         }
     }
+
+    function comment(what) {
+        if (currentcommentsdiv.style.display == "none") {
+            currentcommentsdiv.style.display = "block";
+        } else {
+            currentcommentsdiv.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    var currentcommentsdiv;
+
+    var options = {
+        root: document.querySelector('.app__videos'),
+        rootMargin: '0px',
+        threshold: 1.0
+    };
+
+    var ob = new IntersectionObserver((entries, observer) => {
+        console.log(entries[0].isIntersecting);
+        if (!entries[0].isIntersecting) {
+            currentcommentsdiv = entries[0].target.parentNode.getElementsByClassName("comments")[0];
+            currentcommentsdiv.style.display = "none";
+        }
+        else {
+            entries[0].target.currentTime = 0;
+            entries[0].target.play();
+            currentcommentsdiv = entries[0].target.parentNode.getElementsByClassName("comments")[0];
+            currentcommentsdiv.style.display = "none";
+        }
+    }, options);
+
+    document.querySelectorAll('video').forEach((item) => {
+        ob.observe(item);
+    });
+
+
+    const videos = document.querySelectorAll('video');
+
+    for (const video of videos) {
+        video.addEventListener('click', function () {
+            console.log('clicked');
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        });
+    }
 </script>

@@ -25,37 +25,6 @@
     </div>
 
     {% include "shortjs.html" %}
-
-    <script>
-        var options = {
-            root: document.querySelector('.app__videos'),
-            rootMargin: '0px',
-            threshold: 1.0
-        };
-
-        var ob = new IntersectionObserver((entries, observer) => {
-            entries[0].target.currentTime = 0;
-            entries[0].target.play();
-        }, options);
-
-        document.querySelectorAll('video').forEach((item) => {
-            ob.observe(item);
-        });
-
-
-        const videos = document.querySelectorAll('video');
-
-        for (const video of videos) {
-            video.addEventListener('click', function () {
-                console.log('clicked');
-                if (video.paused) {
-                    video.play();
-                } else {
-                    video.pause();
-                }
-            });
-        }
-    </script>
 </body>
 
 </html>

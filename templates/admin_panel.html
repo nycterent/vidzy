@@ -108,6 +108,7 @@ tr:nth-child(even) {
       <th>Filename</th>
       <th>Owner User ID</th>
       <th>Like Count</th>
+      <th>Date Uploaded</th>
       <th></th>
     </tr>
     {% for short in shorts %}
@@ -117,6 +118,7 @@ tr:nth-child(even) {
       <td>{{short.url}}</td>
       <td>{{short.user_id}}</td>
       <td>{{short.like_count}}</td>
+      <td>{{short.date_uploaded}}</td>
       <td><a href="/admin/deletevidform?short={{short.id}}">Delete This Video</a></td>
     </tr>
     {% endfor %}

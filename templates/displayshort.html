@@ -10,7 +10,7 @@
             <p>{{ short.likes }}</p>
         </div>
 
-        <div class="videoSidebar__button">
+        <div class="videoSidebar__button" onclick="comment(this)">
             <span class="material-icons"> message </span>
             <p>23</p>
         </div>
@@ -37,5 +37,13 @@
             </div>
         </div>
         <img src="https://static.thenounproject.com/png/934821-200.png" alt="" class="videoFooter__record" />
+    </div>
+
+    <div class="comments">
+        <p>{{short.title}}</p>
+        <p>Date Uploaded: {{ short.date_uploaded }}</p>
+        <br>
+        <p>Comments:</p>
+        <p>No comments currently.</p>
     </div>
 </div>
