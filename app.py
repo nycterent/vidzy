@@ -709,6 +709,19 @@ def api_search_page():
 
     return jsonify(rv)
 
+@app.route("/api/users/<user>")
+def api_user_page(user):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, username, bio FROM `users` WHERE (`id` = %s);", (user,))
+    rv = cur.fetchall()[0]
+
+    cur.execute("SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE user_id=%s;", (user,))
+    shorts = cur.fetchall()
+
+    rv["videos"] = shorts
+
+    return jsonify(rv)
+
 ############ API ROUTES ############
 ####################################
 
