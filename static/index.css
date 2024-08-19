@@ -125,7 +125,12 @@ body {
     .app__videos {
         width: 100%;
         max-width: 100%;
+        height: 80%;
         border-radius: 0;
+    }
+
+    .search-container {
+        display: none;
     }
 }
 
