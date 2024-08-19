@@ -397,35 +397,11 @@ def livefeed_page():
 
 @app.route("/users/<user>")
 def profile_page(user):
-    '''
-    instance_url = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc)
-    public_key = 'bruh' # retrieve from file/database
-    response = jsonify({
-        "@context": [
-            "https://www.w3.org/ns/activitystreams",
-            "https://w3id.org/security/v1",
-        ],
-        "id": instance_url + "/users/testuser",
-        "inbox": instance_url + "/users/testuser/inbox",
-        "outbox": instance_url + "/users/testuser/outbox",
-        "type": "Person",
-        "name": "Testuser",
-        "preferredUsername": "testuser",
-        "publicKey": {
-            "id": instance_url + "/users/testuser#main-key",
-            "id": instance_url + "/users/testuser",
-            "publicKeyPem": public_key
-        }
-    })
-    # Servers may discard the result if you do not set the appropriate content type
-    response.headers['Content-Type'] = 'application/activity+json'
-    return response
-    '''
-
     if "@" in user:
         if user.split("@")[1] != str(urlparse(request.base_url).netloc):
             return remote_profile_page(user)
         else:
+            return remote_profile_page(user) # TEMPORARY FOR TESTING
             user = user.split("@")[0]
 
     cur = mysql.connection.cursor()
@@ -443,8 +419,18 @@ def profile_page(user):
 
     return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list, following=following)
 
+def remote_vidzy_profile_page(user):
+    print("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0])
+    r = requests.get("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0]).text
+    data = json.loads(r)
+    return render_template("remote_user.html", shorts=data["videos"], followers_count=0, user_info=data, full_username=user, logged_in = "username" in session)
+
 @app.route("/remote_user/<user>")
 def remote_profile_page(user):
+    if requests.get("http://" + user.split("@")[1] + "/api/vidzy").text == "vidzy":
+        print("Vidzy instance detected")
+        return remote_vidzy_profile_page(user)
+
     varient = ""
 
     try:
@@ -712,15 +698,22 @@ def api_search_page():
 @app.route("/api/users/<user>")
 def api_user_page(user):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT id, username, bio FROM `users` WHERE (`id` = %s);", (user,))
+    cur.execute("SELECT id, username, bio FROM `users` WHERE (`username` = %s);", (user,))
     rv = cur.fetchall()[0]
 
-    cur.execute("SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE user_id=%s;", (user,))
+    cur.execute("SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE user_id=%s;", (rv["id"],))
     shorts = cur.fetchall()
+
+    for row in shorts:
+        row["url"] = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc) + "/static/uploads/" + row["url"]
 
     rv["videos"] = shorts
 
     return jsonify(rv)
+
+@app.route("/api/vidzy")
+def api_vidzy_page():
+    return "vidzy"
 
 ############ API ROUTES ############
 ####################################
