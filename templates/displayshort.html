@@ -29,7 +29,11 @@
 
             <div class="videoFooter__ticker">
                 <span class="material-icons videoFooter__icon"> music_note </span>
-                <marquee>Song name</marquee>
+                {% if short.username %}
+                <marquee>@{{ short.username }}'s sound</marquee>
+                {% else %}
+                <marquee>Original sound</marquee>
+                {% endif %}
             </div>
         </div>
         <img src="https://static.thenounproject.com/png/934821-200.png" alt="" class="videoFooter__record" />
