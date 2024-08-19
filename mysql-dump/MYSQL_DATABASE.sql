@@ -156,5 +156,13 @@ UNLOCK TABLES;
 --
 -- v0.1.2
 --
-ALTER TABLE `vidzy`.`shorts` 
+ALTER TABLE `shorts` 
 ADD COLUMN `date_uploaded` DATE NULL AFTER `user_id`;
+CREATE TABLE `comments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `short_id` int DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+ALTER TABLE `comments` 
+ADD COLUMN `comment_text` VARCHAR(145) NULL AFTER `user_id`;

@@ -76,6 +76,27 @@ def image_proxy(src):
 def get_gravatar(email):
     return "https://www.gravatar.com/avatar/" + hashlib.md5(email.encode()).hexdigest() + "?d=mp"
 
+@app.template_filter('get_comments')
+def get_comments(vid):
+    mycursor = mysql.connection.cursor()
+
+    mycursor.execute("SELECT * FROM `comments` WHERE short_id = %s;", (vid,))
+    myresult = mycursor.fetchall()
+
+    return myresult
+
+@app.template_filter('get_user_info')
+def get_user_info(userid):
+    mycursor = mysql.connection.cursor()
+
+    mycursor.execute("SELECT * FROM `users` WHERE id = %s;", (userid,))
+    myresult = mycursor.fetchall()[0]
+
+    return myresult
+
+@app.template_filter('get_username')
+def get_username(userid):
+    return get_user_info(userid)["username"]
 
 @app.route('/proxy/')
 def route_proxy():
@@ -119,6 +140,20 @@ def like_post_page():
 
     return "Success"
 
+@app.route("/send_comment")
+def send_comment_page():
+    if not "user" in session:
+        return "NotLoggedIn"
+
+    mycursor = mysql.connection.cursor()
+
+    sql = "INSERT INTO `comments` (`short_id`, `user_id`, `comment_text`) VALUES (%s, %s, %s)"
+    val = (request.args.get("shortid"), session["user"]["id"], request.args.get("txt"))
+    mycursor.execute(sql, val)
+
+    mysql.connection.commit()
+
+    return "Success"
 
 @app.route("/if_liked_post")
 def liked_post_page():

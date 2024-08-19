@@ -14,6 +14,20 @@
         xmlhttp.send();
     }
 
+    function comment(what) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText == "Success") {
+                    what.getElementsByClassName("msgsenttext")[0].style.display = "block";
+                } else {
+                    console.error("Error commenting on video, response: " + this.responseText);
+                }
+            }
+        };
+        xmlhttp.open("GET", "/send_comment?txt=" + encodeURIComponent(what.getElementsByClassName("comment_input")[0].value) + "&shortid=" + what.getElementsByTagName('shortid')[0].innerText, true);
+        xmlhttp.send();
+    }
 
     elements = document.querySelectorAll(".like_button_img");
 
@@ -47,7 +61,7 @@
         }
     }
 
-    function comment(what) {
+    function opencomments(what) {
         if (currentcommentsdiv.style.display == "none") {
             currentcommentsdiv.style.display = "block";
         } else {
@@ -76,6 +90,14 @@
             entries[0].target.play();
             currentcommentsdiv = entries[0].target.parentNode.getElementsByClassName("comments")[0];
             currentcommentsdiv.style.display = "none";
+
+
+            entries[0].target.parentNode.getElementsByClassName("comment_input")[0].addEventListener('keyup', function onEvent(e) {
+                if (e.keyCode === 13) {
+                    console.log('Enter');
+                    comment(entries[0].target.parentNode);
+                }
+            });
         }
     }, options);
 
