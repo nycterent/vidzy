@@ -145,6 +145,15 @@ def send_comment_page():
     if not "user" in session:
         return "NotLoggedIn"
 
+    shortid = request.args.get("shortid")
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT count(*) comment_count FROM `vidzy`.`comments` WHERE short_id = %s AND user_id = %s;", (shortid, session["user"]["id"]))
+    comment_count = int(cursor.fetchall()[0]["comment_count"])
+    
+    if comment_count >= 40:
+        return "TooManyComments"
+
     mycursor = mysql.connection.cursor()
 
     sql = "INSERT INTO `comments` (`short_id`, `user_id`, `comment_text`) VALUES (%s, %s, %s)"

@@ -19,6 +19,10 @@
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 if (this.responseText == "Success") {
+                    what.getElementsByClassName("msgsenttext")[0].innerText = "Message Sent! Reload this page to see your comment.";
+                    what.getElementsByClassName("msgsenttext")[0].style.display = "block";
+                } else if (this.responseText == "TooManyComments") {
+                    what.getElementsByClassName("msgsenttext")[0].innerText = "Too many comments sent on one video.";
                     what.getElementsByClassName("msgsenttext")[0].style.display = "block";
                 } else {
                     console.error("Error commenting on video, response: " + this.responseText);
