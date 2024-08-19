@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import re
 from flask_wtf.csrf import CSRFProtect
-
+import math
 
 inproduction = False
 productionpath = os.path.expanduser('~/mysite')
@@ -815,11 +815,14 @@ def unfollow():
 def round_to_multiple(number, multiple):
     return multiple * round(number / multiple)
 
+def floor_to_multiple(number, multiple):
+    return multiple * math.ceil(number / multiple)
+
 @app.route("/about")
 def about():
     cur = mysql.connection.cursor()
     cur.execute("SELECT count(*) total_accounts FROM `users`;")
-    total_accounts = round_to_multiple(cur.fetchall()[0]["total_accounts"], 5)
+    total_accounts = floor_to_multiple(cur.fetchall()[0]["total_accounts"], 5)
 
     return render_template('about.html', instance_domain=urlparse(request.base_url).hostname, total_accounts=total_accounts)
 
