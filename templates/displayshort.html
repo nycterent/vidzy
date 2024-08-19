@@ -43,6 +43,10 @@
         <h2>{{short.title}}</h2>
         <h2>Date Uploaded: {{ short.date_uploaded }}</h2>
         <div class="scroll">
+            {% if short.description %}
+            <h2>Description:</h2>
+            <p>{{ short.description }}</p>
+            {% endif %}
             <h2>Comments:</h2>
             {% for comment in short.id|get_comments %}
             <div style="border: 1px solid white; padding: 5px;">
