@@ -68,9 +68,17 @@
         }
     }
 
+    #bottomnav {
+        display: none;
+    }
+
     @media only screen and (max-width: 720px) {
         .sidenav {
             display: none;
+        }
+
+        #bottomnav {
+            display: block;
         }
     }
 </style>
@@ -93,4 +101,49 @@
     {% endif %}
     {% endif %}
     <p style="bottom: 0; position: absolute; padding: 5px;"><a id="special" href="/about">About</a><br><br><a id="special" href="https://github.com/vidzy-social/vidzy">View source code</a><br><br>{{vidzy_version}}</p>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {margin:0;}
+
+.icon-bar {
+  width: 100%;
+  background-color: #555;
+  overflow: auto;
+  position: fixed;
+  bottom: 0;
+}
+
+.icon-bar a {
+  float: left;
+  width: 20%;
+  text-align: center;
+  padding: 12px 0;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 36px;
+}
+
+.icon-bar a:hover {
+  background-color: #000;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+</style>
+<body>
+
+<div class="icon-bar" id="bottomnav">
+  <a href="/"><i class="fa fa-home"></i></a>
+  <a href="/livefeed"><i class="fa fa-globe"></i></a>
+  <a href="/explore"><i class="fa fa-hashtag"></i></a>
+  {% if logged_in %}
+  <a href="/users/{{ session.username }}"><i class="fa fa-user"></i></a>
+  <a href="/settings"><i class="fa fa-gear"></i></a>
+  {% else %}
+  <a href="/login"><i class="fa fa-user"></i></a>
+  <a href="/register"><i class="fa fa-user-plus"></i></a>
+  {% endif %}
 </div>
