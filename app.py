@@ -89,7 +89,7 @@ def get_comments(vid):
 def get_comment_count(vid):
     cursor = mysql.connection.cursor()
 
-    cursor.execute("SELECT count(*) comment_count FROM `vidzy`.`comments` WHERE short_id = %s;", (vid,))
+    cursor.execute("SELECT count(*) comment_count FROM `comments` WHERE short_id = %s;", (vid,))
     comment_count = int(cursor.fetchall()[0]["comment_count"])
 
     return comment_count
@@ -157,7 +157,7 @@ def send_comment_page():
     shortid = request.args.get("shortid")
 
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT count(*) comment_count FROM `vidzy`.`comments` WHERE short_id = %s AND user_id = %s;", (shortid, session["user"]["id"]))
+    cursor.execute("SELECT count(*) comment_count FROM `comments` WHERE short_id = %s AND user_id = %s;", (shortid, session["user"]["id"]))
     comment_count = int(cursor.fetchall()[0]["comment_count"])
     
     if comment_count >= 40:
@@ -208,10 +208,10 @@ def index_page():
 def settings_page():
     if "username" in request.form:
         cursor = mysql.connection.cursor()
-        cursor.execute("UPDATE `vidzy`.`users` SET `username` = %s WHERE (`id` = %s);", (request.form["username"], session["user"]["id"]))
+        cursor.execute("UPDATE `users` SET `username` = %s WHERE (`id` = %s);", (request.form["username"], session["user"]["id"]))
         mysql.connection.commit()
 
-        cursor.execute("UPDATE `vidzy`.`users` SET `email` = %s WHERE (`id` = %s);", (request.form["email"], session["user"]["id"]))
+        cursor.execute("UPDATE `users` SET `email` = %s WHERE (`id` = %s);", (request.form["email"], session["user"]["id"]))
         mysql.connection.commit()
 
         session.clear()
@@ -807,7 +807,7 @@ def unfollow():
     if following == False:
         return "Not currently following user"
 
-    cur.execute("""DELETE FROM `vidzy`.`follows` WHERE `follower_id` = %s AND `following_id` = %s;""", (str(session["user"]["id"]), following_id))
+    cur.execute("""DELETE FROM `follows` WHERE `follower_id` = %s AND `following_id` = %s;""", (str(session["user"]["id"]), following_id))
     mysql.connection.commit()
 
     return "Done"
