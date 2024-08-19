@@ -103,16 +103,20 @@ tr:nth-child(even) {
   <h3>Shorts (last 50)</h3>
   <table>
     <tr>
+      <th>ID</th>
       <th>Title</th>
       <th>Filename</th>
       <th>Owner User ID</th>
+      <th>Like Count</th>
       <th></th>
     </tr>
     {% for short in shorts %}
     <tr>
+      <td>{{short.id}}</td>
       <td>{{short.title}}</td>
       <td>{{short.url}}</td>
       <td>{{short.user_id}}</td>
+      <td>{{short.like_count}}</td>
       <td><a href="/admin/deletevidform?short={{short.id}}">Delete This Video</a></td>
     </tr>
     {% endfor %}

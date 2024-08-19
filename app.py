@@ -188,7 +188,7 @@ def admin_panel():
     cur.execute("SELECT * FROM `users` ORDER BY id DESC LIMIT 50;")
     accounts = cur.fetchall()
 
-    cur.execute("SELECT * FROM `shorts` ORDER BY id DESC LIMIT 50;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p ORDER BY id DESC LIMIT 50;")
     shorts = cur.fetchall()
 
     return render_template('admin_panel.html', session=session, total_accounts=total_accounts, accounts=accounts, shorts=shorts, total_shorts=total_shorts)
