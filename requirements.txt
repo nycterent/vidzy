@@ -5,3 +5,4 @@ Flask-HTMLmin
 requests
 python-dotenv
 cryptography
+Flask-WTF
