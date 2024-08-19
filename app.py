@@ -85,6 +85,15 @@ def get_comments(vid):
 
     return myresult
 
+@app.template_filter('get_comment_count')
+def get_comment_count(vid):
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("SELECT count(*) comment_count FROM `vidzy`.`comments` WHERE short_id = %s;", (vid,))
+    comment_count = int(cursor.fetchall()[0]["comment_count"])
+
+    return comment_count
+
 @app.template_filter('get_user_info')
 def get_user_info(userid):
     mycursor = mysql.connection.cursor()

@@ -12,7 +12,7 @@
 
         <div class="videoSidebar__button" onclick="opencomments(this)">
             <span class="material-icons"> message </span>
-            <p>23</p>
+            <p>{{ short.id|get_comment_count }}</p>
         </div>
 
         <div class="videoSidebar__button" onclick="share(this)">
