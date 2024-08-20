@@ -564,13 +564,13 @@ def register():
         cursor.execute('SELECT * FROM users WHERE username = %s', (username, ))
         account = cursor.fetchone()
         if account:
-            msg = 'Account already exists !'
+            msg = 'Account already exists!'
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address !'
+            msg = 'Invalid email address!'
         elif not re.match(r'[A-Za-z0-9]+', username):
-            msg = 'Username must contain only characters and numbers !'
+            msg = 'Username must contain only characters and numbers!'
         elif not username or not password or not email:
-            msg = 'Please fill out the form !'
+            msg = 'Please fill out the form!'
         else:
             cursor.execute('INSERT INTO users (`username`, `password`, `email`) VALUES (%s, %s, %s)', (username, hashlib.sha256(password.encode()).hexdigest(), email, ))
             mysql.connection.commit()

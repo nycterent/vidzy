@@ -37,6 +37,10 @@
         .loginbutton:hover {
             background-color: #4CAF50;
         }
+
+        #msg {
+            font-size: large;
+        }
     </style>
 </head>
 
@@ -44,8 +48,11 @@
     <div style="height: 20%;"></div>
 
     <center>
-        {{ msg|safe}}
         <div class="container">
+            {% if msg != '' %}
+            <br>
+            <p id="msg">{{ msg|safe}}</p>
+            {% endif %}
 
             <br>
 
