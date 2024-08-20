@@ -162,7 +162,6 @@ document.getElementById("firsttab").className += " active";
 new Chart(document.getElementById("videosChart"), {
     type: 'bar',
     data: {
-      //labels: ["2024-08-16", "2024-08-17", "2024-08-18", "2024-08-19", "2024-08-20"],
       labels: [{% for key, value in videos_on_date_uploaded.items() %}"{{key}}",{% endfor %}],
       datasets: [
         {
@@ -189,53 +188,6 @@ new Chart(document.getElementById("videosChart"), {
       }
     }
 });
-
-/*
-// Line chart
-new Chart(document.getElementById("videosChart"), {
-  type: 'line',
-  data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [{
-        data: [1,2,4],
-        label: "Alberta",
-        borderColor: "#3e95cd",
-        fill: false
-      }, {
-        data: [1,2,5],
-        label: "BC",
-        borderColor: "#8e5ea2",
-        fill: false
-      }, {
-        data: [1,2,8],
-        label: "Manitoba",
-        borderColor: "#3cba9f",
-        fill: false
-      }, {
-        data: [1,2,10],
-        label: "New Brunswick",
-        borderColor: "#e8c3b9",
-        fill: false
-      }, {
-        data: [1,2,16],
-        label: "NL",
-        borderColor: "#c45850",
-        fill: false
-      }
-    ]
-  },
-  options: {
-    title: {
-      display: true,
-      text: 'Positive Cases of COVID in provinces of Canada'
-    },
-    hover: {
-     mode: 'index',
-     intersect: true
-    },
-  }
-});
-*/
 </script>
 
 </body>

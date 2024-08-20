@@ -14,6 +14,7 @@ import re
 from flask_wtf.csrf import CSRFProtect
 import math
 import nh3
+import vidzyconfig
 
 inproduction = False
 productionpath = os.path.expanduser('~/mysite')
@@ -791,6 +792,10 @@ def allowed_file(filename):
 def upload_file():
     if not "username" in session:
         return "<script>window.location.href='/login';</script>"
+
+    if "ALLOW_UPLOADS" in vidzyconfig.config:
+        if vidzyconfig.config["ALLOW_UPLOADS"] == False:
+            return "This instance does not allow uploading videos"
 
     if request.method == 'POST':
         # check if the post request has the file part

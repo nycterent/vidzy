@@ -19,3 +19,5 @@ SECRET_KEY = os.environ.get("VIDZY_APP_SECRET")
 
 MINIFY_HTML = os.environ.get("MINIFY_HTML")
 HOST = os.environ.get("HOST")
+
+ALLOW_UPLOADS = os.environ.get("ALLOW_UPLOADS")
