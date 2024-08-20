@@ -57,6 +57,11 @@ td, th {
 tr:nth-child(even) {
   background-color: #dddddd;
 }
+
+#videosChartContainer {
+  width: 25%;
+  height: 50vh;
+}
 </style>
 </head>
 <body>
@@ -73,6 +78,9 @@ tr:nth-child(even) {
   <h3>Analytics</h3>
   <p>Total number of accounts on your instance: {{ total_accounts }}</p>
   <p>Total number of shorts on your instance: {{ total_shorts }}</p>
+  <div id="videosChartContainer">
+    <canvas id="videosChart" width="400" height="400"></canvas>
+  </div>
 </div>
 
 <div id="users" class="tabcontent">
@@ -147,6 +155,88 @@ function openTab(evt, tabName) {
 openTab(null, 'analytics');
 document.getElementById("firsttab").className += " active";
 </script>
-   
+
+<script src="/static/chart.min.js"></script>
+
+<script>
+new Chart(document.getElementById("videosChart"), {
+    type: 'bar',
+    data: {
+      //labels: ["2024-08-16", "2024-08-17", "2024-08-18", "2024-08-19", "2024-08-20"],
+      labels: [{% for key, value in videos_on_date_uploaded.items() %}"{{key}}",{% endfor %}],
+      datasets: [
+        {
+          label: "Shorts Uploaded",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: [{% for key, value in videos_on_date_uploaded.items() %}"{{value|length}}",{% endfor %}]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Total Shorts Uploaded By Date'
+      },
+      scales: {
+        yAxes: [{
+            display: true,
+            ticks: {
+                suggestedMin: 0,
+                beginAtZero: true
+            }
+        }]
+      }
+    }
+});
+
+/*
+// Line chart
+new Chart(document.getElementById("videosChart"), {
+  type: 'line',
+  data: {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    datasets: [{
+        data: [1,2,4],
+        label: "Alberta",
+        borderColor: "#3e95cd",
+        fill: false
+      }, {
+        data: [1,2,5],
+        label: "BC",
+        borderColor: "#8e5ea2",
+        fill: false
+      }, {
+        data: [1,2,8],
+        label: "Manitoba",
+        borderColor: "#3cba9f",
+        fill: false
+      }, {
+        data: [1,2,10],
+        label: "New Brunswick",
+        borderColor: "#e8c3b9",
+        fill: false
+      }, {
+        data: [1,2,16],
+        label: "NL",
+        borderColor: "#c45850",
+        fill: false
+      }
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: 'Positive Cases of COVID in provinces of Canada'
+    },
+    hover: {
+     mode: 'index',
+     intersect: true
+    },
+  }
+});
+*/
+</script>
+
 </body>
 </html> 

@@ -243,7 +243,17 @@ def admin_panel():
     cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p ORDER BY id DESC LIMIT 50;")
     shorts = cur.fetchall()
 
-    return render_template('admin_panel.html', session=session, total_accounts=total_accounts, accounts=accounts, shorts=shorts, total_shorts=total_shorts)
+    videos_on_date_uploaded = {}
+
+    for short in shorts:
+        if not short["date_uploaded"] in videos_on_date_uploaded:
+            videos_on_date_uploaded[short["date_uploaded"]] = []
+        
+        videos_on_date_uploaded[short["date_uploaded"]].append(short)
+
+    print(videos_on_date_uploaded)
+
+    return render_template('admin_panel.html', session=session, total_accounts=total_accounts, accounts=accounts, shorts=shorts, total_shorts=total_shorts, videos_on_date_uploaded=videos_on_date_uploaded)
 
 @app.route("/admin/banform")
 def ban_form():
