@@ -75,7 +75,11 @@
                 }
             }
         };
+        {% if page == "livefeed" %}
         xmlhttp.open("GET", "/api/live_feed?startat=" + startAt, true);
+        {% elif page == "explore" %}
+        xmlhttp.open("GET", "/api/explore?startat=" + startAt, true);
+        {% endif %}
         xmlhttp.send();
     }
 

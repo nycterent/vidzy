@@ -382,7 +382,7 @@ def explore_page():
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 3;")
     rv = cur.fetchall()
 
-    return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session)
+    return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session, page="explore")
 
 @app.route("/livefeed")
 def livefeed_page():
@@ -393,7 +393,7 @@ def livefeed_page():
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT 3;")
     rv = cur.fetchall()
 
-    return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session)
+    return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session, page="livefeed")
 
 @app.route("/users/<user>")
 def profile_page(user):
@@ -724,6 +724,19 @@ def api_livefeed_page():
     cur = mysql.connection.cursor()
     cur.execute(
         "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s,%s;", (startAt,startAt+2))
+    rv = cur.fetchall()
+
+    return jsonify(rv)
+
+@app.route("/api/explore")
+def api_explore_page():
+    startAt = int(request.args.get('startat'))
+
+    logged_in = "username" in session
+
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT id, title, url, user_id, date_uploaded, description, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT %s,%s;", (startAt,startAt+2))
     rv = cur.fetchall()
 
     return jsonify(rv)
