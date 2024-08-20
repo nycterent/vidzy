@@ -48,7 +48,7 @@ public_key = key.public_key().public_bytes(
 
 
 
-vidzy_version = "v0.1.2"
+vidzy_version = "v0.1.3"
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'webm'}
