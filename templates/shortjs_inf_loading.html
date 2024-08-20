@@ -136,12 +136,12 @@
             navigator.share({
                 title: "I like this video",
                 text: "Come look a this video",
-                url: "{ request.host_url ]shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText
+                url: "{{ request.host_url }}shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText
             })
                 .then(() => console.log('Successful share'))
                 .catch(error => console.log('Error sharing:', error));
         } else {
-            alert("{ request.host_url ]shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText);
+            alert("{{ request.host_url }}shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText);
         }
     }
 
