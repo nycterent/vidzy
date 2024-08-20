@@ -723,7 +723,7 @@ def api_livefeed_page():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s,%s;", (startAt,startAt+2))
+        "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s OFFSET %s;", (startAt+2,startAt))
     rv = cur.fetchall()
 
     return jsonify(rv)
@@ -736,7 +736,7 @@ def api_explore_page():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT id, title, url, user_id, date_uploaded, description, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT %s,%s;", (startAt,startAt+2))
+        "SELECT id, title, url, user_id, date_uploaded, description, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT %s OFFSET %s;", (startAt+2,startAt))
     rv = cur.fetchall()
 
     return jsonify(rv)
