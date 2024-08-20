@@ -239,7 +239,7 @@ def admin_panel():
     cur.execute("SELECT count(*) total_shorts FROM `shorts`;")
     total_shorts = cur.fetchall()[0]["total_shorts"]
 
-    cur.execute("SELECT * FROM `users` ORDER BY id DESC LIMIT 50;")
+    cur.execute("SELECT *, (SELECT count(*) FROM `follows` WHERE following_id = u.id) followers FROM `users` u ORDER BY id DESC LIMIT 50;")
     accounts = cur.fetchall()
 
     cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p ORDER BY id DESC LIMIT 50;")

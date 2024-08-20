@@ -83,6 +83,7 @@ tr:nth-child(even) {
       <th>Username</th>
       <th>Email</th>
       <th>Is admin?</th>
+      <th>Followers</th>
       <th></th>
       <th></th>
     </tr>
@@ -92,6 +93,7 @@ tr:nth-child(even) {
       <td>{{account.username}}</td>
       <td>{{account.email}}</td>
       <td>{{account.is_admin}}</td>
+      <td>{{account.followers}}</td>
       <td><a href="/admin/banform?user={{account.id}}">Ban This User</a></td>
       <td><a href="/admin/promoteform?user={{account.id}}">Promote This User To Admin</a></td>
     </tr>
