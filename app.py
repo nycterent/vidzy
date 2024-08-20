@@ -425,7 +425,7 @@ def remote_vidzy_profile_page(user):
     print("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0])
     r = requests.get("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0]).text
     data = json.loads(r)
-    return render_template("remote_user.html", shorts=data["videos"], followers_count=0, user_info=data, full_username=user, logged_in = "username" in session)
+    return render_template("remote_user.html", shorts=data["videos"], followers_count=data["followers"], user_info=data, full_username=user, logged_in = "username" in session)
 
 @app.route("/remote_user/<user>")
 def remote_profile_page(user):
@@ -707,7 +707,7 @@ def api_search_page():
 @app.route("/api/users/<user>")
 def api_user_page(user):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT id, username, bio FROM `users` WHERE (`username` = %s);", (user,))
+    cur.execute("SELECT id, username, bio, (SELECT count(*) FROM `follows` WHERE following_id = u.id) followers FROM `users` u WHERE (`username` = %s);", (user,))
     rv = cur.fetchall()[0]
 
     cur.execute("SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE user_id=%s;", (rv["id"],))
