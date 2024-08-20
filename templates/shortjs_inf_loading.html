@@ -1,7 +1,13 @@
 <script>
-    var startAt = 2; // since limit is 3, we start at 2 because its 0,1,2
+    var startAt = 3;
+    var isFirstReqNewShorts = true;
 
     function requestNewShorts() {
+        if (isFirstReqNewShorts) {
+            isFirstReqNewShorts = false;
+            return;
+        }
+
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
