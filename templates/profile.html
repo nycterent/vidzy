@@ -541,15 +541,16 @@
                     {% endif %}
                     <h5 style="font-size: 15px;" class="profile-user-name">{{ user.username }}</h5>
 
-                    {% if session.user.is_authenticated and session.user.id == user_id %}
+                    {% if session.user %}
+                    {% if session.user.id == user_id %}
                     <a style="text-decoration: none;" href="" class="btn profile-edit-btn">Edit
                         Profile</a>
                     <a style="text-decoration: none;" href="/accounts/logout" class="btn profile-edit-btn">Logout</a>
                     <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fa fa-cog" aria-hidden="true"></i></button>
-
-
+                    {% endif %}
                     {% endif %}
                     <br><br>
+                    {% if session.user %}
                     {% if session.user.id != user_id %}
                     {% if following == True %}
                     <a href="javascript:unfollow()" class="btn profile-edit-btn" style="color: red;">Unfollow</a> <br><br>
@@ -557,9 +558,6 @@
                     <a href="javascript:follow()" class="btn profile-edit-btn" style="color: green;">Follow</a> <br><br>
                     {% endif %}
                     {% endif %}
-
-                    {% if session.user.is_authenticated and session.user.id != user_id %}
-                    <a href="" class="btn profile-edit-btn">Message</a> <br><br>
                     {% endif %}
                     <br>
 
@@ -588,8 +586,10 @@
                     <br><br>
                     <div class="profile-user-settings">
                         <a href="" class="btns profiele-edit-btn">Posts</a>
+                        {% if session.user %}
                         {% if session.user.id == user_id %}
                         <a href="" class="btns profeile-edit-btn">Saved</a>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>

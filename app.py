@@ -411,10 +411,13 @@ def profile_page(user):
     cur.execute("SELECT * FROM shorts WHERE user_id=%s;", (str(user["id"]), ))
     latest_short_list = cur.fetchall()
 
-    cur.execute("SELECT * FROM follows WHERE follower_id=%s AND following_id=%s;", (str(session["user"]["id"]), str(user["id"])))
-    following = False
-    for i in cur.fetchall():
-        following = True
+    if "user" in session:
+        cur.execute("SELECT * FROM follows WHERE follower_id=%s AND following_id=%s;", (str(session["user"]["id"]), str(user["id"])))
+        following = False
+        for i in cur.fetchall():
+            following = True
+    else:
+        following = False
 
     return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list, following=following)
 
