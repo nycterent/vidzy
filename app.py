@@ -132,8 +132,7 @@ def like_post_page():
 
     mycursor = mysql.connection.cursor()
 
-    mycursor.execute("SELECT * FROM likes WHERE short_id = " +
-                     str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
+    mycursor.execute("SELECT * FROM likes WHERE short_id = %s AND user_id = %s;", (str(request.args.get("id")), str(session["user"]["id"])))
 
     myresult = mycursor.fetchall()
 
@@ -181,8 +180,7 @@ def liked_post_page():
 
     mycursor = mysql.connection.cursor()
 
-    mycursor.execute("SELECT * FROM likes WHERE short_id = " +
-                     str(request.args.get("id")) + " AND user_id = " + str(session["user"]["id"]))
+    mycursor.execute("SELECT * FROM likes WHERE short_id = %s AND user_id = %s;", (str(request.args.get("id")), str(session["user"]["id"])))
 
     myresult = mycursor.fetchall()
 
@@ -506,7 +504,7 @@ def short_page(short):
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE id = '" + short + "';")
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE id = %s;", (short,))
     rv = cur.fetchall()[0]
 
     return render_template('short.html', short=rv, session=session, logged_in = "username" in session)
@@ -825,8 +823,7 @@ def follow():
     cur = mysql.connection.cursor()
 
 
-    cur.execute("SELECT * FROM follows WHERE following_id = " +
-                     following_id + " AND follower_id = " + str(session["user"]["id"]))
+    cur.execute("SELECT * FROM follows WHERE following_id = %s AND follower_id = %s;", (following_id, str(session["user"]["id"])))
 
     myresult = cur.fetchall()
 
@@ -847,8 +844,7 @@ def unfollow():
     cur = mysql.connection.cursor()
 
 
-    cur.execute("SELECT * FROM follows WHERE following_id = " +
-                     following_id + " AND follower_id = " + str(session["user"]["id"]))
+    cur.execute("SELECT * FROM follows WHERE following_id = %s AND follower_id = %s;", (following_id, str(session["user"]["id"])))
 
     myresult = cur.fetchall()
 
