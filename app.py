@@ -543,6 +543,13 @@ def login_page():
     else:
         return render_template("login.html")
 
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    session.pop('id', None)
+    session.pop('user', None)
+    return app.make_response(redirect(url_for("login_page")))
+
 @app.route('/register', methods =['GET', 'POST'])
 def register():
     if "username" in session:
