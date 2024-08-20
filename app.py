@@ -13,6 +13,7 @@ from datetime import datetime
 import re
 from flask_wtf.csrf import CSRFProtect
 import math
+import nh3
 
 inproduction = False
 productionpath = os.path.expanduser('~/mysite')
@@ -199,7 +200,7 @@ def index_page():
     if logged_in:
         cur.execute("SELECT p.id, title, url, user_id, date_uploaded, ANY_VALUE(f.id) followid, ANY_VALUE(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
     else:
-        cur.execute("SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 20;")
+        return explore_page()
     rv = cur.fetchall()
 
     return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
@@ -726,6 +727,15 @@ def api_livefeed_page():
         "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s OFFSET %s;", (startAt+2,startAt))
     rv = cur.fetchall()
 
+    nh3_tags = set() # Empty set
+
+    for r in rv:
+        r["title"] = nh3.clean(r["title"], tags=nh3_tags)
+        if "description" in r:
+            if r["description"] != None:
+                r["description"] = nh3.clean(r["description"], tags=nh3_tags)
+        r["url"] = nh3.clean(r["url"], tags=nh3_tags)
+
     return jsonify(rv)
 
 @app.route("/api/explore")
@@ -738,6 +748,15 @@ def api_explore_page():
     cur.execute(
         "SELECT id, title, url, user_id, date_uploaded, description, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT %s OFFSET %s;", (startAt+2,startAt))
     rv = cur.fetchall()
+
+    nh3_tags = set() # Empty set
+
+    for r in rv:
+        r["title"] = nh3.clean(r["title"], tags=nh3_tags)
+        if "description" in r:
+            if r["description"] != None:
+                r["description"] = nh3.clean(r["description"], tags=nh3_tags)
+        r["url"] = nh3.clean(r["url"], tags=nh3_tags)
 
     return jsonify(rv)
 
