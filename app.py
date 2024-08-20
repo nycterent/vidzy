@@ -379,7 +379,7 @@ def explore_page():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 20;")
+        "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 3;")
     rv = cur.fetchall()
 
     return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session)
@@ -390,7 +390,7 @@ def livefeed_page():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT 20;")
+        "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT 3;")
     rv = cur.fetchall()
 
     return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session)
@@ -714,6 +714,19 @@ def api_user_page(user):
 @app.route("/api/vidzy")
 def api_vidzy_page():
     return "vidzy"
+
+@app.route("/api/live_feed")
+def api_livefeed_page():
+    startAt = int(request.args.get('startat'))
+
+    logged_in = "username" in session
+
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s,%s;", (startAt,startAt+2))
+    rv = cur.fetchall()
+
+    return jsonify(rv)
 
 ############ API ROUTES ############
 ####################################

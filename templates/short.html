@@ -17,7 +17,99 @@
         {% include "displayshort.html" %}
     </div>
 
-    {% include "shortjs.html" %}
+    <script>
+        function like(what) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    if (this.responseText == "Success") {
+                        what.getElementsByTagName('img')[0].src = "/static/star-solid.svg";
+                    } else if (this.responseText == "NotLoggedIn") {
+                        window.location.href = "/login";
+                    }
+                }
+            };
+            xmlhttp.open("GET", "/like_post?id=" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText, true);
+            xmlhttp.send();
+        }
+    
+        function comment(what) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    if (this.responseText == "Success") {
+                        what.getElementsByClassName("msgsenttext")[0].innerText = "Message Sent! Reload this page to see your comment.";
+                        what.getElementsByClassName("msgsenttext")[0].style.display = "block";
+                    } else if (this.responseText == "TooManyComments") {
+                        what.getElementsByClassName("msgsenttext")[0].innerText = "Too many comments sent on one video.";
+                        what.getElementsByClassName("msgsenttext")[0].style.display = "block";
+                    } else {
+                        console.error("Error commenting on video, response: " + this.responseText);
+                    }
+                }
+            };
+            xmlhttp.open("GET", "/send_comment?txt=" + encodeURIComponent(what.getElementsByClassName("comment_input")[0].value) + "&shortid=" + what.getElementsByTagName('shortid')[0].innerText, true);
+            xmlhttp.send();
+        }
+    
+        elements = document.querySelectorAll(".like_button_img");
+    
+        for (var i = 0; i < elements.length; i++) {
+            elem = elements[i];
+    
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    if (this.responseText == "true") {
+                        elem.src = "/static/star-solid.svg";
+                    }
+                }
+            };
+            xmlhttp.open("GET", "/if_liked_post?id=" + elem.parentNode.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText, false);
+            xmlhttp.send();
+        }
+    
+    
+        function share(what) {
+            if (navigator.share) {
+                navigator.share({
+                    title: "I like this video",
+                    text: "Come look a this video",
+                    url: "{ request.host_url ]shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText
+                })
+                    .then(() => console.log('Successful share'))
+                    .catch(error => console.log('Error sharing:', error));
+            } else {
+                alert("{ request.host_url ]shorts/" + what.parentNode.parentNode.getElementsByTagName('shortid')[0].innerText);
+            }
+        }
+    
+        function opencomments(what) {
+            if (currentcommentsdiv.style.display == "none") {
+                currentcommentsdiv.style.display = "block";
+            } else {
+                currentcommentsdiv.style.display = "none";
+            }
+        }
+    </script>
+    
+    <script>
+        var currentcommentsdiv = document.getElementsByClassName("comments")[0];
+        currentcommentsdiv.style.display = "none";
+
+        const videos = document.querySelectorAll('video');
+    
+        for (const video of videos) {
+            video.addEventListener('click', function () {
+                console.log('clicked');
+                if (video.paused) {
+                    video.play();
+                } else {
+                    video.pause();
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

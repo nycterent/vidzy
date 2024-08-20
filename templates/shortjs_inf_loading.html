@@ -1,4 +1,84 @@
 <script>
+    var startAt = 2; // since limit is 3, we start at 2 because its 0,1,2
+
+    function requestNewShorts() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                for (var short of JSON.parse(this.responseText)) {
+                const node = document.createElement("div");
+                node.classList.add('video');
+                node.innerHTML = `
+    <shortid style="display: none;">${short["id"]}</shortid>
+
+    <video class="video__player" src="/static/uploads/${short["url"]}" loop controls></video>
+
+    <!-- sidebar -->
+    <div class="videoSidebar">
+        <div class="videoSidebar__button" onclick="like(this)">
+            <img src="/static/star-regular.svg" class="like_button_img">
+            <p>${short["likes"]}</p>
+        </div>
+
+        <div class="videoSidebar__button" onclick="opencomments(this)">
+            <span class="material-icons"> message </span>
+            <p>27</p>
+        </div>
+
+        <div class="videoSidebar__button" onclick="share(this)">
+            <span class="material-icons"> share </span>
+            <p>43</p>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div class="videoFooter">
+        <div class="videoFooter__text">
+            <h3>${short["username"]}</h3>
+            <p class="videoFooter__description">${short["title"]}</p>
+
+            <div class="videoFooter__ticker">
+                <span class="material-icons videoFooter__icon"> music_note </span>
+                <marquee>Original sound</marquee>
+            </div>
+        </div>
+        <img src="https://static.thenounproject.com/png/934821-200.png" alt="" class="videoFooter__record" />
+    </div>
+
+    <div class="comments">
+        <h2>${short["title"]}</h2>
+        <h2>Date Uploaded: ${short["date_uploaded"]}</h2>
+        <div class="scroll">
+            <h2>Description:</h2>
+            <p>${short["description"]}</p>
+            <h2>Comments:</h2>
+            %% for comment in short.id|get_comments %%
+            <div style="border: 1px solid white; padding: 5px;">
+                <p>{ comment.user_id|get_username ]</p>
+                <p>{ comment.comment_text ]</p>
+            </div>
+            %% endfor %%
+        </div>
+        <p style="position: absolute; bottom: 8%; padding-left: 6px; display: none;" class="msgsenttext">Message Sent! Reload this page to see your comment.</p>
+        {% if session.user %}
+        <input type="text" placeholder="Type here..." class="comment_input" style="position: absolute; width: 100%; bottom: 0; height: 7%; font-size: large;">
+        {% else %}
+        <input type="text" disabled placeholder="Sign up to comment on videos" class="comment_input" style="position: absolute; width: 100%; bottom: 0; height: 7%; font-size: large; background: whitesmoke;">
+        {% endif %}
+    </div>
+`;
+
+                document.getElementsByClassName("app__videos")[0].appendChild(node);
+                ob.observe(node.getElementsByTagName("video")[0]);
+                startAt++;
+                }
+            }
+        };
+        xmlhttp.open("GET", "/api/live_feed?startat=" + startAt, true);
+        xmlhttp.send();
+    }
+
     function like(what) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
@@ -102,6 +182,8 @@
                     comment(entries[0].target.parentNode);
                 }
             });
+
+            requestNewShorts();
         }
     }, options);
 
