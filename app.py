@@ -425,6 +425,8 @@ def remote_vidzy_profile_page(user):
     print("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0])
     r = requests.get("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0]).text
     data = json.loads(r)
+    if not "followers" in data:
+        data["followers"] = 0
     return render_template("remote_user.html", shorts=data["videos"], followers_count=data["followers"], user_info=data, full_username=user, logged_in = "username" in session)
 
 @app.route("/remote_user/<user>")
