@@ -21,3 +21,7 @@ MINIFY_HTML = os.environ.get("MINIFY_HTML")
 HOST = os.environ.get("HOST")
 
 ALLOW_UPLOADS = os.environ.get("ALLOW_UPLOADS")
+
+S3_ENABLED = os.environ.get("S3_ENABLED")
+S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME")
+AWS_ENDPOINT_URL = os.environ.get("AWS_ENDPOINT_URL")

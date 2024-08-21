@@ -168,3 +168,9 @@ ALTER TABLE `comments`
 ADD COLUMN `comment_text` VARCHAR(145) NULL AFTER `user_id`;
 ALTER TABLE `shorts`
 ADD COLUMN `description` VARCHAR(400) NULL AFTER `date_uploaded`;
+
+
+--
+-- v0.1.4
+--
+ALTER TABLE `shorts` CHANGE COLUMN `url` `url` VARCHAR(100) NULL DEFAULT NULL ;

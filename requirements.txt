@@ -7,3 +7,4 @@ python-dotenv
 cryptography
 Flask-WTF
 nh3==0.2.18
+boto3

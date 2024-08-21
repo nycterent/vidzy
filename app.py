@@ -15,6 +15,8 @@ from flask_wtf.csrf import CSRFProtect
 import math
 import nh3
 import vidzyconfig
+import boto3
+import uuid
 
 
 CLEANR = re.compile('<.*?>') 
@@ -65,6 +67,9 @@ if app.config['MINIFY_HTML']:
     htmlmin = HTMLMIN(app, remove_comments=True)
 
 mysql.init_app(app)
+
+s3_enabled = app.config['S3_ENABLED']
+print("S3 enabled:", s3_enabled)
 
 @app.template_filter('image_proxy')
 def image_proxy(src):
@@ -807,16 +812,30 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = datetime.today().strftime('%Y%m%d') + secure_filename(file.filename)
-            if vidzyconfig.config["use_absolute_upload_path"]:
-                project_folder = vidzyconfig.config["vidzy_absolute_path"]
-                file.save(os.path.join(project_folder + '/' + app.config['UPLOAD_FOLDER'], filename))
+            if s3_enabled == True:
+                new_filename = uuid.uuid4().hex + '.' + file.filename.rsplit('.', 1)[1].lower()
+
+                bucket_name = app.config['S3_BUCKET_NAME']
+                s3 = boto3.resource("s3")
+                s3.Bucket(bucket_name).upload_fileobj(file, new_filename)
+
+                s3_fileurl = app.config['AWS_ENDPOINT_URL'] + "/" + app.config['S3_BUCKET_NAME'] + "/" + new_filename
+
+                cur = mysql.connection.cursor()
+
+                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded) VALUES (%s,%s,%s,%s)""", (request.form.get("title"), s3_fileurl, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d')) )
+                mysql.connection.commit()
             else:
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                if vidzyconfig.config["use_absolute_upload_path"]:
+                    project_folder = vidzyconfig.config["vidzy_absolute_path"]
+                    file.save(os.path.join(project_folder + '/' + app.config['UPLOAD_FOLDER'], filename))
+                else:
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            cur = mysql.connection.cursor()
+                cur = mysql.connection.cursor()
 
-            cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded) VALUES (%s,%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d')) )
-            mysql.connection.commit()
+                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded) VALUES (%s,%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d')) )
+                mysql.connection.commit()
 
             return redirect(url_for('index_page'))
     return '''
