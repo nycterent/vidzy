@@ -19,7 +19,7 @@ import boto3
 import vidzyconfig
 
 
-CLEANR = re.compile('<.*?>') 
+CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
     cleantext = re.sub(CLEANR, '', raw_html)
     return cleantext
@@ -141,7 +141,7 @@ def send_comment_page():
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT count(*) comment_count FROM `comments` WHERE short_id = %s AND user_id = %s;", (shortid, session["user"]["id"]))
     comment_count = int(cursor.fetchall()[0]["comment_count"])
-    
+
     if comment_count >= 40:
         return "TooManyComments"
 
@@ -465,7 +465,7 @@ def remote_profile_page(user):
         user_info = {}
 
     return render_template("remote_user.html", shorts=shorts, followers_count=followers_count, user_info=user_info, full_username=user, logged_in = "username" in session)
-    
+
 
 @app.route("/hcard/users/<guid>")
 def hcard_page(guid):
@@ -552,7 +552,7 @@ def logout():
 def register():
     if "username" in session:
         return "<script>window.location.href='/';</script>"
-    
+
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         username = request.form['username']
@@ -585,7 +585,7 @@ def user_inbox(username):
 
     app.logger.info(request.headers)
     app.logger.info(request.data)
-    
+
     return Response("", status=202)
 
 @app.route('/.well-known/webfinger')
@@ -610,7 +610,7 @@ def webfinger():
 
     # Servers may discard the result if you do not set the appropriate content type
     response.headers['Content-Type'] = 'application/jrd+json'
-    
+
     return response
 '''
 @app.route('/.well-known/webfinger')
@@ -850,7 +850,7 @@ def follow():
 
     for x in myresult:
         return "Already following"
-    
+
 
     cur.execute("""INSERT INTO follows (follower_id, following_id) VALUES (%s,%s)""", (str(session["user"]["id"]), following_id))
     mysql.connection.commit()
@@ -872,7 +872,7 @@ def unfollow():
     following = False
     for x in myresult:
         following = True
-    
+
     if following == False:
         return "Not currently following user"
 
