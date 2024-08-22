@@ -15,14 +15,14 @@ from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import requests
 import nh3
-import vidzyconfig
 import boto3
+import vidzyconfig
 
 
 CLEANR = re.compile('<.*?>') 
 def cleanhtml(raw_html):
-  cleantext = re.sub(CLEANR, '', raw_html)
-  return cleantext
+    cleantext = re.sub(CLEANR, '', raw_html)
+    return cleantext
 
 
 from cryptography.hazmat.primitives import serialization as crypto_serialization
@@ -230,7 +230,7 @@ def admin_panel():
     for short in shorts:
         if not short["date_uploaded"] in videos_on_date_uploaded:
             videos_on_date_uploaded[short["date_uploaded"]] = []
-        
+
         videos_on_date_uploaded[short["date_uploaded"]].append(short)
 
     print(videos_on_date_uploaded)
