@@ -86,11 +86,14 @@
     var ob = new IntersectionObserver((entries, observer) => {
         console.log(entries[0].isIntersecting);
         if (!entries[0].isIntersecting) {
+            entries[0].target.pause();
+            entries[0].target.muted = true;
             currentcommentsdiv = entries[0].target.parentNode.getElementsByClassName("comments")[0];
             currentcommentsdiv.style.display = "none";
         }
         else {
             entries[0].target.currentTime = 0;
+            entries[0].target.muted = false;
             entries[0].target.play();
             currentcommentsdiv = entries[0].target.parentNode.getElementsByClassName("comments")[0];
             currentcommentsdiv.style.display = "none";

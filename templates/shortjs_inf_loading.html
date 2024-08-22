@@ -11,7 +11,6 @@
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                console.log(this.responseText);
                 for (var short of JSON.parse(this.responseText)) {
                 const node = document.createElement("div");
                 node.classList.add('video');
@@ -176,12 +175,17 @@
     var ob = new IntersectionObserver((entries, observer) => {
         console.log(entries[0].isIntersecting);
         if (!entries[0].isIntersecting) {
+            entries[0].target.pause();
+            entries[0].target.muted = true;
+
             currentcommentsdiv = entries[0].target.parentNode.getElementsByClassName("comments")[0];
             currentcommentsdiv.style.display = "none";
         }
         else {
             entries[0].target.currentTime = 0;
+            entries[0].target.muted = false;
             entries[0].target.play();
+            
             currentcommentsdiv = entries[0].target.parentNode.getElementsByClassName("comments")[0];
             currentcommentsdiv.style.display = "none";
 
@@ -192,8 +196,6 @@
                     comment(entries[0].target.parentNode);
                 }
             });
-
-            requestNewShorts();
         }
     }, options);
 
