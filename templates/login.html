@@ -1,84 +1,253 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log in - Vidzy</title>
-</head>
-
-<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .loginInput {
-            border-radius: 8px;
-            border: 1px solid darkgrey;
-            font-size: 1.2em;
+        :root {
+            --bg-color: #121212;
+            --text-color: #FFFFFF;
+            --secondary-text-color: #B0B0B0;
+            --input-bg-color: #1E1E1E;
+            --input-border-color: #333333;
+            --button-bg-color: #1E1E1E;
+            --button-hover-color: #2C2C2C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100%;
         }
 
         .container {
-            background: white;
-            margin: auto;
-            width: 20%;
-            border-radius: 10px;
+            display: flex;
+            height: 100%;
         }
 
-        body {
-            background: rgb(2, 0, 36);
-            background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(131, 131, 240, 1) 35%, rgba(0, 212, 255, 1) 100%);
+        .login-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 5% 10%;
+        }
+
+        .logo {
+            width: 120px;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .loginInput {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--input-bg-color);
+            border: 1px solid var(--input-border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .loginInput:focus {
+            outline: none;
+            border-color: var(--text-color);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--secondary-text-color);
         }
 
         .loginbutton {
-            background-color: green;
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            border-radius: 10px;
+            background-color: var(--button-bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--input-border-color);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
         }
 
         .loginbutton:hover {
-            background-color: #4CAF50;
+            background-color: var(--button-hover-color);
         }
-    </style>
 
-    <div style="height: 20%;"></div>
+        .signup-link, .open-source-info {
+            margin-top: 2rem;
+            color: var(--secondary-text-color);
+        }
 
-    <center>
-        <div class="container">
+        .signup-link a, .open-source-info a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
 
-            <br>
+        .signup-link a:hover, .open-source-info a:hover {
+            opacity: 0.8;
+        }
 
-            <img src="/static/logo.png" style="width: 20%;">
+        .animation-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1A1A1A;
+            padding: 2rem;
+        }
 
-            <h1>Log in to Vidzy</h1>
+        .typing-container {
+            font-size: 1.5rem;
+            font-family: monospace;
+            padding: 20px;
+            background-color: #2A2A2A;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
 
-            <form action="/login" enctype="multipart/form-data" method="POST">
-                <input type="text" name="username" placeholder="Username" class="loginInput" required>
-                <br><br>
-                <input type="password" name="password" placeholder="Password" class="loginInput" id="pswInput" required>
-                <input type="checkbox" onclick="showPSW()" style="margin-left: -22px;">
-                <br><br>
-                <button name="login" class="loginbutton">Log in</button>
-            </form>
+        .typing-text::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+        }
 
-            <p style="font-size: 17px;">Don't have an account yet? <a style="text-decoration: none;" href="{{url_for('register')}}"> Sign up here</p>
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
 
-            <br><br>
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
 
-        </div>
-    </center>
+            .login-section {
+                padding: 10% 5%;
+            }
 
-    <script>
-        function showPSW() {
-            var x = document.getElementById("pswInput");
-            if (x.type === "password") {
-                x.type = "text";
-            } else {
-                x.type = "password";
+            .animation-section {
+                display: none;
             }
         }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-section">
+            <img src="/static/logo.svg" alt="Vidzy Logo" class="logo">
+            <h1>Log in to Vidzy</h1>
+            <form action="/login" method="POST" class="login-form">
+                <div class="input-group">
+                    <input type="text" name="username" placeholder="Username" class="loginInput" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Password" class="loginInput" id="pswInput" required>
+                    <span class="password-toggle" onclick="togglePassword()"><i class="far fa-eye"></i></span>
+                </div>
+                <button type="submit" name="login" class="loginbutton">Log in</button>
+            </form>
+            <p class="signup-link">Don't have an account yet? <a href="{{url_for('register')}}">Sign up here</a></p>
+            <p class="open-source-info">Vidzy is open source! Check out our <a href="https://github.com/vidzy-social/vidzy" target="_blank">GitHub repository</a>.</p>
+        </div>
+        <div class="animation-section">
+            <div class="typing-container">
+                <span class="typing-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById("pswInput");
+            const passwordToggle = document.querySelector(".password-toggle i");
+            
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                passwordToggle.classList.remove("fa-eye");
+                passwordToggle.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                passwordToggle.classList.remove("fa-eye-slash");
+                passwordToggle.classList.add("fa-eye");
+            }
+        }
+
+        const texts = [
+            "Welcome to Vidzy!",
+            "Share your moments...",
+            "Connect with friends...",
+            "Discover new content...",
+            "Start your journey now!",
+            "Open source and free!"
+        ];
+
+        let textIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typingSpeed = 100;
+
+        function typeText() {
+            const currentText = texts[textIndex];
+            const typingElement = document.querySelector('.typing-text');
+
+            if (isDeleting) {
+                typingElement.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+                typingSpeed = 50;
+            } else {
+                typingElement.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+                typingSpeed = 100;
+            }
+
+            if (!isDeleting && charIndex === currentText.length) {
+                isDeleting = true;
+                typingSpeed = 1000; // Pause before deleting
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % texts.length;
+                typingSpeed = 500; // Pause before typing next text
+            }
+
+            setTimeout(typeText, typingSpeed);
+        }
+
+        typeText();
     </script>
-
 </body>
-
 </html>
