@@ -178,7 +178,10 @@ def index_page():
 
     cur = mysql.connection.cursor()
     if logged_in:
-        cur.execute("SELECT p.id, title, url, user_id, date_uploaded, MIN(f.id) followid, MIN(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
+        cur.execute(
+            "SELECT p.id, title, url, user_id, date_uploaded, MIN(f.id) followid, MIN(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;",
+            (str(session["user"]["id"]), str(session["user"]["id"]),)
+        )
     else:
         return explore_page()
     rv = cur.fetchall()
@@ -704,7 +707,10 @@ def api_user_page(user):
     cur.execute("SELECT id, username, bio, (SELECT count(*) FROM `follows` WHERE following_id = u.id) followers FROM `users` u WHERE (`username` = %s);", (user,))
     rv = cur.fetchall()[0]
 
-    cur.execute("SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE user_id=%s;", (rv["id"],))
+    cur.execute(
+        "SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE user_id=%s;",
+        (rv["id"],)
+    )
     shorts = cur.fetchall()
 
     for row in shorts:
