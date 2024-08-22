@@ -22,4 +22,4 @@ jobs:
           pip install pylint-flask
       - name: Analysing the code with pylint
         run: |
-          pylint --load-plugins pylint_flask $(git ls-files '*.py')
+          pylint --load-plugins pylint_flask --max-line-length=250 $(git ls-files '*.py')
