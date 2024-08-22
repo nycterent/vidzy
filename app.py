@@ -19,7 +19,7 @@ import boto3
 import vidzyconfig
 
 
-CLEANR = re.compile('<.*?>') 
+CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
     cleantext = re.sub(CLEANR, '', raw_html)
     return cleantext
@@ -48,7 +48,7 @@ public_key = key.public_key().public_bytes(
 
 
 
-vidzy_version = "v0.1.3"
+VIDZY_VERSION = "v0.1.3"
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'webm'}
@@ -57,7 +57,7 @@ mysql = MySQL()
 app = Flask(__name__, static_url_path='')
 csrf = CSRFProtect(app)
 
-app.jinja_env.globals.update(vidzy_version=vidzy_version)
+app.jinja_env.globals.update(VIDZY_VERSION=VIDZY_VERSION)
 
 app.config.from_pyfile('settings.py', silent=False)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -141,7 +141,7 @@ def send_comment_page():
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT count(*) comment_count FROM `comments` WHERE short_id = %s AND user_id = %s;", (shortid, session["user"]["id"]))
     comment_count = int(cursor.fetchall()[0]["comment_count"])
-    
+
     if comment_count >= 40:
         return "TooManyComments"
 
@@ -178,7 +178,10 @@ def index_page():
 
     cur = mysql.connection.cursor()
     if logged_in:
-        cur.execute("SELECT p.id, title, url, user_id, date_uploaded, MIN(f.id) followid, MIN(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;", (str(session["user"]["id"]), str(session["user"]["id"]), ))
+        cur.execute(
+            "SELECT p.id, title, url, user_id, date_uploaded, MIN(f.id) followid, MIN(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;",
+            (str(session["user"]["id"]), str(session["user"]["id"]),)
+        )
     else:
         return explore_page()
     rv = cur.fetchall()
@@ -462,7 +465,7 @@ def remote_profile_page(user):
         user_info = {}
 
     return render_template("remote_user.html", shorts=shorts, followers_count=followers_count, user_info=user_info, full_username=user, logged_in = "username" in session)
-    
+
 
 @app.route("/hcard/users/<guid>")
 def hcard_page(guid):
@@ -549,7 +552,7 @@ def logout():
 def register():
     if "username" in session:
         return "<script>window.location.href='/';</script>"
-    
+
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         username = request.form['username']
@@ -582,7 +585,7 @@ def user_inbox(username):
 
     app.logger.info(request.headers)
     app.logger.info(request.data)
-    
+
     return Response("", status=202)
 
 @app.route('/.well-known/webfinger')
@@ -607,7 +610,7 @@ def webfinger():
 
     # Servers may discard the result if you do not set the appropriate content type
     response.headers['Content-Type'] = 'application/jrd+json'
-    
+
     return response
 '''
 @app.route('/.well-known/webfinger')
@@ -678,7 +681,7 @@ def instance_info():
         "title": "Vidzy",
         "short_description": "The testing server operated by Vidzy",
         "description": "",
-        "version": vidzy_version
+        "version": VIDZY_VERSION
     }
 
     resp = Response(json.dumps(info))
@@ -704,7 +707,10 @@ def api_user_page(user):
     cur.execute("SELECT id, username, bio, (SELECT count(*) FROM `follows` WHERE following_id = u.id) followers FROM `users` u WHERE (`username` = %s);", (user,))
     rv = cur.fetchall()[0]
 
-    cur.execute("SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE user_id=%s;", (rv["id"],))
+    cur.execute(
+        "SELECT p.id, p.title, p.user_id, p.url, p.description, p.date_uploaded, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE user_id=%s;",
+        (rv["id"],)
+    )
     shorts = cur.fetchall()
 
     for row in shorts:
@@ -844,7 +850,7 @@ def follow():
 
     for x in myresult:
         return "Already following"
-    
+
 
     cur.execute("""INSERT INTO follows (follower_id, following_id) VALUES (%s,%s)""", (str(session["user"]["id"]), following_id))
     mysql.connection.commit()
@@ -866,7 +872,7 @@ def unfollow():
     following = False
     for x in myresult:
         following = True
-    
+
     if following == False:
         return "Not currently following user"
 
