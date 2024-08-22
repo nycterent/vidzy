@@ -71,10 +71,6 @@ mysql.init_app(app)
 s3_enabled = app.config['S3_ENABLED']
 print("S3 enabled:", s3_enabled)
 
-@app.template_filter('image_proxy')
-def image_proxy(src):
-    return "/proxy/?url=" + quote(str(src))
-
 
 @app.template_filter('get_gravatar')
 def get_gravatar(email):
@@ -110,23 +106,6 @@ def get_user_info(userid):
 @app.template_filter('get_username')
 def get_username(userid):
     return get_user_info(userid)["username"]
-
-@app.route('/proxy/')
-def route_proxy():
-    url = request.args.get("url")
-    if url != None:
-        if re.search(r"https://media.*?/media_attachments/", url):
-            data = requests.get(unquote(url))
-            content_type = data.headers["content-type"]
-            if content_type.startswith("image/") or content_type.startswith("video/"):
-                return Response(data.content, content_type=data.headers["content-type"])
-            else:
-                return Response(render_template("400.html"), status=400)
-        else:
-            return Response(render_template("400.html"), status=400)
-    else:
-        return Response(render_template("400.html"), status=400)
-
 
 @app.route("/like_post")
 def like_post_page():
