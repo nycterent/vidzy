@@ -1,22 +1,22 @@
+import hashlib
+import json
+import re
+import os
+import math
+import uuid
+
 from flask import *
 from flask_mysqldb import MySQL
 from flask_htmlmin import HTMLMIN
 
-import hashlib
-import requests
-import json
 from urllib.parse import quote, unquote, urlparse
-import re
-import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
-import re
 from flask_wtf.csrf import CSRFProtect
-import math
+import requests
 import nh3
 import vidzyconfig
 import boto3
-import uuid
 
 
 CLEANR = re.compile('<.*?>') 
