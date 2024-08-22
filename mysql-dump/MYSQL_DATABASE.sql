@@ -174,3 +174,9 @@ ADD COLUMN `description` VARCHAR(400) NULL AFTER `date_uploaded`;
 -- v0.1.4
 --
 ALTER TABLE `shorts` CHANGE COLUMN `url` `url` VARCHAR(100) NULL DEFAULT NULL ;
+
+--
+-- v0.1.5
+--
+ALTER TABLE `vidzy`.`shorts` 
+ADD COLUMN `tags` VARCHAR(100) NULL AFTER `description`;
