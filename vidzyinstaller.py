@@ -14,7 +14,9 @@ print("        Installer        ")
 
 print("\n")
 
-i = input("Vidzy installer will guide you through the installation of Vidzy on your server. Press enter to continue")
+i = input(
+    "Vidzy installer will guide you through the installation of Vidzy on your server. Note: Vidzy installer is in alpha and may not work properly. Press enter to continue"
+)
 
 os.system("clear")
 
