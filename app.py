@@ -48,7 +48,7 @@ public_key = key.public_key().public_bytes(
 
 
 
-vidzy_version = "v0.1.3"
+VIDZY_VERSION = "v0.1.3"
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'webm'}
@@ -57,7 +57,7 @@ mysql = MySQL()
 app = Flask(__name__, static_url_path='')
 csrf = CSRFProtect(app)
 
-app.jinja_env.globals.update(vidzy_version=vidzy_version)
+app.jinja_env.globals.update(VIDZY_VERSION=VIDZY_VERSION)
 
 app.config.from_pyfile('settings.py', silent=False)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -681,7 +681,7 @@ def instance_info():
         "title": "Vidzy",
         "short_description": "The testing server operated by Vidzy",
         "description": "",
-        "version": vidzy_version
+        "version": VIDZY_VERSION
     }
 
     resp = Response(json.dumps(info))
