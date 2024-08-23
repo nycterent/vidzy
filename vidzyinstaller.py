@@ -3,15 +3,15 @@ import sys
 
 os.system("clear")
 
-print(" _   _ _     _           ")
-print("| | | (_)   | |          ")
-print("| | | |_  __| |_____   _ ")
-print("| | | | |/ _` |_  / | | |")
-print("\ \_/ / | (_| |/ /| |_| |")
-print(" \___/|_|\__,_/___|\__, |")
-print("                    __/ |")
-print("                   |___/ ")
-print("        Installer        ")
+print(r" _   _ _     _           ")
+print(r"| | | (_)   | |          ")
+print(r"| | | |_  __| |_____   _ ")
+print(r"| | | | |/ _` |_  / | | |")
+print(r"\ \_/ / | (_| |/ /| |_| |")
+print(r" \___/|_|\__,_/___|\__, |")
+print(r"                    __/ |")
+print(r"                   |___/ ")
+print(r"        Installer        ")
 
 print("\n")
 

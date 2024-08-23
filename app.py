@@ -467,12 +467,16 @@ def remote_profile_page(user):
                         shorts.append( { "id": 1, "url": post["object"]["attachment"][0]["url"], "username": user, "title": cleanhtml(post["object"]["content"]) } )
 
     if variant == "mastodon":
-        followers_count = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/followers", headers={"Accept":"application/activity+json"}).text)["totalItems"]
+        followers_count = json.loads(
+            requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/followers", headers={"Accept":"application/activity+json"}, timeout=20).text
+        )["totalItems"]
     else:
         followers_count = 0
 
     if variant == "mastodon":
-        user_info = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0], headers={"Accept":"application/activity+json"}).text)
+        user_info = json.loads(
+            requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0], headers={"Accept":"application/activity+json"}, timeout=20).text
+        )
     else:
         user_info = {}
 
@@ -752,7 +756,7 @@ def api_livefeed_page():
     for r in rv:
         r["title"] = nh3.clean(r["title"], tags=nh3_tags)
         if "description" in r:
-            if r["description"] != None:
+            if r["description"] is not None:
                 r["description"] = nh3.clean(r["description"], tags=nh3_tags)
         r["url"] = nh3.clean(r["url"], tags=nh3_tags)
 
@@ -774,7 +778,7 @@ def api_explore_page():
     for r in rv:
         r["title"] = nh3.clean(r["title"], tags=nh3_tags)
         if "description" in r:
-            if r["description"] != None:
+            if r["description"] is not None:
                 r["description"] = nh3.clean(r["description"], tags=nh3_tags)
         if "tags" in r:
             if r["tags"] is not None:
@@ -889,7 +893,7 @@ def unfollow():
     for x in myresult:
         following = True
 
-    if following == False:
+    if not following:
         return "Not currently following user"
 
     cur.execute("""DELETE FROM `follows` WHERE `follower_id` = %s AND `following_id` = %s;""", (str(session["user"]["id"]), following_id))
