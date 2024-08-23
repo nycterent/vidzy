@@ -4,6 +4,8 @@ import re
 import os
 import math
 import uuid
+from operator import itemgetter
+from datetime import date
 
 from flask import *
 from flask_mysqldb import MySQL
@@ -182,11 +184,25 @@ def index_page():
             "SELECT p.id, title, url, user_id, date_uploaded, MIN(f.id) followid, MIN(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;",
             (str(session["user"]["id"]), str(session["user"]["id"]),)
         )
+
+        rv = cur.fetchall()
+
+        instances = json.loads(requests.get("https://raw.githubusercontent.com/vidzy-social/vidzy-social.github.io/main/instancelist.json").text)
+
+        for i in instances:
+            if requests.get("https://vo.group.lt/api/vidzy").text != "vidzy":
+                print("Skipped instance: " + i)
+            else:
+                r = json.loads(requests.get(i + "/api/live_feed?startat=0").text)
+                c = r[0]
+                c["url"] = i + "/static/uploads/" + c["url"]
+                rv = rv + (c,)
+
+        rv = sorted(rv, key=itemgetter('id'), reverse=True)
+
+        return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
     else:
         return explore_page()
-    rv = cur.fetchall()
-
-    return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
 
 @app.route("/settings", methods=['POST', 'GET'])
 def settings_page():
