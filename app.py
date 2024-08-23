@@ -4,6 +4,12 @@ import re
 import os
 import math
 import uuid
+
+import requests
+import nh3
+import boto3
+import vidzyconfig
+
 from operator import itemgetter
 from datetime import date
 
@@ -15,21 +21,15 @@ from urllib.parse import quote, unquote, urlparse
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
-import requests
-import nh3
-import boto3
-import vidzyconfig
 
+from cryptography.hazmat.primitives import serialization as crypto_serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import default_backend as crypto_default_backend
 
 CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
     cleantext = re.sub(CLEANR, '', raw_html)
     return cleantext
-
-
-from cryptography.hazmat.primitives import serialization as crypto_serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend as crypto_default_backend
 
 key = rsa.generate_private_key(
     backend=crypto_default_backend(),
@@ -46,8 +46,6 @@ public_key = key.public_key().public_bytes(
     crypto_serialization.Encoding.PEM,
     crypto_serialization.PublicFormat.SubjectPublicKeyInfo
 )
-
-
 
 
 VIDZY_VERSION = "v0.1.5"
@@ -72,7 +70,6 @@ mysql.init_app(app)
 
 s3_enabled = app.config['S3_ENABLED']
 print("S3 enabled:", s3_enabled)
-
 
 @app.template_filter('get_gravatar')
 def get_gravatar(email):
@@ -159,7 +156,7 @@ def send_comment_page():
 
 @app.route("/if_liked_post")
 def liked_post_page():
-    if not "user" in session:
+    if "user" not in session:
         return "NotLoggedIn"
 
     mycursor = mysql.connection.cursor()
@@ -258,7 +255,7 @@ def admin_panel():
 
 @app.route("/admin/banform")
 def ban_form():
-    if not "user" in session:
+    if "user" not in session:
         return "You are not logged in"
     if not session["user"]["is_admin"] == 1:
         return "You are not an admin"
@@ -281,7 +278,7 @@ def ban_form():
 def ban_user():
     csrf.protect()
 
-    if not "user" in session:
+    if "user" not in session:
         return "NotLoggedIn"
     if not session["user"]["is_admin"] == 1:
         return "NotAdmin"
@@ -296,7 +293,7 @@ def ban_user():
 
 @app.route("/admin/deletevidform")
 def delete_vid_form():
-    if not "user" in session:
+    if "user" not in session:
         return "You are not logged in"
     if not session["user"]["is_admin"] == 1:
         return "You are not an admin"
@@ -316,7 +313,7 @@ def delete_vid_form():
 def delete_vid():
     csrf.protect()
 
-    if not "user" in session:
+    if "user" not in session:
         return "NotLoggedIn"
     if not session["user"]["is_admin"] == 1:
         return "NotAdmin"
@@ -331,7 +328,7 @@ def delete_vid():
 
 @app.route("/admin/promoteform")
 def promote_form():
-    if not "user" in session:
+    if "user" not in session:
         return "You are not logged in"
     if not session["user"]["is_admin"] == 1:
         return "You are not an admin"
@@ -354,7 +351,7 @@ def promote_form():
 def promote_user():
     csrf.protect()
 
-    if not "user" in session:
+    if "user" not in session:
         return "NotLoggedIn"
     if not session["user"]["is_admin"] == 1:
         return "NotAdmin"
@@ -372,7 +369,7 @@ def promote_user():
 
 @app.route("/search")
 def search_page():
-    if not "username" in session:
+    if "username" not in session:
         return "<script>window.location.href='/login';</script>"
 
     query = request.args.get('q')
