@@ -27,6 +27,15 @@
         "design",
         "code"
       ]
+    },
+    {
+      "login": "nycterent",
+      "name": "Marty",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81133?v=4",
+      "profile": "https://github.com/nycterent",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
