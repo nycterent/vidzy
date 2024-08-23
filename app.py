@@ -406,9 +406,8 @@ def profile_page(user):
     if "@" in user:
         if user.split("@")[1] != str(urlparse(request.base_url).netloc):
             return remote_profile_page(user)
-        else:
-            return remote_profile_page(user) # TEMPORARY FOR TESTING
-            user = user.split("@")[0]
+        return remote_profile_page(user) # TEMPORARY FOR TESTING
+        user = user.split("@")[0]
 
     cur = mysql.connection.cursor()
 
@@ -454,7 +453,7 @@ def remote_profile_page(user):
     shorts = []
 
     for post in outbox["orderedItems"]:
-        if type(post["object"]) is dict:
+        if isinstance(post["object"], dict):
             if variant == "peertube":
                 for i in post["object"]["url"][1]["tag"]:
                     if "mediaType" in i:
