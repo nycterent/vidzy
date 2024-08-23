@@ -766,7 +766,7 @@ def allowed_file(filename):
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    if not "username" in session:
+    if 'username' not in session:
         return "<script>window.location.href='/login';</script>"
 
     if "ALLOW_UPLOADS" in vidzyconfig.config:
