@@ -108,7 +108,7 @@ def get_username(userid):
 
 @app.route("/like_post")
 def like_post_page():
-    if not "user" in session:
+    if "user" not in session:
         return "NotLoggedIn"
 
     mycursor = mysql.connection.cursor()
@@ -132,7 +132,7 @@ def like_post_page():
 
 @app.route("/send_comment")
 def send_comment_page():
-    if not "user" in session:
+    if "user" not in session:
         return "NotLoggedIn"
 
     shortid = request.args.get("shortid")
@@ -198,8 +198,7 @@ def index_page():
         rv = sorted(rv, key=itemgetter('id'), reverse=True)
 
         return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
-    else:
-        return explore_page()
+    return explore_page()
 
 @app.route("/settings", methods=['POST', 'GET'])
 def settings_page():
@@ -222,7 +221,7 @@ def settings_page():
 
 @app.route("/admin")
 def admin_panel():
-    if not "user" in session:
+    if "user" not in session:
         return "<script>window.location.href='/login';</script>"
 
     if not session["user"]["is_admin"] == 1:
@@ -389,7 +388,7 @@ def explore_page():
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 3;")
     rv = cur.fetchall()
 
-    return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session, page="explore")
+    return render_template('explore.html', shorts=rv, session=session, logged_in, page="explore")
 
 @app.route("/livefeed")
 def livefeed_page():
@@ -400,7 +399,7 @@ def livefeed_page():
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT 3;")
     rv = cur.fetchall()
 
-    return render_template('explore.html', shorts=rv, session=session, logged_in = "username" in session, page="livefeed")
+    return render_template('explore.html', shorts=rv, session=session, logged_in, page="livefeed")
 
 @app.route("/users/<user>")
 def profile_page(user):
@@ -443,7 +442,7 @@ def remote_profile_page(user):
         print("Vidzy instance detected")
         return remote_vidzy_profile_page(user)
 
-    varient = ""
+    variant = ""
 
     try:
         outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/outbox?page=true").text)
@@ -513,7 +512,7 @@ def profile_feed_page(user):
 
 @app.route("/shorts/<short>")
 def short_page(short):
-    if not "username" in session:
+    if "username" not in session:
         return "<script>window.location.href='/login';</script>"
 
     cur = mysql.connection.cursor()
@@ -739,13 +738,13 @@ def api_vidzy_page():
 
 @app.route("/api/live_feed")
 def api_livefeed_page():
-    startAt = int(request.args.get('startat'))
+    start_at = int(request.args.get('startat'))
 
     logged_in = "username" in session
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s OFFSET %s;", (startAt+2,startAt))
+        "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s OFFSET %s;", (start_at+2,start_at))
     rv = cur.fetchall()
 
     nh3_tags = set() # Empty set
@@ -761,13 +760,13 @@ def api_livefeed_page():
 
 @app.route("/api/explore")
 def api_explore_page():
-    startAt = int(request.args.get('startat'))
+    start_at = int(request.args.get('startat'))
 
     logged_in = "username" in session
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT id, title, url, user_id, date_uploaded, description, tags, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT %s OFFSET %s;", (startAt+2,startAt))
+        "SELECT id, title, url, user_id, date_uploaded, description, tags, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT %s OFFSET %s;", (start_at+2,start_at))
     rv = cur.fetchall()
 
     nh3_tags = set() # Empty set
@@ -778,7 +777,7 @@ def api_explore_page():
             if r["description"] != None:
                 r["description"] = nh3.clean(r["description"], tags=nh3_tags)
         if "tags" in r:
-            if r["tags"] != None:
+            if r["tags"] is not None:
                 r["tags"] = nh3.clean(r["tags"], tags=nh3_tags)
                 r["tags"] = r["tags"].split(",")
         r["url"] = nh3.clean(r["url"], tags=nh3_tags)
@@ -798,7 +797,7 @@ def upload_file():
         return "<script>window.location.href='/login';</script>"
 
     if "ALLOW_UPLOADS" in vidzyconfig.config:
-        if vidzyconfig.config["ALLOW_UPLOADS"] == False:
+        if vidzyconfig.config["ALLOW_UPLOADS"] is False:
             return "This instance does not allow uploading videos"
 
     if request.method == 'POST':
@@ -814,7 +813,7 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = datetime.today().strftime('%Y%m%d') + secure_filename(file.filename)
-            if s3_enabled == True:
+            if s3_enabled is True:
                 new_filename = uuid.uuid4().hex + '.' + file.filename.rsplit('.', 1)[1].lower()
 
                 bucket_name = app.config['S3_BUCKET_NAME']
