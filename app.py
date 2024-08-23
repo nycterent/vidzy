@@ -628,36 +628,6 @@ def webfinger():
     response.headers['Content-Type'] = 'application/jrd+json'
 
     return response
-'''
-@app.route('/.well-known/webfinger')
-def webfinger():
-    info = {}
-
-    info["subject"] = request.args.get("resource")
-
-    info["aliases"] = [request.host_url + "users/" +
-                       request.args.get("resource").replace("acct:", "").split("@")[0]]
-
-    info["links"] = [
-        {
-            "rel": "http://microformats.org/profile/hcard",
-            "type": "text/html",
-            "href": request.host_url + "hcard/users/" + request.args.get("resource").replace("acct:", "").split("@")[0].encode("utf-8").hex()
-        },
-        {
-            "rel": "http://joindiaspora.com/seed_location",
-            "type": "text/html",
-            "href": request.host_url
-        }
-    ]
-
-    if info["subject"].split("@")[1] != request.host:
-        return " "
-
-    resp = Response(json.dumps(info))
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
-'''
 
 @app.route('/activitypub/actor/<user>')
 def activitypub_actor(user):
