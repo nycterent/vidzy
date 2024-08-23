@@ -1,4 +1,5 @@
 import os
+import sys
 
 os.system("clear")
 
@@ -24,7 +25,7 @@ print("Please confirm that you have the following packages installed:\nPython3\n
 i = input("(Y/n) ")
 
 if i.lower() == "n":
-    exit()
+    sys.exit()
 
 os.system("clear")
 
