@@ -184,13 +184,13 @@ def index_page():
 
         rv = cur.fetchall()
 
-        instances = json.loads(requests.get("https://raw.githubusercontent.com/vidzy-social/vidzy-social.github.io/main/instancelist.json").text)
+        instances = json.loads(requests.get("https://raw.githubusercontent.com/vidzy-social/vidzy-social.github.io/main/instancelist.json", timeout=20).text)
 
         for i in instances:
-            if requests.get("https://vo.group.lt/api/vidzy").text != "vidzy":
+            if requests.get(i + "/api/vidzy", timeout=20).text != "vidzy":
                 print("Skipped instance: " + i)
             else:
-                r = json.loads(requests.get(i + "/api/live_feed?startat=0").text)
+                r = json.loads(requests.get(i + "/api/live_feed?startat=0", timeout=20).text)
                 for c in r:
                     c["url"] = i + "/static/uploads/" + c["url"]
                     rv = rv + (c,)
@@ -430,7 +430,7 @@ def profile_page(user):
 
 def remote_vidzy_profile_page(user):
     print("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0])
-    r = requests.get("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0]).text
+    r = requests.get("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0], timeout=20).text
     data = json.loads(r)
     if not "followers" in data:
         data["followers"] = 0
@@ -438,17 +438,17 @@ def remote_vidzy_profile_page(user):
 
 @app.route("/remote_user/<user>")
 def remote_profile_page(user):
-    if requests.get("http://" + user.split("@")[1] + "/api/vidzy").text == "vidzy":
+    if requests.get("http://" + user.split("@")[1] + "/api/vidzy", timeout=20).text == "vidzy":
         print("Vidzy instance detected")
         return remote_vidzy_profile_page(user)
 
     variant = ""
 
     try:
-        outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/outbox?page=true").text)
+        outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/users/" + user.split("@")[0] + "/outbox?page=true", timeout=20).text)
         variant = "mastodon"
     except json.decoder.JSONDecodeError:
-        outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/accounts/" + user.split("@")[0] + "/outbox?page=1", headers={"Accept":"application/activity+json"}).text)
+        outbox = json.loads(requests.get("https://" + user.split("@")[1] + "/accounts/" + user.split("@")[0] + "/outbox?page=1", headers={"Accept":"application/activity+json"}, timeout=20).text)
         variant = "peertube"
 
     shorts = []
