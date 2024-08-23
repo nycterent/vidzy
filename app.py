@@ -4,6 +4,7 @@ import re
 import os
 import math
 import uuid
+import collections
 
 import requests
 import nh3
@@ -248,7 +249,7 @@ def admin_panel():
 
         videos_on_date_uploaded[short["date_uploaded"]].append(short)
 
-    print(videos_on_date_uploaded)
+    videos_on_date_uploaded = collections.OrderedDict(sorted(videos_on_date_uploaded.items()))
 
     return render_template('admin_panel.html', session=session, total_accounts=total_accounts, accounts=accounts, shorts=shorts, total_shorts=total_shorts, videos_on_date_uploaded=videos_on_date_uploaded)
 
