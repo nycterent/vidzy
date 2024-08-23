@@ -1,3 +1,11 @@
 HTML:
   - changed-files:
-      - any-glob-to-any-file: templates/**
+      - any-glob-to-any-file: "**/*.html"
+
+Python:
+  - changed-files:
+      - any-glob-to-any-file: "**/*.py"
+
+Markdown:
+  - changed-files:
+      - any-glob-to-any-file: "**/*.md"
