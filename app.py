@@ -770,7 +770,7 @@ def api_explore_page():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT id, title, url, user_id, date_uploaded, description, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT %s OFFSET %s;", (startAt+2,startAt))
+        "SELECT id, title, url, user_id, date_uploaded, description, tags, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT %s OFFSET %s;", (startAt+2,startAt))
     rv = cur.fetchall()
 
     nh3_tags = set() # Empty set
@@ -780,6 +780,10 @@ def api_explore_page():
         if "description" in r:
             if r["description"] != None:
                 r["description"] = nh3.clean(r["description"], tags=nh3_tags)
+        if "tags" in r:
+            if r["tags"] != None:
+                r["tags"] = nh3.clean(r["tags"], tags=nh3_tags)
+                r["tags"] = r["tags"].split(",")
         r["url"] = nh3.clean(r["url"], tags=nh3_tags)
 
     return jsonify(rv)
