@@ -388,7 +388,7 @@ def explore_page():
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 3;")
     rv = cur.fetchall()
 
-    return render_template('explore.html', shorts=rv, session=session, logged_in, page="explore")
+    return render_template('explore.html', shorts=rv, session=session, logged_in = logged_in , page="explore")
 
 @app.route("/livefeed")
 def livefeed_page():
@@ -399,7 +399,7 @@ def livefeed_page():
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT 3;")
     rv = cur.fetchall()
 
-    return render_template('explore.html', shorts=rv, session=session, logged_in, page="livefeed")
+    return render_template('explore.html', shorts=rv, session=session, logged_in = logged_in, page="livefeed")
 
 @app.route("/users/<user>")
 def profile_page(user):
