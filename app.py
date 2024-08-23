@@ -194,9 +194,9 @@ def index_page():
                 print("Skipped instance: " + i)
             else:
                 r = json.loads(requests.get(i + "/api/live_feed?startat=0").text)
-                c = r[0]
-                c["url"] = i + "/static/uploads/" + c["url"]
-                rv = rv + (c,)
+                for c in r:
+                    c["url"] = i + "/static/uploads/" + c["url"]
+                    rv = rv + (c,)
 
         rv = sorted(rv, key=itemgetter('id'), reverse=True)
 
