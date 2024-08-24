@@ -62,7 +62,7 @@
 
     .sidenav {
         height: calc(100% - 48px);
-        width: 175px;
+        width: 200px;
         position: fixed;
         z-index: 1;
         bottom: 0;
@@ -134,7 +134,13 @@
     <a href="/admin">Admin Panel</a>
     {% endif %}
     {% endif %}
-    <p style="bottom: 0; position: absolute; padding: 5px;"><a id="special" href="/about">About</a><br><br><a id="special" href="https://github.com/vidzy-social/vidzy">View source code</a><br><br>{{VIDZY_VERSION}}</p>
+    <div style="bottom: 0; position: absolute; padding: 5px;">
+        <a id="special" href="/about">About</a>
+        <br><br>
+        <a id="special" href="https://github.com/vidzy-social/vidzy">View source code</a>
+        <br><br>
+        <p style="font-size: 13px;">{{VIDZY_VERSION}}</p>
+    </div>
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
