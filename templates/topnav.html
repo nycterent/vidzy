@@ -28,8 +28,8 @@
 <div class="topnav">
     <a><b style="font-size: 17.1px;">Vidzy</b></a>
     <div class="topnav-right">
-        <a href="/upload">Upload</a>
         {% if logged_in %}
+        <a href="/upload">Upload</a>
         <button onclick="openUserDropdown()" class="dropbtn">{{ session.username }}</button>
         {% else %}
         <a href="/login">Login</a>
