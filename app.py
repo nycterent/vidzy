@@ -201,6 +201,27 @@ def index_page():
         return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
     return explore_page()
 
+@app.route("/public/remote")
+def public_remote_page():
+    logged_in = "username" in session
+
+    instances = json.loads(requests.get("https://raw.githubusercontent.com/vidzy-social/vidzy-social.github.io/main/instancelist.json", timeout=20).text)
+
+    rv = tuple()
+
+    for i in instances:
+        if requests.get(i + "/api/vidzy", timeout=20).text != "vidzy":
+            print("Skipped instance: " + i)
+        else:
+            r = json.loads(requests.get(i + "/api/live_feed/full", timeout=20).text)
+            for c in r:
+                c["url"] = i + "/static/uploads/" + c["url"]
+                rv = rv + (c,)
+
+    rv = sorted(rv, key=itemgetter('id'), reverse=True)
+
+    return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
+
 @app.route("/settings", methods=['POST', 'GET'])
 def settings_page():
     if "username" in request.form:
@@ -719,6 +740,26 @@ def api_livefeed_page():
     cur = mysql.connection.cursor()
     cur.execute(
         "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s OFFSET %s;", (start_at+2,start_at))
+    rv = cur.fetchall()
+
+    nh3_tags = set() # Empty set
+
+    for r in rv:
+        r["title"] = nh3.clean(r["title"], tags=nh3_tags)
+        if "description" in r:
+            if r["description"] is not None:
+                r["description"] = nh3.clean(r["description"], tags=nh3_tags)
+        r["url"] = nh3.clean(r["url"], tags=nh3_tags)
+
+    return jsonify(rv)
+
+@app.route("/api/live_feed/full")
+def api_livefeed_full_page():
+    logged_in = "username" in session
+
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT 20;")
     rv = cur.fetchall()
 
     nh3_tags = set() # Empty set
