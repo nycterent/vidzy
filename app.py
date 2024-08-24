@@ -220,6 +220,8 @@ def public_remote_page():
 
     rv = sorted(rv, key=itemgetter('id'), reverse=True)
 
+    rv = rv[:10]
+
     return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
 
 @app.route("/settings", methods=['POST', 'GET'])
