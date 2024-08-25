@@ -68,7 +68,7 @@ app.jinja_env.globals.update(VIDZY_VERSION=VIDZY_VERSION)
 app.config.from_pyfile('settings.py', silent=False)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['WTF_CSRF_CHECK_DEFAULT'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost:3306/vidzy'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(app.config["MYSQL_USER"], app.config["MYSQL_PASSWORD"], app.config["VIDZY_DB_HOST"], app.config["VIDZY_DB_PORT"], app.config["MYSQL_DATABASE"])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 if app.config['MINIFY_HTML']:
