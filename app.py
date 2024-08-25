@@ -170,7 +170,7 @@ def get_username(userid):
 @app.route("/comments/<shortid>")
 def comments_route(shortid):
     comments = SQLAlchemy_session.query(Comment).filter(Comment.short_id == shortid).order_by(Comment.path)
-    
+
     try:
         return render_template("comments.html", comments=comments)
     except sqlalchemy.exc.PendingRollbackError:
@@ -207,7 +207,7 @@ def like_post_page():
 def send_comment_page():
     if "user" not in session:
         return "NotLoggedIn"
-    
+
     parent_comment = request.args.get("parent", default=None)
     if parent_comment != None:
         parent_comment = SQLAlchemy_session.query(Comment).get(int(parent_comment))
