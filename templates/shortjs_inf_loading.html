@@ -1,4 +1,5 @@
 <script>
+    window.replyto = "";
     var startAt = 3;
     var isFirstReqNewShorts = true;
 
@@ -113,7 +114,11 @@
                 }
             }
         };
-        xmlhttp.open("GET", "/send_comment?txt=" + encodeURIComponent(what.getElementsByClassName("comment_input")[0].value) + "&shortid=" + what.getElementsByTagName('shortid')[0].innerText, true);
+        if (window.replyto != "") {
+            xmlhttp.open("GET", "/send_comment?txt=" + encodeURIComponent(what.getElementsByClassName("comment_input")[0].value) + "&shortid=" + what.getElementsByTagName('shortid')[0].innerText + "&parent=" + window.replyto, true);
+        } else {
+            xmlhttp.open("GET", "/send_comment?txt=" + encodeURIComponent(what.getElementsByClassName("comment_input")[0].value) + "&shortid=" + what.getElementsByTagName('shortid')[0].innerText, true);
+        }
         xmlhttp.send();
     }
 
@@ -213,4 +218,16 @@
             }
         });
     }
+
+    const interval = setInterval(function() {
+        if (currentcommentsdiv.getElementsByTagName("iframe")[0].contentWindow.location.hash != "") {
+            var replyto = currentcommentsdiv.getElementsByTagName("iframe")[0].contentWindow.location.hash.slice(1);
+            console.log(replyto);
+            currentcommentsdiv.getElementsByClassName("comment_input")[0].placeholder = "Type here... (replying to " + replyto + ")";
+            window.replyto = replyto;
+        } else {
+            window.replyto = "";
+            currentcommentsdiv.getElementsByClassName("comment_input")[0].placeholder = "Type here...";
+        }
+    }, 500);
 </script>

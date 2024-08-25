@@ -84,7 +84,7 @@ Base = declarative_base()
 db = SQLAlchemy(app)
 db.init_app(app)
 
-engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], isolation_level="AUTOCOMMIT")
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], isolation_level="AUTOCOMMIT", pool_pre_ping=True)
 
 SQLAlchemy_Session = sessionmaker(bind=engine)
 SQLAlchemy_session = SQLAlchemy_Session()
@@ -171,7 +171,13 @@ def get_username(userid):
 def comments_route(shortid):
     comments = SQLAlchemy_session.query(Comment).filter(Comment.short_id == shortid).order_by(Comment.path)
     
-    return render_template("comments.html", comments=comments)
+    try:
+        return render_template("comments.html", comments=comments)
+    except sqlalchemy.exc.PendingRollbackError:
+        SQLAlchemy_session.rollback()
+        return render_template("comments.html", comments=comments)
+    else:
+        raise
 
 @app.route("/like_post")
 def like_post_page():
