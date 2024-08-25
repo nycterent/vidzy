@@ -58,12 +58,7 @@
             <h2>Description:</h2>
             <p>${short["description"]}</p>
             <h2>Comments:</h2>
-            %% for comment in short.id|get_comments %%
-            <div style="border: 1px solid white; padding: 5px;">
-                <p>{ comment.user_id|get_username ]</p>
-                <p>{ comment.comment_text ]</p>
-            </div>
-            %% endfor %%
+            <iframe src="/comments/${short["id"]}" style="width:100%;height:75%;"></iframe>
         </div>
         <p style="position: absolute; bottom: 8%; padding-left: 6px; display: none;" class="msgsenttext">Message Sent! Reload this page to see your comment.</p>
         {% if session.user %}
@@ -180,6 +175,8 @@
 
             currentcommentsdiv = entries[0].target.parentNode.getElementsByClassName("comments")[0];
             currentcommentsdiv.style.display = "none";
+
+            requestNewShorts();
         }
         else {
             entries[0].target.currentTime = 0;

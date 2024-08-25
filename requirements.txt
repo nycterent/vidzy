@@ -8,3 +8,6 @@ cryptography
 Flask-WTF
 nh3==0.2.18
 boto3
+mysqlclient==2.2.4
+flask_sqlalchemy==3.0.2
+sqlalchemy

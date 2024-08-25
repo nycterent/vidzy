@@ -27,6 +27,11 @@ from cryptography.hazmat.primitives import serialization as crypto_serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend as crypto_default_backend
 
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+import sqlalchemy
+
 CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
     cleantext = re.sub(CLEANR, '', raw_html)
@@ -63,6 +68,8 @@ app.jinja_env.globals.update(VIDZY_VERSION=VIDZY_VERSION)
 app.config.from_pyfile('settings.py', silent=False)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['WTF_CSRF_CHECK_DEFAULT'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost:3306/vidzy'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 if app.config['MINIFY_HTML']:
     htmlmin = HTMLMIN(app, remove_comments=True)
@@ -71,6 +78,59 @@ mysql.init_app(app)
 
 s3_enabled = app.config['S3_ENABLED']
 print("S3 enabled:", s3_enabled)
+
+Base = declarative_base()
+
+db = SQLAlchemy(app)
+db.init_app(app)
+
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], isolation_level="AUTOCOMMIT")
+
+SQLAlchemy_Session = sessionmaker(bind=engine)
+SQLAlchemy_session = SQLAlchemy_Session()
+
+@sqlalchemy.event.listens_for(engine, "handle_error")
+def handle_error(ctx):
+    if isinstance(ctx.original_exception, KeyboardInterrupt):
+        print("keyboard interrupt intercepted, keeping connection opened")
+        ctx.is_disconnect = False
+
+#class Shorts(Base):
+#    __tablename__ = 'shorts'
+#
+#    id = db.Column(db.Integer, primary_key=True)
+#    title = db.Column(db.String(65))
+#    url = db.Column(db.String(60))
+#    user_id = db.Column(db.Integer, primary_key=False)
+#    date_uploaded = db.Column(db.Date, default=datetime.now().strftime('%Y-%m-%d'), nullable=True)
+
+class Comment(Base):
+    __tablename__ = 'vidcomments'
+    _N = 6
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    text = db.Column(db.String(140))
+    author = db.Column(db.String(32))
+    timestamp = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+    short_id = db.Column(db.Integer, primary_key=False)
+    path = db.Column(db.Text(400), index=True)
+    parent_id = db.Column(db.Integer, db.ForeignKey('vidcomments.id'))
+    replies = db.relationship(
+        'Comment', backref=db.backref('parent', remote_side=[id]),
+        lazy='dynamic')
+
+    def save(self):
+        SQLAlchemy_session.add(self)
+        SQLAlchemy_session.commit()
+        prefix = self.parent.path + '.' if self.parent else ''
+        self.path = prefix + '{:0{}d}'.format(self.id, self._N)
+        SQLAlchemy_session.commit()
+
+    def level(self):
+        return len(self.path) // self._N - 1
+
+with app.app_context():
+    Base.metadata.create_all(engine)
 
 @app.template_filter('get_gravatar')
 def get_gravatar(email):
@@ -107,6 +167,12 @@ def get_user_info(userid):
 def get_username(userid):
     return get_user_info(userid)["username"]
 
+@app.route("/comments/<shortid>")
+def comments_route(shortid):
+    comments = SQLAlchemy_session.query(Comment).filter(Comment.short_id == shortid).order_by(Comment.path)
+    
+    return render_template("comments.html", comments=comments)
+
 @app.route("/like_post")
 def like_post_page():
     if "user" not in session:
@@ -135,6 +201,10 @@ def like_post_page():
 def send_comment_page():
     if "user" not in session:
         return "NotLoggedIn"
+    
+    parent_comment = request.args.get("parent", default=None)
+    if parent_comment != None:
+        parent_comment = SQLAlchemy_session.query(Comment).get(int(parent_comment))
 
     shortid = request.args.get("shortid")
 
@@ -144,7 +214,23 @@ def send_comment_page():
 
     if comment_count >= 40:
         return "TooManyComments"
+    
 
+
+    #c1 = Comment(text='hello1', author='alice')
+    #c11 = Comment(text='reply11', author='bob', parent=c1)
+    #c111 = Comment(text='reply111', author='susan', parent=c11)
+
+    mycomment = Comment(text=request.args.get("txt"), author=session["user"]["id"], short_id=int(shortid), parent=parent_comment)
+
+    with app.app_context():
+        #c1.save()
+        mycomment.save()
+
+    for comment in SQLAlchemy_session.query(Comment).order_by(Comment.path):
+        print('{}{}: {}'.format('  ' * comment.level(), comment.author, comment.text))
+
+    '''
     mycursor = mysql.connection.cursor()
 
     sql = "INSERT INTO `comments` (`short_id`, `user_id`, `comment_text`) VALUES (%s, %s, %s)"
@@ -152,6 +238,7 @@ def send_comment_page():
     mycursor.execute(sql, val)
 
     mysql.connection.commit()
+    '''
 
     return "Success"
 
