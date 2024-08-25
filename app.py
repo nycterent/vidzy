@@ -220,31 +220,14 @@ def send_comment_page():
 
     if comment_count >= 40:
         return "TooManyComments"
-    
-
-
-    #c1 = Comment(text='hello1', author='alice')
-    #c11 = Comment(text='reply11', author='bob', parent=c1)
-    #c111 = Comment(text='reply111', author='susan', parent=c11)
 
     mycomment = Comment(text=request.args.get("txt"), author=session["user"]["id"], short_id=int(shortid), parent=parent_comment)
 
     with app.app_context():
-        #c1.save()
         mycomment.save()
 
     for comment in SQLAlchemy_session.query(Comment).order_by(Comment.path):
         print('{}{}: {}'.format('  ' * comment.level(), comment.author, comment.text))
-
-    '''
-    mycursor = mysql.connection.cursor()
-
-    sql = "INSERT INTO `comments` (`short_id`, `user_id`, `comment_text`) VALUES (%s, %s, %s)"
-    val = (request.args.get("shortid"), session["user"]["id"], request.args.get("txt"))
-    mycursor.execute(sql, val)
-
-    mysql.connection.commit()
-    '''
 
     return "Success"
 
