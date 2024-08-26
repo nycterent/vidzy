@@ -9,6 +9,7 @@ A free and open source alternative to TikTok
 
 ![License: AGPL-v3.0](https://img.shields.io/github/license/vidzy-social/vidzy?style=for-the-badge)
 [![GitHub contributors](https://img.shields.io/github/contributors-anon/vidzy-social/vidzy?style=for-the-badge)](#contributors)
+![Commit activity](https://img.shields.io/github/commit-activity/w/vidzy-social/vidzy/main?style=for-the-badge)
 
 </div>
 
