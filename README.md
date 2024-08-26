@@ -7,7 +7,7 @@ A free and open source alternative to TikTok
 &nbsp;•&nbsp;
 <a href="https://matrix.to/#/#vidzysocial:fedora.im">Matrix</a>
 
-![License: AGPL-v3.0](./license_badge.svg)
+![License: AGPL-v3.0](https://img.shields.io/github/license/vidzy-social/vidzy?style=for-the-badge)
 
 </div>
 
