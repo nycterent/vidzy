@@ -15,7 +15,7 @@ A free and open source alternative to TikTok
 
 </div>
 
-<br><br>
+<br>
 
 ## Install
 
