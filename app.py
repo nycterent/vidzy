@@ -167,6 +167,10 @@ def get_user_info(userid):
 def get_username(userid):
     return get_user_info(userid)["username"]
 
+@app.route("/camera")
+def camera_route():
+    return app.send_static_file('demos/threejs/glassesVTO/index.html')
+
 @app.route("/comments/<shortid>")
 def comments_route(shortid):
     comments = SQLAlchemy_session.query(Comment).filter(Comment.short_id == shortid).order_by(Comment.path)

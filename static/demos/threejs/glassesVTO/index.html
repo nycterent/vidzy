@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="content-language" content="en-EN" />
+    
+    <title>Snap</title>
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <!-- INCLUDE JEELIZ FACEFILTER SCRIPT -->
+    <script src="/static/dist/jeelizFaceFilter.js"></script>
+
+    <!-- INCLUDE THREE.JS -->
+    <script src="/static/libs/three/v112/three.js"></script>
+
+    <!-- INCLUDE JEELIZ THREE.JS HELPER -->
+    <script src="/static/helpers/JeelizThreeHelper.js"></script>
+
+    <!-- INCLUDE JEELIZRESIZER -->
+    <script src="/static/helpers/JeelizResizer.js"></script>
+
+    <!-- INCLUDE DEMO SCRIPT AND GLASSES CREATOR -->
+    <script src="/static/demos/threejs/glassesVTO/JeelizThreeGlassesCreator.js"></script>
+    <script src="/static/demos/threejs/glassesVTO/main.js"></script>
+	
+	<link rel="stylesheet" href="/static/demos/appearance/style.css" type="text/css" />
+  </head>
+  
+  <body>
+	<div style="position:fixed;top:1%;left:47.5%;width:5%;height:5%;text-align:center;z-index:99;color:red;display:none;font-size:25px;" id="recordingtxt">Recording... <span id="recordingtimer"></span> / 30</div>
+  
+    <canvas width="600" height="600" id='jeeFaceFilterCanvas'></canvas>
+	
+	<button style="position:fixed;bottom:1px;left:47%;width:6%;height:8%;z-index:99;" onclick="startRecording()"><i class="fa fa-chevron-right" style="font-size:30px;" id="record-icon"></i></button>
+  </body>
+  
+  <script>
+  const canvas = document.getElementsByTagName("canvas")[0];
+  var chunks = [];
+  var recordinginterval;
+  
+  function on_media_recorder_stop() {
+	// Gather chunks of video data into a blob and create an object URL
+	var blob = new Blob(chunks, {type: "video/webm" });
+	var recording_url = URL.createObjectURL(blob);// Attach the object URL to an <a> element, setting the download file name
+	var a = document.createElement('a');
+	a.style = "display: none;";
+	a.href = recording_url;
+	a.download = "video.webm";
+	document.getElementById("record-icon").style.color = "black";
+	document.getElementById("recordingtxt").style.display = "none";
+	clearInterval(recordinginterval);
+	document.getElementById("recordingtimer").innerText = "0";
+	document.body.appendChild(a); // Trigger the file download
+	a.click();
+	setTimeout(() => {
+	  // Clean up - see https://stackoverflow.com/a/48968694 for why it is in a timeout
+	  URL.revokeObjectURL(recording_url);
+	  document.body.removeChild(a);
+	}, 0);
+  }
+  
+  function startRecording() {
+	if (document.getElementById("recordingtimer").innerText != "0" && document.getElementById("recordingtimer").innerText != "") {
+		this.media_recorder.stop();
+		return;
+	}
+  
+	document.getElementById("record-icon").style.color = "red";
+	document.getElementById("recordingtxt").style.display = "block";
+	var canvas_stream = canvas.captureStream(30); // fps// Create media recorder from canvas stream
+	this.media_recorder = new MediaRecorder(canvas_stream, { mimeType: "video/webm; codecs=vp8" });// Record data in chunks array when data is available
+	this.media_recorder.ondataavailable = (evt) => { chunks.push(evt.data); };// Provide recorded data when recording stops
+	this.media_recorder.onstop = () => {this.on_media_recorder_stop(chunks);}// Start recording using a 1s timeslice [ie data is made available every 1s)
+	this.media_recorder.start(1000);
+	recordinginterval = setInterval(function() {
+		document.getElementById("recordingtimer").innerText = ( Number(document.getElementById("recordingtimer").innerText) + 1 ).toString();
+	}, 1000);
+	setTimeout(function(){ this.media_recorder.stop(); }, 30000);
+  }
+  </script>
+</html>
+ 
+ 
