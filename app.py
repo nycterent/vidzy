@@ -6,21 +6,19 @@ import math
 import uuid
 import collections
 
+from operator import itemgetter
+from datetime import datetime
+from urllib.parse import urlparse
+
 import requests
 import nh3
 import boto3
-import vidzyconfig
-
-from operator import itemgetter
-from datetime import date
 
 from flask import *
 from flask_mysqldb import MySQL
 from flask_htmlmin import HTMLMIN
 
-from urllib.parse import quote, unquote, urlparse
 from werkzeug.utils import secure_filename
-from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 
 from cryptography.hazmat.primitives import serialization as crypto_serialization
@@ -31,6 +29,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import sqlalchemy
+
+
+import vidzyconfig
 
 CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
@@ -180,8 +181,6 @@ def comments_route(shortid):
     except sqlalchemy.exc.PendingRollbackError:
         SQLAlchemy_session.rollback()
         return render_template("comments.html", comments=comments)
-    else:
-        raise
 
 @app.route("/like_post")
 def like_post_page():
@@ -194,7 +193,7 @@ def like_post_page():
 
     myresult = mycursor.fetchall()
 
-    for x in myresult:
+    for _ in myresult:
         return "Already Liked"
 
     mycursor = mysql.connection.cursor()
@@ -213,7 +212,7 @@ def send_comment_page():
         return "NotLoggedIn"
 
     parent_comment = request.args.get("parent", default=None)
-    if parent_comment != None:
+    if parent_comment is not None:
         parent_comment = SQLAlchemy_session.query(Comment).get(int(parent_comment))
 
     shortid = request.args.get("shortid")
@@ -246,7 +245,7 @@ def liked_post_page():
 
     myresult = mycursor.fetchall()
 
-    for x in myresult:
+    for _ in myresult:
         return "true"
 
     return "false"
@@ -524,7 +523,7 @@ def profile_page(user):
     if "user" in session:
         cur.execute("SELECT * FROM follows WHERE follower_id=%s AND following_id=%s;", (str(session["user"]["id"]), str(user["id"])))
         following = False
-        for i in cur.fetchall():
+        for _ in cur.fetchall():
             following = True
     else:
         following = False
@@ -817,8 +816,6 @@ def api_vidzy_page():
 def api_livefeed_page():
     start_at = int(request.args.get('startat'))
 
-    logged_in = "username" in session
-
     cur = mysql.connection.cursor()
     cur.execute(
         "SELECT date_uploaded, description, id, title, url, user_id, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT %s OFFSET %s;", (start_at+2,start_at))
@@ -837,7 +834,6 @@ def api_livefeed_page():
 
 @app.route("/api/live_feed/full")
 def api_livefeed_full_page():
-    logged_in = "username" in session
 
     cur = mysql.connection.cursor()
     cur.execute(
@@ -858,8 +854,6 @@ def api_livefeed_full_page():
 @app.route("/api/explore")
 def api_explore_page():
     start_at = int(request.args.get('startat'))
-
-    logged_in = "username" in session
 
     cur = mysql.connection.cursor()
     cur.execute(
@@ -961,7 +955,7 @@ def follow():
 
     myresult = cur.fetchall()
 
-    for x in myresult:
+    for _ in myresult:
         return "Already following"
 
 
@@ -983,7 +977,7 @@ def unfollow():
     myresult = cur.fetchall()
 
     following = False
-    for x in myresult:
+    for _ in myresult:
         following = True
 
     if not following:
