@@ -14,7 +14,7 @@ import requests
 import nh3
 import boto3
 
-from flask import * # pylint: disable=W0614
+from flask import *
 
 from flask_mysqldb import MySQL
 from flask_htmlmin import HTMLMIN
