@@ -5,7 +5,7 @@ Flask-HTMLmin
 requests
 python-dotenv
 cryptography
-Flask-WTF
+Flask-WTF==1.2.1
 nh3==0.2.18
 boto3
 mysqlclient==2.2.4
