@@ -1,11 +1,11 @@
 waitress==2.1.2
-Flask==2.3.2
+Flask==2.3.3
 Flask-MySQLdb==1.0.1
 Flask-HTMLmin
 requests
 python-dotenv
 cryptography
-Flask-WTF
+Flask-WTF==1.2.1
 nh3==0.2.18
 boto3
 mysqlclient==2.2.4
