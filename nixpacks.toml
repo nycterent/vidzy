@@ -6,3 +6,7 @@ aptPkgs = [
   "build-essential", 
   "pkg-config"
 ]
+
+[phases.start]
+commands = ["python3 -m waitress --port=8080 --call app:create_app"]
+
