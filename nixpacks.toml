@@ -8,5 +8,5 @@ aptPkgs = [
 ]
 
 [start]
-cmds = ["python3 -m waitress --port=8080 --call app:create_app"]
+cmd = "python3 -m waitress --port=8080 --call app:create_app"
 
