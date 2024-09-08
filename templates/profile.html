@@ -584,6 +584,7 @@
                     </p>
                     {% endif %}
                     <br><br>
+                    <!--
                     <div class="profile-user-settings">
                         <a href="" class="btns profiele-edit-btn">Posts</a>
                         {% if session.user %}
@@ -592,15 +593,16 @@
                         {% endif %}
                         {% endif %}
                     </div>
+                    -->
                 </div>
 
 
                 <div class="profile-stats">
 
                     <ul>
-                        <li><span class="profile-stat-count">posts_count</span> posts</li>
-                        <li><span class="profile-stat-count">followers_count</span> followers</li>
-                        <li><span class="profile-stat-count">following_count</span> following</li>
+                        <li><span class="profile-stat-count">{{shorts_count}}</span> posts</li>
+                        <li><span class="profile-stat-count">{{follower_count}}</span> followers</li>
+                        <!--<li><span class="profile-stat-count">following_count</span> following</li>-->
                     </ul>
                     <br>
 

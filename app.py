@@ -521,6 +521,9 @@ def profile_page(user):
     cur.execute("SELECT * FROM shorts WHERE user_id=%s;", (str(user["id"]), ))
     latest_short_list = cur.fetchall()
 
+    cur.execute("SELECT count(*) c FROM shorts WHERE user_id=%s;", (str(user["id"]), ))
+    shorts_count = cur.fetchall()[0]["c"]
+
     if "user" in session:
         cur.execute("SELECT * FROM follows WHERE follower_id=%s AND following_id=%s;", (str(session["user"]["id"]), str(user["id"])))
         following = False
@@ -528,8 +531,12 @@ def profile_page(user):
             following = True
     else:
         following = False
+    
+    cur.execute("SELECT count(*) c FROM follows WHERE following_id=%s;", (str(user["id"]),))
+    for _ in cur.fetchall():
+        follower_count = _["c"]
 
-    return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list, following=following)
+    return render_template('profile.html', user=user, session=session, latest_short_list=latest_short_list, following=following, follower_count=follower_count, shorts_count=shorts_count)
 
 def remote_vidzy_profile_page(user):
     print("http://" + user.split("@")[1] + "/api/users/" + user.split("@")[0])
