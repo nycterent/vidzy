@@ -916,10 +916,15 @@ def upload_file():
                 new_filename = uuid.uuid4().hex + '.' + file.filename.rsplit('.', 1)[1].lower()
 
                 bucket_name = app.config['S3_BUCKET_NAME']
-                s3 = boto3.resource("s3")
+                
+                session = boto3.Session(
+                    aws_access_key_id=app.config['AWS_ACCESS_KEY'],
+                    aws_secret_access_key=app.config['AWS_ACCESS_SECRET_KEY'],
+                )
+                s3 = session.resource('s3')
                 s3.Bucket(bucket_name).upload_fileobj(file, new_filename)
 
-                s3_fileurl = app.config['AWS_ENDPOINT_URL'] + "/" + app.config['S3_BUCKET_NAME'] + "/" + new_filename
+                s3_fileurl = app.config['AWS_ENDPOINT_URL'] + "/" + bucket_name + "/" + new_filename
 
                 cur = mysql.connection.cursor()
 
