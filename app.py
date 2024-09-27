@@ -30,7 +30,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import sqlalchemy
-
+import random
 
 import vidzyconfig
 
@@ -133,6 +133,12 @@ class Comment(Base):
 
 with app.app_context():
     Base.metadata.create_all(engine)
+
+# For now, the random will make the share number a little better
+@app.template_filter('random_share_num')
+def random_share_num(lol):
+    print("called")
+    return random.randint(35, 171)
 
 @app.template_filter('get_gravatar')
 def get_gravatar(email):
