@@ -137,7 +137,6 @@ with app.app_context():
 # For now, the random will make the share number a little better
 @app.template_filter('random_share_num')
 def random_share_num(lol):
-    print("called")
     return random.randint(35, 171)
 
 @app.template_filter('get_gravatar')
