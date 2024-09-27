@@ -947,7 +947,7 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = datetime.today().strftime('%Y%m%d') + secure_filename(file.filename)
-            if s3_enabled is True:
+            if s3_enabled == 'True':
                 new_filename = uuid.uuid4().hex + '.' + file.filename.rsplit('.', 1)[1].lower()
 
                 bucket_name = app.config['S3_BUCKET_NAME']
