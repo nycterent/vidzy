@@ -954,7 +954,7 @@ def upload_file():
                 
                 s3_session = boto3.Session(
                     aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
-                    aws_secret_access_key=app.config['AWS_ACCESS_SECRET_KEY'],
+                    aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
                 )
                 s3 = s3_session.resource('s3')
                 s3.Bucket(bucket_name).upload_fileobj(file, new_filename)
