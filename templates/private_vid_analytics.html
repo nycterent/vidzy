@@ -172,13 +172,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Public Video Analytics for {{short.title}}</h2>
+            <h2>Private Video Analytics for {{short.title}}</h2>
             <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Main Page</a>
         </div>
 
         <div class="tab">
             <button class="tablinks active" onclick="openTab(event, 'details')">Details</button>
             <button class="tablinks" onclick="openTab(event, 'analytics')">Analytics</button>
+            <button class="tablinks" onclick="openTab(event, 'comments')">Comments</button>
         </div>
 
         <div id="details" class="tabcontent" style="display:block;">
@@ -210,15 +211,20 @@
                     <p>{{ short.like_count }}</p>
                 </div>
                 <div class="stat-card">
-                    {% if session["user"]["id"] == short["user_id"] %}
-                    <h4>Private Analytics</h4>
-                    <p style="font-size: 20px;">As the owner of this video, you have access to <a href="/shorts/{{short.id}}/analytics/private">it's private analytics.</a></p>
-                    {% else %}
-                    <h4>Note</h4>
-                    <p style="font-size: 20px;">Only the owner of a video can see it's private analytics.</p>
-                    {% endif %}
+                    <h4>Public Analytics</h4>
+                    <p style="font-size: 20px;">You can also view this video's <a href="/shorts/{{short.id}}/analytics/public">public analytics.</a></p>
                 </div>
             </div>
+        </div>
+
+        <div id="comments" class="tabcontent">
+            <h3>Comments</h3>
+            {% for comment in short.id|get_comments %}
+            <div style="border: 1px solid white; padding: 5px;">
+                <p>{{ comment.user_id|get_username }}</p>
+                <p>{{ comment.comment_text }}</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
 

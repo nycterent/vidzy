@@ -321,7 +321,7 @@ def settings_page():
     return render_template('settings.html', username=session["user"]["username"], email=session["user"]["email"])
 
 @app.route("/shorts/<short>/analytics/public")
-def video_analytics(short):
+def video_publicanalytics(short):
     if "user" not in session:
         return "<script>window.location.href='/login';</script>"
 
@@ -330,9 +330,25 @@ def video_analytics(short):
     cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p  WHERE (`id` = %s);", (short,))
     short = cur.fetchall()[0]
 
-    print(short)
-
     return render_template('public_vid_analytics.html', session=session, short=short)
+
+@app.route("/shorts/<short_id>/analytics/private")
+def video_privateanalytics(short_id):
+    if "user" not in session:
+        return "<script>window.location.href='/login';</script>"
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p  WHERE (`id` = %s);", (short_id,))
+    short = cur.fetchall()
+    if len(short) == 0:
+        return "Video not found."
+    short = short[0]
+
+    if session["user"]["id"] != short["user_id"]:
+        return "<script>window.location.href='/';</script>"
+
+    return render_template('private_vid_analytics.html', session=session, short=short)
 
 ########################################################################
 ########################### ADMIN STUFF ################################
