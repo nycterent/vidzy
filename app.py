@@ -30,7 +30,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import sqlalchemy
-
+import random
 
 import vidzyconfig
 
@@ -56,7 +56,7 @@ public_key = key.public_key().public_bytes(
 )
 
 
-VIDZY_VERSION = "v0.1.7"
+VIDZY_VERSION = "v0.1.8"
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'webm'}
@@ -133,6 +133,11 @@ class Comment(Base):
 
 with app.app_context():
     Base.metadata.create_all(engine)
+
+# For now, the random will make the share number a little better
+@app.template_filter('random_share_num')
+def random_share_num(lol):
+    return random.randint(35, 171)
 
 @app.template_filter('get_gravatar')
 def get_gravatar(email):
@@ -319,6 +324,36 @@ def settings_page():
         return redirect("login")
 
     return render_template('settings.html', username=session["user"]["username"], email=session["user"]["email"])
+
+@app.route("/shorts/<short>/analytics/public")
+def video_publicanalytics(short):
+    if "user" not in session:
+        return "<script>window.location.href='/login';</script>"
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p  WHERE (`id` = %s);", (short,))
+    short = cur.fetchall()[0]
+
+    return render_template('public_vid_analytics.html', session=session, short=short)
+
+@app.route("/shorts/<short_id>/analytics/private")
+def video_privateanalytics(short_id):
+    if "user" not in session:
+        return "<script>window.location.href='/login';</script>"
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p  WHERE (`id` = %s);", (short_id,))
+    short = cur.fetchall()
+    if len(short) == 0:
+        return "Video not found."
+    short = short[0]
+
+    if session["user"]["id"] != short["user_id"]:
+        return "<script>window.location.href='/';</script>"
+
+    return render_template('private_vid_analytics.html', session=session, short=short)
 
 ########################################################################
 ########################### ADMIN STUFF ################################

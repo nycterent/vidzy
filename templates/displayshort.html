@@ -21,7 +21,7 @@
 
         <div class="videoSidebar__button" onclick="share(this)">
             <span class="material-icons"> share </span>
-            <p>75</p>
+            <p>{{ short|random_share_num }}</p>
         </div>
     </div>
 
@@ -62,6 +62,8 @@
                 <p>{{ comment.comment_text }}</p>
             </div>
             {% endfor %}
+            <br>
+            <a href="/shorts/{{short.id}}/analytics/public">View Public Video Analytics</a>
         </div>
         <p style="position: absolute; bottom: 8%; padding-left: 6px; display: none;" class="msgsenttext">Message Sent! Reload this page to see your comment.</p>
         {% if session.user %}
