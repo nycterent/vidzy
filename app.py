@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 import requests
 import nh3
 import boto3
+import urllib.parse
 
 from flask import *
 
@@ -68,6 +69,14 @@ csrf = CSRFProtect(app)
 app.jinja_env.globals.update(VIDZY_VERSION=VIDZY_VERSION)
 
 app.config.from_pyfile('settings.py', silent=False)
+if app.config['SENTRY_ENABLED']:
+    import sentry_sdk
+    from sentry_sdk.integrations.flask import FlaskIntegration
+
+    sentry_sdk.init(
+        dsn=app.config['SENTRY_DSN'],
+        integrations=[FlaskIntegration()]
+    )
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(app.config["MYSQL_USER"], app.config["MYSQL_PASSWORD"], app.config["MYSQL_HOST"], app.config["MYSQL_PORT"], app.config["MYSQL_DB"])
@@ -951,10 +960,15 @@ def upload_file():
                 new_filename = uuid.uuid4().hex + '.' + file.filename.rsplit('.', 1)[1].lower()
 
                 bucket_name = app.config['S3_BUCKET_NAME']
-                s3 = boto3.resource("s3")
+                
+                s3_session = boto3.Session(
+                    aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+                    aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
+                )
+                s3 = s3_session.resource('s3')
                 s3.Bucket(bucket_name).upload_fileobj(file, new_filename)
 
-                s3_fileurl = app.config['AWS_ENDPOINT_URL'] + "/" + app.config['S3_BUCKET_NAME'] + "/" + new_filename
+                s3_fileurl = urllib.parse.urljoin(app.config['S3_PUBLIC_URL'], new_filename)
 
                 cur = mysql.connection.cursor()
 

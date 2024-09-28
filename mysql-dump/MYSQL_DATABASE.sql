@@ -79,7 +79,7 @@ DROP TABLE IF EXISTS `shorts`;
 CREATE TABLE `shorts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(65) DEFAULT NULL,
-  `url` varchar(60) DEFAULT NULL,
+  `url` varchar(2048) DEFAULT NULL,
   `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
@@ -105,7 +105,7 @@ CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(65) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
-  `cover_photo_url` varchar(300) DEFAULT 'assets/black.jpg',
+  `cover_photo_url` varchar(2048) DEFAULT 'assets/black.jpg',
   `is_admin` int DEFAULT '0',
   `first_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
@@ -173,7 +173,7 @@ ADD COLUMN `description` VARCHAR(400) NULL AFTER `date_uploaded`;
 --
 -- v0.1.4
 --
-ALTER TABLE `shorts` CHANGE COLUMN `url` `url` VARCHAR(100) NULL DEFAULT NULL ;
+ALTER TABLE `shorts` CHANGE COLUMN `url` `url` VARCHAR(2048) NULL DEFAULT NULL ;
 
 --
 -- v0.1.5
