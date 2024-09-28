@@ -34,6 +34,15 @@ import random
 
 import vidzyconfig
 
+if app.config['SENTRY_ENABLED']:
+    import sentry_sdk
+    from sentry_sdk.integrations.flask import FlaskIntegration
+
+    sentry_sdk.init(
+        dsn=app.config['SENTRY_DSN'],
+        integrations=[FlaskIntegration()]
+    )
+
 CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
     cleantext = re.sub(CLEANR, '', raw_html)
