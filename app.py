@@ -692,6 +692,9 @@ def login_page():
 
         myresult = mycursor.fetchall()
 
+        if len(myresult) == 0:
+            return "<br><h1 style='text-align:center'>User doesn't exist. Would you like to <a href='/register'>sign up?</a></h1>"
+
         for x in myresult:
             if x["password"] == hashlib.sha256(password.encode()).hexdigest():
                 session["username"] = username
