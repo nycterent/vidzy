@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 import requests
 import nh3
 import boto3
+import urllib.parse
 
 from flask import *
 
