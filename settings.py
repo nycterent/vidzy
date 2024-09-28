@@ -30,5 +30,6 @@ AWS_ENDPOINT_URL = os.environ.get("AWS_ENDPOINT_URL")
 S3_PUBLIC_URL = os.environ.get("S3_PUBLIC_URL")
 
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
+SENTRY_ENABLED = os.environ.get("SENTRY_ENABLED")
 
 
