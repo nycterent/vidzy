@@ -29,4 +29,6 @@ S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME")
 AWS_ENDPOINT_URL = os.environ.get("AWS_ENDPOINT_URL")
 S3_PUBLIC_URL = os.environ.get("S3_PUBLIC_URL")
 
+SENTRY_DSN = os.environ.get("SENTRY_DSN")
+
 
