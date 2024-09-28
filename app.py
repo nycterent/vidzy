@@ -967,7 +967,7 @@ def upload_file():
                 s3 = s3_session.resource('s3')
                 s3.Bucket(bucket_name).upload_fileobj(file, new_filename)
 
-                s3_fileurl = app.config['S3_PUBLIC_URL'] + "/" + new_filename
+                s3_fileurl = urlparse.urljoin(app.config['S3_PUBLIC_URL'], new_filename)
 
                 cur = mysql.connection.cursor()
 
