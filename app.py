@@ -34,15 +34,6 @@ import random
 
 import vidzyconfig
 
-if app.config['SENTRY_ENABLED']:
-    import sentry_sdk
-    from sentry_sdk.integrations.flask import FlaskIntegration
-
-    sentry_sdk.init(
-        dsn=app.config['SENTRY_DSN'],
-        integrations=[FlaskIntegration()]
-    )
-
 CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
     cleantext = re.sub(CLEANR, '', raw_html)
@@ -77,6 +68,14 @@ csrf = CSRFProtect(app)
 app.jinja_env.globals.update(VIDZY_VERSION=VIDZY_VERSION)
 
 app.config.from_pyfile('settings.py', silent=False)
+if app.config['SENTRY_ENABLED']:
+    import sentry_sdk
+    from sentry_sdk.integrations.flask import FlaskIntegration
+
+    sentry_sdk.init(
+        dsn=app.config['SENTRY_DSN'],
+        integrations=[FlaskIntegration()]
+    )
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(app.config["MYSQL_USER"], app.config["MYSQL_PASSWORD"], app.config["MYSQL_HOST"], app.config["MYSQL_PORT"], app.config["MYSQL_DB"])
