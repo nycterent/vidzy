@@ -717,9 +717,6 @@ def login_page():
 @app.route('/logout')
 def logout():
     session.clear()
-    session.pop('username', None)
-    session.pop('id', None)
-    session.pop('user', None)
     return app.make_response(redirect(url_for("login_page")))
 
 @app.route('/register', methods =['GET', 'POST'])
