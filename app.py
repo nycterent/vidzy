@@ -716,6 +716,7 @@ def login_page():
 
 @app.route('/logout')
 def logout():
+    session.clear()
     session.pop('username', None)
     session.pop('id', None)
     session.pop('user', None)
