@@ -989,16 +989,86 @@ def upload_file():
 
             return redirect(url_for('index_page'))
     return '''
-    <!doctype html>
-    <title>Upload a new video</title>
-    <h1>Upload a new video</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload a New Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 17px;
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: calc(100% - 10px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 17px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            height: 40px;
+            font-size: 17px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <h1>Upload a New Video</h1>
     <form method=post enctype=multipart/form-data>
-      Video title: <input type=text name=title>
+      <input type=text name=title placeholder="Video title">
       <br><br>
       <input type=file name=file>
       <br><br>
       <input type=submit value=Upload>
     </form>
+    </div>
+
+    </body>
+    </html>
     '''
 
 @app.route('/follow')
