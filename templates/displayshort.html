@@ -2,9 +2,9 @@
     <shortid style="display: none;">{{ short.id }}</shortid>
 
     {% if short.url.startswith('https://') %}
-    <video class="video__player" src="{{ short.url }}" loop controls></video>
+    <video class="video__player" src="{{ short.url }}" loop controls onerror="handleVideoError(this)"></video>
     {% else %}
-    <video class="video__player" src="/static/uploads/{{ short.url }}" loop controls></video>
+    <video class="video__player" src="/static/uploads/{{ short.url }}" loop controls onerror="handleVideoError(this)"></video>
     {% endif %}
 
     <!-- sidebar -->
