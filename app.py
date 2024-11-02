@@ -682,6 +682,8 @@ def short_page(short):
 
 @app.route('/static/<path:path>')
 def send_static(path):
+    if path.startswith("uploads/https://"):
+        return redirect(path[8:], code=302)
     return send_from_directory('static', path)
 
 
