@@ -539,7 +539,8 @@
                     {% if user.first_name %}
                     <h6 class="profile-user-name">{{ user.first_name }} {{ user.last_name }}</h6> <br>
                     {% endif %}
-                    <h5 style="font-size: 15px;" class="profile-user-name">{{ user.username }}</h5>
+                    <br>
+                    <h5 style="font-size: 17px;" class="profile-user-name"><span style="color:red;">[ADMIN]</span> {{ user.username }}</h5>
 
                     {% if session.user %}
                     {% if session.user.id == user_id %}

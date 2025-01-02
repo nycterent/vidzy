@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 350px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #FF4500;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .checkbox-group label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            background-color: #FF4500;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #e03e00;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome!</h1>
+    <p>Select topics you like:</p>
+    <div class="checkbox-group">
+        <label><input type="checkbox"> Technology</label>
+        <label><input type="checkbox"> Sports</label>
+        <label><input type="checkbox"> Music</label>
+        <label><input type="checkbox"> Movies</label>
+        <label><input type="checkbox"> Gaming</label>
+    </div>
+    <button class="button" onclick="window.location.href='/';">Continue</button>
+    <div class="footer">Already have an account? <a href="/login" style="color: #FF4500; text-decoration: none;">Log In</a></div>
+</div>
+
+</body>
+</html>

@@ -1073,6 +1073,10 @@ def upload_file():
     </html>
     '''
 
+@app.route("/onboarding")
+def onboarding_page():
+    return render_template("onboarding.html")
+
 @app.route('/follow')
 def follow():
     following_id = str(request.args.get("id"))
