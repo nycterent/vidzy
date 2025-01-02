@@ -5,15 +5,16 @@ import os
 import math
 import uuid
 import collections
+import random
 
 from operator import itemgetter
 from datetime import datetime
 from urllib.parse import urlparse
+import urllib.parse
 
 import requests
 import nh3
 import boto3
-import urllib.parse
 
 from flask import *
 
@@ -31,7 +32,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import sqlalchemy
-import random
 
 import vidzyconfig
 
@@ -555,7 +555,7 @@ def profile_page(user):
         if user.split("@")[1] != str(urlparse(request.base_url).netloc):
             return remote_profile_page(user)
         return remote_profile_page(user) # TEMPORARY FOR TESTING
-        user = user.split("@")[0]
+        #user = user.split("@")[0]
 
     cur = mysql.connection.cursor()
 
@@ -575,7 +575,7 @@ def profile_page(user):
             following = True
     else:
         following = False
-    
+
     cur.execute("SELECT count(*) c FROM follows WHERE following_id=%s;", (str(user["id"]),))
     for _ in cur.fetchall():
         follower_count = _["c"]
@@ -963,7 +963,7 @@ def upload_file():
                 new_filename = uuid.uuid4().hex + '.' + file.filename.rsplit('.', 1)[1].lower()
 
                 bucket_name = app.config['S3_BUCKET_NAME']
-                
+
                 s3_session = boto3.Session(
                     aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
                     aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
