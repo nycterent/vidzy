@@ -171,6 +171,23 @@
                 display: none;
             }
         }
+
+
+        #password-strength-container {
+            margin-bottom: 0.5rem;
+        }
+
+        #password-strength-bar {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        #password-strength-text {
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
     </style>
 </head>
 <body>
@@ -188,6 +205,10 @@
                 <div class="input-group">
                     <input type="password" name="password" placeholder="Password" class="loginInput" id="pswInput" required>
                     <span class="password-toggle" onclick="togglePassword()"><i class="far fa-eye"></i></span>
+                </div>
+                <div id="password-strength-container" style="display: none;">
+                    <div id="password-strength-bar"></div>
+                    <small id="password-strength-text"></small>
                 </div>
                 <div class="input-group">
                     <input type="email" name="email" placeholder="Email Address" class="loginInput" required>
@@ -261,6 +282,69 @@
         }
 
         typeText();
+
+
+
+
+        // PASSWORD STRENGTH
+        const passwordInput = document.getElementById('pswInput');
+        const strengthBar = document.getElementById('password-strength-bar');
+        const strengthText = document.getElementById('password-strength-text');
+        const strengthContainer = document.getElementById('password-strength-container');
+
+        function checkPasswordStrength(password) {
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+
+            const patterns = [
+                /[a-z]/,    // lowercase
+                /[A-Z]/,    // uppercase
+                /\d/,       // numbers
+                /[\W_]/     // special characters
+            ];
+
+            patterns.forEach(pattern => {
+                if (pattern.test(password)) strength++;
+            });
+
+            let strengthLevel = '';
+            let barColor = 'red';
+            
+            if (strength === 1) {
+                strengthBar.style.width = '25%';
+                strengthLevel = 'Weak';
+            } else if (strength === 2) {
+                strengthBar.style.width = '50%';
+                strengthLevel = 'Moderate';
+                barColor = 'orange';
+            } else if (strength === 3) {
+                strengthBar.style.width = '75%';
+                strengthLevel = 'Strong';
+                barColor = 'yellow';
+            } else if (strength >= 4) {
+                strengthBar.style.width = '100%';
+                strengthLevel = 'Very Strong';
+                barColor = 'green';
+            } else {
+                strengthBar.style.width = '0';
+            }
+
+            strengthBar.style.backgroundColor = barColor;
+            strengthText.textContent = strengthLevel;
+        }
+
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            if (password.length > 0) {
+                strengthContainer.style.display = 'block';
+                checkPasswordStrength(password);
+            } else {
+                strengthContainer.style.display = 'none';
+            }
+        });
+
     </script>
 </body>
 </html>
