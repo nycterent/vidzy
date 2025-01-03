@@ -959,6 +959,11 @@ def upload_file():
     if "ALLOW_UPLOADS" in vidzyconfig.config:
         if vidzyconfig.config["ALLOW_UPLOADS"] is False:
             return "This instance does not allow uploading videos"
+    
+    video_description = ""
+    if request.form.get("description") != None and request.form.get("tags") != None:
+        video_description = request.form.get("description")
+        video_description += "  " + request.form.get("tags")
 
     if request.method == 'POST':
         # check if the post request has the file part
@@ -976,7 +981,7 @@ def upload_file():
             return 'File is too large. Please upload a file smaller than 99MB.'
         
         if file and allowed_file(file.filename):
-            filename = datetime.today().strftime('%Y%m%d') + secure_filename(file.filename)
+            filename = datetime.today().strftime('%Y%m%d') + secure_filename(file.filename) + "__" + str(random.randrange(0,9999))
             if s3_enabled == 'True':
                 new_filename = uuid.uuid4().hex + '.' + file.filename.rsplit('.', 1)[1].lower()
 
@@ -993,7 +998,7 @@ def upload_file():
 
                 cur = mysql.connection.cursor()
 
-                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded) VALUES (%s,%s,%s,%s)""", (request.form.get("title"), s3_fileurl, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d')) )
+                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded, description) VALUES (%s,%s,%s,%s,%s)""", (request.form.get("title"), s3_fileurl, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d'), video_description) )
                 mysql.connection.commit()
             else:
                 temp_filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'temp_video.' + file.filename.rsplit('.', 1)[1].lower())
@@ -1024,92 +1029,11 @@ def upload_file():
 
                 cur = mysql.connection.cursor()
 
-                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded) VALUES (%s,%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d')) )
+                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded, description) VALUES (%s,%s,%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d'), video_description) )
                 mysql.connection.commit()
 
             return redirect(url_for('index_page'))
-    return '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload a New Video</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 400px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-size: 17px;
-            display: block;
-            margin-bottom: 8px;
-            text-align: left;
-        }
-
-        input[type="text"],
-        input[type="file"] {
-            width: calc(100% - 10px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 17px;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            height: 40px;
-            font-size: 17px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-    <h1>Upload a New Video</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=text name=title placeholder="Video title">
-      <br><br>
-      <input type=file name=file>
-      <br><br>
-      <input type=submit value=Upload>
-    </form>
-    </div>
-
-    </body>
-    </html>
-    '''
+    return render_template("upload_video.html")
 
 @app.route("/onboarding")
 def onboarding_page():

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload a New Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 17px;
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea {
+            width: calc(100% - 10px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 17px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            height: 40px;
+            font-size: 17px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .tag {
+            background-color: #eee;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            background-color: #ddd;
+        }
+
+        .tag-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 17px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Upload a New Video</h1>
+        <form method=post enctype=multipart/form-data>
+            <input type=text name=title placeholder="Video title">
+            <br><br>
+            <input type=file name=file>
+            <br><br>
+            <textarea name=description placeholder="Description"></textarea>
+            <br><br>
+
+            <label for="tags">Add Tags (e.g., #travel, #holiday, #technology):</label>
+            <input type="text" id="tags" class="tag-input" placeholder="Type or select tags" name="tags">
+
+            <div class="tags-container" id="tagList">
+                <span class="tag" onclick="addTag('#travel')">#travel</span>
+                <span class="tag" onclick="addTag('#holiday')">#holiday</span>
+                <span class="tag" onclick="addTag('#technology')">#technology</span>
+            </div>
+
+            <br><br>
+            <input type=submit value=Upload>
+        </form>
+    </div>
+
+    <script>
+        function addTag(tag) {
+            const tagInput = document.getElementById('tags');
+            if (tagInput.value) {
+                tagInput.value += ' ' + tag;
+            } else {
+                tagInput.value = tag;
+            }
+        }
+    </script>
+
+</body>
+</html>
