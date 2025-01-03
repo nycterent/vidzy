@@ -1,7 +1,7 @@
 <div align="center">
 <img src="static/logo.svg">
 <h1>Vidzy</h1>
-A free and open source alternative to TikTok
+A free, open source, federated alternative to TikTok
 
 <a href="https://vidzy.codeberg.page/">Website</a>
 &nbsp;•&nbsp;
