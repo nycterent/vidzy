@@ -115,6 +115,41 @@
             display: block;
         }
     }
+
+    #popular-tags-container {
+        padding: 15px;
+        margin-top: 20px;
+        background-color: #1a1a1a;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        transform: translateY(40%);
+    }
+
+    #popular-tags-container h3 {
+        color: #f1f1f1;
+        font-size: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    #popular-tags-container ul {
+        padding-left: 0;
+    }
+
+    #popular-tags-container li {
+        color: #f1f1f1;
+        font-size: 14px;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 8px;
+        background-color: #333;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #popular-tags-container li:hover {
+        background-color: #575757;
+    }
 </style>
 
 <div class="sidenav">
@@ -137,9 +172,12 @@
     <div style="bottom: 0; position: absolute; padding: 5px;">
         <a id="special" href="/about">About</a>
         <br><br>
-        <!--<a id="special" href="https://github.com/vidzy-social/vidzy">View source code</a>
-        <br><br>-->
+        <a id="special" href="https://github.com/vidzy-social/vidzy">View source code</a>
+        <br><br>
         <p style="font-size: 13px;">{{VIDZY_VERSION}}</p>
+    </div>
+    <div id="popular-tags-container" style="padding: 15px; color: #333;">
+        <!-- Popular tags will be inserted here by JS -->
     </div>
 </div>
 
@@ -206,4 +244,56 @@ body {margin:0;}
         }
       }
     }
+
+
+
+
+function fetchPopularTags() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/api/get_most_popular_tags", true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var tags = JSON.parse(xhr.responseText);
+            displayPopularTags(tags);
+        }
+    };
+    xhr.send();
+}
+
+function displayPopularTags(tags) {
+    var container = document.getElementById('popular-tags-container');
+    
+    var header = document.createElement('h3');
+    header.textContent = 'Most Popular Tags';
+    container.appendChild(header);
+
+    var tagList = document.createElement('ul');
+    
+    tags.forEach(function(tag) {
+        var listItem = document.createElement('li');
+        var link = document.createElement('a');
+        link.href = "/tags/" + encodeURIComponent(tag["tag"].substring(1)); // Removes the "#"
+        link.textContent = tag["tag"];
+        link.style.padding = '1px';
+        link.style.fontSize = '14px';
+        link.style.textDecoration = 'none';
+        link.style.color = 'white';
+
+        link.onmouseover = function() {
+            link.style.color = '#4CAF50';
+        };
+        link.onmouseout = function() {
+            link.style.color = 'white';
+        };
+
+        listItem.style.listStyleType = 'none';
+        listItem.style.borderBottom = '1px solid #ddd';
+        listItem.appendChild(link);
+        tagList.appendChild(listItem);
+    });
+    
+    container.appendChild(tagList);
+}
+
+window.onload = fetchPopularTags;
 </script>

@@ -944,6 +944,28 @@ def api_explore_page():
 
     return jsonify(rv)
 
+@app.route("/api/get_most_popular_tags")
+def api_get_popular_tags():
+    cur = mysql.connection.cursor()
+    cur.execute("""
+SELECT tag, COUNT(*) AS tag_count
+FROM (
+    SELECT REGEXP_SUBSTR(description, '#[A-Za-z0-9_]+') AS tag
+    FROM shorts
+    JOIN (SELECT 1 AS n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 
+          UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10) numbers
+    ON CHAR_LENGTH(description)
+    -CHAR_LENGTH(REPLACE(description, '#', '')) >= n - 1
+) AS tags
+WHERE tag != '' AND tag IS NOT NULL
+GROUP BY tag
+ORDER BY tag_count DESC
+LIMIT 3;
+    """)
+    rv = cur.fetchall()
+
+    return jsonify(rv)
+
 ############ API ROUTES ############
 ####################################
 
