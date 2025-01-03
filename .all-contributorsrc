@@ -15,7 +15,12 @@
       "profile": "https://github.com/ProgramminCat",
       "contributions": [
         "code",
-        "design"
+        "design",
+        "ideas",
+        "question",
+        "maintenance",
+        "review",
+        "security"
       ]
     },
     {
@@ -35,6 +40,25 @@
       "profile": "https://github.com/nycterent",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "chusopr",
+      "name": "Chuso Pérez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3270352?v=4",
+      "profile": "https://chuso.net",
+      "contributions": [
+        "security"
+      ]
+    },
+    {
+      "login": "everypizza1",
+      "name": "Derry Tutt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/82726593?v=4",
+      "profile": "https://everypizza.bearblog.dev",
+      "contributions": [
+        "code",
+        "bug"
       ]
     }
   ]
