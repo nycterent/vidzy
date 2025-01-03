@@ -981,7 +981,7 @@ def upload_file():
     if "ALLOW_UPLOADS" in vidzyconfig.config:
         if vidzyconfig.config["ALLOW_UPLOADS"] is False:
             return "This instance does not allow uploading videos"
-    
+
     video_description = ""
     if request.form.get("description") != None and request.form.get("tags") != None:
         video_description = request.form.get("description")
@@ -998,7 +998,7 @@ def upload_file():
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
-        
+
         if file.content_length > 99 * 1024 * 1024:  # 99MB in bytes
             return 'File is too large. Please upload a file smaller than 99MB.'
         
