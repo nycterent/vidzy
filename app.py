@@ -539,7 +539,7 @@ def explore_page():
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY likes DESC LIMIT 3;")
     rv = cur.fetchall()
 
-    return render_template('explore.html', shorts=rv, session=session, logged_in = logged_in , page="explore")
+    return render_template('explore.html', shorts=rv, session=session, logged_in = logged_in, page="explore")
 
 @app.route("/livefeed")
 def livefeed_page():
@@ -548,6 +548,17 @@ def livefeed_page():
     cur = mysql.connection.cursor()
     cur.execute(
         "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts ORDER BY id DESC LIMIT 3;")
+    rv = cur.fetchall()
+
+    return render_template('explore.html', shorts=rv, session=session, logged_in = logged_in, page="livefeed")
+
+@app.route("/tags/<tag>")
+def tag_page(tag):
+    logged_in = "username" in session
+
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT *, (SELECT count(*) FROM `likes` p WHERE p.short_id = shorts.id) likes FROM shorts WHERE description LIKE %s ORDER BY id DESC LIMIT 3;", ('%#' + tag + '%',))
     rv = cur.fetchall()
 
     return render_template('explore.html', shorts=rv, session=session, logged_in = logged_in, page="livefeed")
