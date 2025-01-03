@@ -50,6 +50,16 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "everypizza1",
+      "name": "Derry Tutt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/82726593?v=4",
+      "profile": "https://everypizza.bearblog.dev",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ]
 }
