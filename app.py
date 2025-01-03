@@ -186,6 +186,40 @@ def get_user_info(userid):
 def get_username(userid):
     return get_user_info(userid)["username"]
 
+def delete_non_existent_files_from_shorts():
+    entries_deleted = 0
+
+    cursor = mysql.connection.cursor()
+    
+    try:
+        cursor.execute("SELECT `id`, `url` FROM `shorts`")
+        rows = cursor.fetchall()
+        
+        for row in rows:
+            short_id = row["id"]
+            file_path = row["url"]
+            
+            full_file_path = os.path.join(os.path.join(app.config['UPLOAD_FOLDER'], file_path))
+            
+            if not os.path.exists(full_file_path) and not file_path.startswith("http://") and not file_path.startswith("https://"):
+                print(f"File {full_file_path} does not exist. Deleting entry from database.")
+                
+                cursor.execute("DELETE FROM `shorts` WHERE `id` = %s", (short_id,))
+                mysql.connection.commit()
+
+                entries_deleted += 1
+        
+        print("Cleanup complete.")
+    
+    except Exception as err:
+        print(f"Error: {err}")
+        mysql.connection.rollback()
+    
+    finally:
+        cursor.close()
+    
+    return entries_deleted
+
 @app.route("/camera")
 def camera_route():
     return app.send_static_file('demos/threejs/glassesVTO/index.html')
@@ -268,6 +302,10 @@ def liked_post_page():
 
     return "false"
 
+@app.route("/cleanup")
+def cleanup_page():
+    entries_deleted = delete_non_existent_files_from_shorts()
+    return "<h2>Cleanup complete. " + str(entries_deleted) + " entries deleted.</h2>"
 
 @app.route("/")
 def index_page():
