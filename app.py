@@ -6,6 +6,7 @@ import math
 import uuid
 import collections
 import random
+import time
 
 from operator import itemgetter
 from datetime import datetime
@@ -32,6 +33,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import sqlalchemy
+
+from moviepy import VideoFileClip
 
 import vidzyconfig
 
@@ -60,7 +63,7 @@ public_key = key.public_key().public_bytes(
 VIDZY_VERSION = "v0.1.9"
 
 UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'mp4', 'webm'}
+ALLOWED_EXTENSIONS = {'mp4', 'webm', 'mkv'}
 
 mysql = MySQL()
 app = Flask(__name__, static_url_path='')
@@ -957,6 +960,10 @@ def upload_file():
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
+        
+        if file.content_length > 99 * 1024 * 1024:  # 99MB in bytes
+            return 'File is too large. Please upload a file smaller than 99MB.'
+        
         if file and allowed_file(file.filename):
             filename = datetime.today().strftime('%Y%m%d') + secure_filename(file.filename)
             if s3_enabled == 'True':
@@ -978,11 +985,31 @@ def upload_file():
                 cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded) VALUES (%s,%s,%s,%s)""", (request.form.get("title"), s3_fileurl, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d')) )
                 mysql.connection.commit()
             else:
+                temp_filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'temp_video.' + file.filename.rsplit('.', 1)[1].lower())
+                file.save(temp_filepath)
+                try:
+                    video = VideoFileClip(temp_filepath)
+                    duration = video.duration  # Duration in seconds
+                    if duration > 60:
+                        video.close()
+                        os.remove(temp_filepath)
+                        return 'Video duration exceeds 60 seconds. Please upload a video that is less than 60 seconds.'
+                        return redirect(request.url)
+                except Exception as e:
+                    video.close()
+                    os.remove(temp_filepath)
+                    return f"Error processing video: {e}"
+                    return redirect(request.url)
+                finally:
+                    video.close()
+                time.sleep(1)
+
                 if vidzyconfig.config["use_absolute_upload_path"]:
                     project_folder = vidzyconfig.config["vidzy_absolute_path"]
-                    file.save(os.path.join(project_folder + '/' + app.config['UPLOAD_FOLDER'], filename))
+                    os.rename(temp_filepath, os.path.join(os.path.join(project_folder + '/' + app.config['UPLOAD_FOLDER'], filename)))
                 else:
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    os.rename(temp_filepath, os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
 
                 cur = mysql.connection.cursor()
 
