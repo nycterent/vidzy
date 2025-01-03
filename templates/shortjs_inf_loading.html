@@ -15,10 +15,17 @@
                 for (var short of JSON.parse(this.responseText)) {
                 const node = document.createElement("div");
                 node.classList.add('video');
+                
+                if (short_url.startsWith("https://") || short_url.startsWith("http://")) {
+                    var short_url = short["url"];
+                } else {
+                    var short_url = "/static/uploads/" + short["url"];
+                }
+
                 node.innerHTML = `
     <shortid style="display: none;">${short["id"]}</shortid>
 
-    <video class="video__player" src="/static/uploads/${short["url"]}" loop controls></video>
+    <video class="video__player" src="${short_url}" loop controls></video>
 
     <!-- sidebar -->
     <div class="videoSidebar">
