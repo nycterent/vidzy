@@ -1066,10 +1066,10 @@ def upload_file():
                 try:
                     video = VideoFileClip(temp_filepath)
                     duration = video.duration  # Duration in seconds
-                    if duration > 60:
+                    if duration > 180:
                         video.close()
                         os.remove(temp_filepath)
-                        return 'Video duration exceeds 60 seconds. Please upload a video that is less than 60 seconds.'
+                        return 'Video duration exceeds 3 minutes. Please upload a video that is less than 3 minutes.'
                         return redirect(request.url)
                 except Exception as e:
                     video.close()
