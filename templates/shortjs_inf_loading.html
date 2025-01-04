@@ -227,14 +227,16 @@
     }
 
     const interval = setInterval(function() {
-        if (currentcommentsdiv.getElementsByTagName("iframe")[0].contentWindow.location.hash != "") {
-            var replyto = currentcommentsdiv.getElementsByTagName("iframe")[0].contentWindow.location.hash.slice(1);
-            console.log(replyto);
-            currentcommentsdiv.getElementsByClassName("comment_input")[0].placeholder = "Type here... (replying to " + replyto + ")";
-            window.replyto = replyto;
-        } else {
-            window.replyto = "";
-            currentcommentsdiv.getElementsByClassName("comment_input")[0].placeholder = "Type here...";
+        if (currentcommentsdiv.getElementsByTagName("iframe").length != 0) {
+            if (currentcommentsdiv.getElementsByTagName("iframe")[0].contentWindow.location.hash != "") {
+                var replyto = currentcommentsdiv.getElementsByTagName("iframe")[0].contentWindow.location.hash.slice(1);
+                console.log(replyto);
+                currentcommentsdiv.getElementsByClassName("comment_input")[0].placeholder = "Type here... (replying to " + replyto + ")";
+                window.replyto = replyto;
+            } else {
+                window.replyto = "";
+                currentcommentsdiv.getElementsByClassName("comment_input")[0].placeholder = "Type here...";
+            }
         }
     }, 500);
 </script>

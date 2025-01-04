@@ -141,6 +141,8 @@ class Comment(Base):
         SQLAlchemy_session.commit()
 
     def level(self):
+        if self.path == None:
+            return 1
         return len(self.path) // self._N - 1
 
 with app.app_context():
@@ -159,7 +161,7 @@ def get_gravatar(email):
 def get_comments(vid):
     mycursor = mysql.connection.cursor()
 
-    mycursor.execute("SELECT * FROM `comments` WHERE short_id = %s;", (vid,))
+    mycursor.execute("SELECT * FROM `vidcomments` WHERE short_id = %s;", (vid,))
     myresult = mycursor.fetchall()
 
     return myresult
@@ -168,7 +170,7 @@ def get_comments(vid):
 def get_comment_count(vid):
     cursor = mysql.connection.cursor()
 
-    cursor.execute("SELECT count(*) comment_count FROM `comments` WHERE short_id = %s;", (vid,))
+    cursor.execute("SELECT count(*) comment_count FROM `vidcomments` WHERE short_id = %s;", (vid,))
     comment_count = int(cursor.fetchall()[0]["comment_count"])
 
     return comment_count

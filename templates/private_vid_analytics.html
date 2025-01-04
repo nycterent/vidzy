@@ -221,8 +221,8 @@
             <h3>Comments</h3>
             {% for comment in short.id|get_comments %}
             <div style="border: 1px solid white; padding: 5px;">
-                <p>{{ comment.user_id|get_username }}</p>
-                <p>{{ comment.comment_text }}</p>
+                <p>{{ comment.author|get_username }}</p>
+                <p>{{ comment.text }}</p>
             </div>
             {% endfor %}
         </div>
