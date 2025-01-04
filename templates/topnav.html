@@ -60,28 +60,116 @@
         font-family: "Lato", sans-serif;
     }
 
-    .sidenav {
-        height: calc(100% - 48px);
-        width: 200px;
-        position: fixed;
-        z-index: 1;
-        bottom: 0;
-        left: 0;
-        background-color: #111;
-        overflow-x: hidden;
-        padding-top: 20px;
+    @media (prefers-color-scheme: dark) {
+        .sidenav {
+            height: calc(100% - 48px);
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            bottom: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        .sidenav a:not(#special) {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+        }
+
+        .sidenav a:hover:not(#special) {
+            color: #f1f1f1;
+        }
+
+        #popular-tags-container {
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transform: translateY(40%);
+        }
+
+        #popular-tags-container h3 {
+            color: #f1f1f1;
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        #popular-tags-container li {
+            color: #f1f1f1;
+            font-size: 14px;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background-color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #popular-tags-container li:hover {
+            background-color: #575757;
+        }
     }
 
-    .sidenav a:not(#special) {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        font-size: 25px;
-        color: #818181;
-        display: block;
-    }
+    @media (prefers-color-scheme: light) {
+        .sidenav {
+            height: calc(100% - 48px);
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            bottom: 0;
+            left: 0;
+            background-color: #eee;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
 
-    .sidenav a:hover:not(#special) {
-        color: #f1f1f1;
+        .sidenav a:not(#special) {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #636363;
+            display: block;
+        }
+
+        .sidenav a:hover:not(#special) {
+            color: #636363;
+        }
+
+        #popular-tags-container {
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #cfcfcf;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transform: translateY(40%);
+        }
+
+        #popular-tags-container h3 {
+            color: #636363;
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        #popular-tags-container li {
+            color: #636363;
+            font-size: 14px;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background-color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #popular-tags-container li:hover {
+            background-color: #575757;
+        }
     }
 
     .main {
@@ -116,39 +204,8 @@
         }
     }
 
-    #popular-tags-container {
-        padding: 15px;
-        margin-top: 20px;
-        background-color: #1a1a1a;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        transform: translateY(40%);
-    }
-
-    #popular-tags-container h3 {
-        color: #f1f1f1;
-        font-size: 20px;
-        margin-bottom: 10px;
-        text-align: center;
-    }
-
     #popular-tags-container ul {
         padding-left: 0;
-    }
-
-    #popular-tags-container li {
-        color: #f1f1f1;
-        font-size: 14px;
-        padding: 10px;
-        margin: 5px 0;
-        border-radius: 8px;
-        background-color: #333;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    #popular-tags-container li:hover {
-        background-color: #575757;
     }
 </style>
 
