@@ -100,6 +100,7 @@
             margin-bottom: 10px;
             text-align: center;
         }
+
         #popular-tags-container li {
             color: #f1f1f1;
             font-size: 14px;
@@ -309,6 +310,8 @@ body {margin:0;}
     }
 
 
+const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
 
 
 function fetchPopularTags() {
@@ -340,14 +343,26 @@ function displayPopularTags(tags) {
         link.style.padding = '1px';
         link.style.fontSize = '14px';
         link.style.textDecoration = 'none';
-        link.style.color = '#4C4E52';
 
-        link.onmouseover = function() {
-            link.style.color = '#262A32';
-        };
-        link.onmouseout = function() {
+        if (prefersDarkMode) {
+            link.style.color = 'white';
+
+            link.onmouseover = function() {
+                link.style.color = '#4CAF50';
+            };
+            link.onmouseout = function() {
+                link.style.color = 'white';
+            };
+        } else {
             link.style.color = '#4C4E52';
-        };
+
+            link.onmouseover = function() {
+                link.style.color = '#262A32';
+            };
+            link.onmouseout = function() {
+                link.style.color = '#4C4E52';
+            };
+        }
 
         listItem.style.listStyleType = 'none';
         listItem.style.borderBottom = '1px solid #ddd';
