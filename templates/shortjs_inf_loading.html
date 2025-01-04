@@ -16,7 +16,7 @@
                 const node = document.createElement("div");
                 node.classList.add('video');
                 
-                if (short_url.startsWith("https://") || short_url.startsWith("http://")) {
+                if (short["url"].startsWith("https://") || short["url"].startsWith("http://")) {
                     var short_url = short["url"];
                 } else {
                     var short_url = "/static/uploads/" + short["url"];
