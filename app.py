@@ -5,6 +5,7 @@ import os
 import math
 import uuid
 import collections
+from collections import defaultdict
 import random
 import time
 
@@ -316,7 +317,7 @@ def index_page():
     cur = mysql.connection.cursor()
     if logged_in:
         cur.execute(
-            "SELECT p.id, title, url, user_id, date_uploaded, MIN(f.id) followid, MIN(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;",
+            "SELECT p.id, title, description, url, user_id, date_uploaded, MIN(f.id) followid, MIN(follower_id) follower_id, following_id, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes, (SELECT username FROM `users` WHERE id = p.user_id) username FROM shorts p INNER JOIN follows f ON (f.following_id = p.user_id) WHERE f.follower_id = %s OR p.user_id = %s GROUP BY p.id ORDER BY p.id DESC LIMIT 20;",
             (str(session["user"]["id"]), str(session["user"]["id"]),)
         )
 
@@ -335,7 +336,43 @@ def index_page():
 
         rv = sorted(rv, key=itemgetter('id'), reverse=True)
 
-        return render_template('index.html', shorts=rv, session=session, logged_in = logged_in)
+        '''
+        # Random chance for a video to swap with another video within 5 positions of itself
+        for i in range(len(rv)):
+            if random.random() < 0.2:  # 20% chance to swap
+                # Limit swap range to be within 5 positions
+                swap_index = random.randint(max(i - 5, 0), min(i + 5, len(rv) - 1))
+                if swap_index != i:  # Avoid swapping with the same item
+                    rv[i], rv[swap_index] = rv[swap_index], rv[i]
+        '''
+
+        grouped_by_date = defaultdict(lambda: defaultdict(list))
+
+        for video in rv:
+            date = video['date_uploaded']
+            if isinstance(date, str):
+                date = datetime.strptime(date, "%a, %d %b %Y %H:%M:%S GMT").date()
+            
+            if video['description'] is None:
+                tags = []
+            else:
+                tags = [word for word in video['description'].split() if word.startswith('#')]
+
+            for tag in tags:
+                grouped_by_date[date][tag].append(video)
+
+        for date, tags in grouped_by_date.items():
+            for tag, videos in tags.items():
+                random.shuffle(videos)
+
+        final_videos = []
+        for date in sorted(grouped_by_date.keys()):  # Sort by date
+            for tag in sorted(grouped_by_date[date].keys()):  # Sort by tag within each date
+                final_videos.extend(grouped_by_date[date][tag])
+
+
+
+        return render_template('index.html', shorts=final_videos, session=session, logged_in = logged_in)
     return explore_page()
 
 @app.route("/public/remote")
