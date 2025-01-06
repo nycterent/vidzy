@@ -1197,6 +1197,17 @@ def about():
 
     return render_template('about.html', instance_domain=urlparse(request.base_url).hostname, total_accounts=total_accounts)
 
+############## ERRORS ##############
+####################################
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template('500.html'), 500
+
 def create_app():
     return app
 
