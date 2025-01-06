@@ -185,4 +185,4 @@ ADD COLUMN `tags` VARCHAR(100) NULL AFTER `description`;
 -- v0.X.X
 ---
 ALTER TABLE `shorts`
-ADD COLUMN `time_uploaded` TIMESTAMP NULL DEFAULT NULL;
+ADD COLUMN `time_uploaded` TIME NULL DEFAULT NULL;
