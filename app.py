@@ -424,7 +424,7 @@ def video_publicanalytics(short):
     cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p  WHERE (`id` = %s);", (short,))
     short = cur.fetchall()[0]
 
-    return render_template('public_vid_analytics.html', session=session, short=short)
+    return render_template('public_vid_analytics.html', session=session, short=short, time_uploaded=time)
 
 @app.route("/shorts/<short_id>/analytics/private")
 def video_privateanalytics(short_id):
