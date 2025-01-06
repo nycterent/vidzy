@@ -180,3 +180,9 @@ ALTER TABLE `shorts` CHANGE COLUMN `url` `url` VARCHAR(2048) NULL DEFAULT NULL ;
 --
 ALTER TABLE `vidzy`.`shorts` 
 ADD COLUMN `tags` VARCHAR(100) NULL AFTER `description`;
+
+--
+-- v0.X.X
+---
+ALTER TABLE `shorts`
+ADD COLUMN `time_uploaded` TIMESTAMP NULL DEFAULT NULL;
