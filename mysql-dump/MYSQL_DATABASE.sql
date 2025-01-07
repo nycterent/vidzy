@@ -90,7 +90,7 @@ CREATE TABLE `shorts` (
 
 LOCK TABLES `shorts` WRITE;
 /*!40000 ALTER TABLE `shorts` DISABLE KEYS */;
-INSERT INTO `shorts` VALUES (1,'test video','video.mp4',1),(2,'test video #2','video.mp4',1);
+INSERT INTO `shorts` VALUES (1,'test video','video.mp4',1,2025-01-05),(2,'test video #2','video.mp4',1,2025-01-05);
 /*!40000 ALTER TABLE `shorts` ENABLE KEYS */;
 UNLOCK TABLES;
 
