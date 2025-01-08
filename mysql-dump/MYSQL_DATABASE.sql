@@ -182,7 +182,7 @@ ALTER TABLE `vidzy`.`shorts`
 ADD COLUMN `tags` VARCHAR(100) NULL AFTER `description`;
 
 --
--- v0.X.X
+-- v0.2.0
 ---
 ALTER TABLE `shorts`
 ADD COLUMN `time_uploaded` TIME NULL DEFAULT NULL;
