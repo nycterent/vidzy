@@ -424,7 +424,7 @@ def video_publicanalytics(short):
     cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) like_count FROM `shorts` p  WHERE (`id` = %s);", (short,))
     short = cur.fetchall()[0]
 
-    return render_template('public_vid_analytics.html', session=session, short=short)
+    return render_template('public_vid_analytics.html', session=session, short=short, time_uploaded=time)
 
 @app.route("/shorts/<short_id>/analytics/private")
 def video_privateanalytics(short_id):
@@ -1097,7 +1097,7 @@ def upload_file():
 
                 cur = mysql.connection.cursor()
 
-                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded, description) VALUES (%s,%s,%s,%s,%s)""", (request.form.get("title"), s3_fileurl, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d'), video_description) )
+                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded, description, time_uploaded) VALUES (%s,%s,%s,%s,%s,%s)""", (request.form.get("title"), s3_fileurl, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d'), video_description, datetime.now().strftime('%H:%M:%S')) )
                 mysql.connection.commit()
             else:
                 temp_filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'temp_video.' + file.filename.rsplit('.', 1)[1].lower())
@@ -1128,7 +1128,7 @@ def upload_file():
 
                 cur = mysql.connection.cursor()
 
-                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded, description) VALUES (%s,%s,%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d'), video_description) )
+                cur.execute( """INSERT INTO shorts (title, url, user_id, date_uploaded, description, time_uploaded) VALUES (%s,%s,%s,%s,%s,%s)""", (request.form.get("title"), filename, str(session["user"]["id"]), datetime.now().strftime('%Y-%m-%d'), video_description, datetime.now().strftime('%H:%M:%S')) )
                 mysql.connection.commit()
 
             return redirect(url_for('index_page'))
