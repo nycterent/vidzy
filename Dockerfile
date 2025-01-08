@@ -4,6 +4,7 @@ FROM --platform=$BUILDPLATFORM python:3.12-alpine AS builder
 WORKDIR /app
 
 RUN apk update
+RUN apk add ffmpeg
 RUN apk add pkgconfig
 RUN apk add --virtual build-deps gcc python3-dev musl-dev
 RUN apk add --no-cache mariadb-dev
