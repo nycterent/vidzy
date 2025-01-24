@@ -60,6 +60,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "honjes",
+      "name": "Clara",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33932833?v=4",
+      "profile": "https://github.com/honjes",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ]
 }

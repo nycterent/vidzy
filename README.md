@@ -64,6 +64,7 @@ Vidzy is open-source software licensed under the GNU Affero General Public Licen
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nycterent"><img src="https://avatars.githubusercontent.com/u/81133?v=4?s=100" width="100px;" alt="Marty"/><br /><sub><b>Marty</b></sub></a><br /><a href="#code-nycterent" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://chuso.net"><img src="https://avatars.githubusercontent.com/u/3270352?v=4?s=100" width="100px;" alt="Chuso Pérez"/><br /><sub><b>Chuso Pérez</b></sub></a><br /><a href="#security-chusopr" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://everypizza.bearblog.dev"><img src="https://avatars.githubusercontent.com/u/82726593?v=4?s=100" width="100px;" alt="Derry Tutt"/><br /><sub><b>Derry Tutt</b></sub></a><br /><a href="#code-everypizza1" title="Code">💻</a> <a href="#bug-everypizza1" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/honjes"><img src="https://avatars.githubusercontent.com/u/33932833?v=4?s=100" width="100px;" alt="Clara"/><br /><sub><b>Clara</b></sub></a><br /><a href="#code-honjes" title="Code">💻</a> <a href="#bug-honjes" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
