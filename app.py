@@ -1043,6 +1043,59 @@ LIMIT 3;
 
     return jsonify(rv)
 
+@app.route("/.well-known/nodeinfo")
+def well_known_nodeinfo():
+    instance_url = str(urlparse(request.base_url).scheme) + "://" + str(urlparse(request.base_url).netloc)
+
+    return jsonify(
+        {
+            "links": [
+                {
+                    "href": instance_url + "/api/nodeinfo",
+                    "rel": "http://nodeinfo.diaspora.software/ns/schema/2.0"
+                }
+            ]
+        }
+    )
+
+@app.route("/api/nodeinfo")
+def api_nodeinfo_2_0():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT count(*) total_accounts FROM `users`;")
+    total_accounts = cur.fetchall()[0]["total_accounts"]
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT count(*) total_vids FROM `shorts`;")
+    total_vids = cur.fetchall()[0]["total_vids"]
+
+    return jsonify({
+        "version": "2.0",
+        "software": {
+            "name": "vidzy",
+            "version": VIDZY_VERSION[1:]  # Get rid of the "v"
+        },
+        "protocols": [
+            "activitypub"
+        ],
+        "services": {
+            "outbound": [],
+            "inbound": []
+        },
+        "usage": {
+            "users": {
+                "total": total_accounts,
+                "activeMonth": 0, # TODO: Make activeMonth and activeHalfyear work
+                "activeHalfyear": 0
+            },
+            "localPosts": total_vids
+        },
+        "openRegistrations": True,
+        "metadata": {
+            "nodeName": "Vidzy",
+            "nodeDescription": "A general-purpose Vidzy server."
+        }
+    })
+
 ############ API ROUTES ############
 ####################################
 
