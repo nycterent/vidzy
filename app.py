@@ -751,9 +751,6 @@ def profile_feed_page(user):
 
 @app.route("/shorts/<short>")
 def short_page(short):
-    if "username" not in session:
-        return "<script>window.location.href='/login';</script>"
-
     cur = mysql.connection.cursor()
     cur.execute("SELECT *, (SELECT count(*) FROM `likes` WHERE short_id = p.id) likes FROM shorts p WHERE id = %s;", (short,))
     rv = cur.fetchall()[0]
